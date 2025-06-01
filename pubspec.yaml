@@ -46,10 +46,9 @@ dev_dependencies:
   json_serializable: ^6.9.5
   retrofit_generator: ^9.1.7
 
-flutter_icons:
+flutter_launcher_icons:
   android: true
-  ios: true
-  image_path: "assets/logo.png"
+  image_path: "assets/icon.png"
 
 
 flutter:
