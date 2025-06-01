@@ -21,12 +21,11 @@ Noted is a Flutter application designed to help users track their entertainment 
 
 ## Screenshots
 
-![1](https://github.com/user-attachments/assets/d31e6a87-9f18-4e14-ae26-013d9ffbd3cb)
-![2](https://github.com/user-attachments/assets/11cf5d74-6c8c-411f-ad25-2730960891f1)
-![3](https://github.com/user-attachments/assets/35fc8aef-c70c-47c5-a661-f424d5d77b96)
-![4](https://github.com/user-attachments/assets/b5a85f26-9cae-433e-8724-d883de2cf3c0)
-![5](https://github.com/user-attachments/assets/42e3a096-0544-4aa0-a658-aa5857a27362)
-
+<img src="https://github.com/user-attachments/assets/d31e6a87-9f18-4e14-ae26-013d9ffbd3cb" width="300"/>
+<img src="https://github.com/user-attachments/assets/11cf5d74-6c8c-411f-ad25-2730960891f1" width="300"/>
+<img src="https://github.com/user-attachments/assets/35fc8aef-c70c-47c5-a661-f424d5d77b96" width="300"/>
+<img src="https://github.com/user-attachments/assets/b5a85f26-9cae-433e-8724-d883de2cf3c0" width="300"/>
+<img src="https://github.com/user-attachments/assets/42e3a096-0544-4aa0-a658-aa5857a27362" width="300"/
 
 ## API Keys
 
