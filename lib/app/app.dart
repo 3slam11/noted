@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
       future: themeManager.getCurrentTheme(),
       builder: (context, snapshot) {
         FlexScheme currentScheme;
-        currentScheme = snapshot.data!;
+        currentScheme = snapshot.data ?? themeManager.getMonthlyTheme();
 
         return MaterialApp(
           title: t.appName,
