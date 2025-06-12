@@ -85,7 +85,7 @@ class StateRenderer extends StatelessWidget {
     );
   }
 
-  Widget getmedia(context) {
+  Widget getmedia(BuildContext context) {
     Widget mediatype;
     switch (stateRendererType) {
       case StateRendererType.popupLoadingState:
@@ -144,7 +144,7 @@ class StateRenderer extends StatelessWidget {
   }
 
   Widget _getActionButtton(
-    context,
+    BuildContext context,
     String buttonTitle,
     VoidCallback onPressedAction,
   ) {

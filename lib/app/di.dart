@@ -69,7 +69,7 @@ Future<void> initAppModule() async {
   instance.registerLazySingleton<ThemeManager>(() => ThemeManager(instance()));
 }
 
-initMainModule() {
+void initMainModule() {
   if (!GetIt.I.isRegistered<MainUsecase>()) {
     instance.registerFactory<MainUsecase>(() => MainUsecase(instance()));
     instance.registerFactory<MainViewModel>(
@@ -78,7 +78,7 @@ initMainModule() {
   }
 }
 
-initSearchModule() {
+void initSearchModule() {
   if (!GetIt.I.isRegistered<SearchUsecase>()) {
     instance.registerFactory<SearchUsecase>(() => SearchUsecase(instance()));
     instance.registerFactory<SearchViewModel>(
@@ -87,7 +87,7 @@ initSearchModule() {
   }
 }
 
-initDetailsModule() {
+void initDetailsModule() {
   if (!GetIt.I.isRegistered<DetailsUsecase>()) {
     instance.registerFactory<DetailsUsecase>(() => DetailsUsecase(instance()));
     instance.registerFactory<DetailsViewModel>(
@@ -96,7 +96,7 @@ initDetailsModule() {
   }
 }
 
-initSettingsModule() {
+void initSettingsModule() {
   if (!GetIt.I.isRegistered<SettingsViewModel>()) {
     instance.registerFactory<SettingsViewModel>(
       () => SettingsViewModel(instance(), instance()),
@@ -104,7 +104,7 @@ initSettingsModule() {
   }
 }
 
-initHistoryModule() {
+void initHistoryModule() {
   if (!GetIt.I.isRegistered<HistoryViewModel>()) {
     instance.registerFactory<HistoryUsecase>(() => HistoryUsecase(instance()));
     instance.registerFactory<HistoryViewModel>(
@@ -113,7 +113,7 @@ initHistoryModule() {
   }
 }
 
-initStatisticsModule() {
+void initStatisticsModule() {
   if (!GetIt.I.isRegistered<StatisticsViewModel>()) {
     instance.registerFactory<StatisticsViewModel>(
       () => StatisticsViewModel(instance()),
@@ -121,7 +121,7 @@ initStatisticsModule() {
   }
 }
 
-initChangeApiModule() {
+void initChangeApiModule() {
   if (!GetIt.I.isRegistered<ChangeApiViewModel>()) {
     instance.registerFactory<ChangeApiViewModel>(
       () => ChangeApiViewModel(instance()),
@@ -129,7 +129,7 @@ initChangeApiModule() {
   }
 }
 
-initBackupAndRestoreModule() {
+void initBackupAndRestoreModule() {
   if (!GetIt.I.isRegistered<BackupAndRestoreViewModel>()) {
     instance.registerFactory<BackupAndRestoreViewModel>(
       () => BackupAndRestoreViewModel(instance(), instance()),

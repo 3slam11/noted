@@ -24,7 +24,7 @@ class SearchViewState extends State<SearchView> {
     _bind();
   }
 
-  _bind() {
+  void _bind() {
     viewModel.start();
   }
 

@@ -9,7 +9,7 @@ enum Category {
   books,
   games;
 
-  localizedCategory() {
+  String localizedCategory() {
     switch (this) {
       case Category.all:
         return t.home.all;

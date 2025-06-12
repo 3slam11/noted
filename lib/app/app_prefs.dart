@@ -40,7 +40,7 @@ class AppPrefs {
     await sharedPreferences.setBool(loggedInPref, false);
   }
 
-  Future<void> setHasSeenDisclaimer(viewed) async {
+  Future<void> setHasSeenDisclaimer(bool viewed) async {
     await sharedPreferences.setBool(hasSeenDisclaimer, viewed);
   }
 

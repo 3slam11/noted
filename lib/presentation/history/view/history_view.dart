@@ -156,7 +156,7 @@ class HistoryViewState extends State<HistoryView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${selectedCategory.localizedCategory()}',
+                          selectedCategory.localizedCategory(),
                           style: TextStyle(
                             fontSize: AppSize.s20,
                             fontWeight: FontWeight.bold,
