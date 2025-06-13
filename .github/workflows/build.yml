@@ -10,6 +10,9 @@ jobs:
     # specifing the OS to Linux.
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       # 1. checks out the repository
       - name: Checkout repository
