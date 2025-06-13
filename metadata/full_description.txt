@@ -1,1 +1,0 @@
-Noted is an application designed to help users track their entertainment across various categories like movies, TV series, books, and games. It allows users to maintain To-Do and Finished lists, search for new items, view details, and manage their viewing/reading/playing history. The app supports localization, dynamic theming, data backup/restore, and custom API key integration.

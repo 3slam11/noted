@@ -1,0 +1,1 @@
+Noted is an application designed to help you track your entertainment across various categories like movies, TV series, books, and games. It allows you to search for new items, add them to todo or finished list, , and view their details. The app supports localization, dynamic theming, data backup/restore, and custom API key integration.

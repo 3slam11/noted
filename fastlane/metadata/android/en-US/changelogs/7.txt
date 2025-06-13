@@ -1,0 +1,2 @@
+- Deleted unwanted files
+- Optimized icon
