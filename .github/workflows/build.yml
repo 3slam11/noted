@@ -1,10 +1,9 @@
-# workflow name
-name: Build Flutter APK
+name: Build and release APKs
 
 on:
   push:
-    branches: [ "main" ]
-  workflow_dispatch:
+    tags:
+      - '*.*.*'
 
 jobs:
   build:
@@ -27,7 +26,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version-file: pubspec.yaml
 
       # 4. gets Flutter dependencies
       - name: Get Flutter dependencies
@@ -63,9 +62,25 @@ jobs:
           done
           ls -l
 
-      # 9. upload the generated APKs as an artifact
-      - name: Upload APKs
-        uses: actions/upload-artifact@v4
+      # 9. create a GitHub Release
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: release-apks
-          path: build/app/outputs/flutter-apk/
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            Release of version ${{ github.ref_name }}.
+          draft: false
+          prerelease: false
+
+      # 10. upload each APK to the GitHub Release
+      - name: Upload Release Assets
+        run: |
+          for file in build/app/outputs/flutter-apk/*.apk; do
+            gh release upload ${{ github.ref_name }} "$file"
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
