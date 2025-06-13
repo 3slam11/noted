@@ -1,1 +1,14 @@
-Noted is an application designed to help you track your entertainment across various categories like movies, TV series, books, and games. It allows you to search for new items, add them to todo or finished list, , and view their details. The app supports localization, dynamic theming, data backup/restore, and custom API key integration.
+Noted is your all-in-one entertainment tracker for movies, TV series, books, and games. Organize your entertainment journey with To-Do and Finished lists, and experience our unique monthly rollover that moves completed items to history while letting you carry over unfinished ones. 
+
+Key Features:
+• Track entertainment across Movies, TV Series, Books, and Games
+• Smart monthly rollover with history archiving
+• Search new titles using RAWG, TMDB, and Google Books APIs
+• Detailed item information with descriptions, ratings, and images
+• Consumption statistics and history tracking
+• Custom API key support
+• Local backup/restore
+• Dynamic theming (auto-monthly or manual)
+• Multi-language localization support
+
+Never lose track of your entertainment adventures again. Manage your watchlist, discover new favorites, and analyze your habits - all in one minimalist designed app.

@@ -73,5 +73,5 @@ jobs:
           CHANGELOG_FILE=$(ls -v fastlane/metadata/android/en-US/changelogs/*.txt | tail -n 1)
           gh release create ${{ github.ref_name }} \
             --title "${{ github.ref_name }}" \
-            --notes "$CHANGELOG_FILE" \
+            --notes-file "$CHANGELOG_FILE" \
             build/app/outputs/flutter-apk/*.apk
