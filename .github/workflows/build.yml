@@ -1,0 +1,55 @@
+# workflow name
+name: Build Flutter APK
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    # specifing the OS to Linux.
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. checks out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. sets up the Java environment
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. sets up Flutter SDK environment
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      # 4. gets Flutter dependencies
+      - name: Get Flutter dependencies
+        run: dart pub get
+
+      # 5. Build the APKs
+      - name: Build APK
+        run: flutter build apk --release --split-per-abi
+
+      # 6. rename the generated APK files
+      - name: Rename APK files
+        run: |
+          cd build/app/outputs/flutter-apk/
+          for file in app-*-release.apk; do
+            new_name=$(echo "$file" | sed -e 's/app-/noted-/' -e 's/-release//')
+            mv "$file" "$new_name"
+          done
+          ls -l
+
+      # 7. upload the generated APKs as an artifact
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apks
+          path: build/app/outputs/flutter-apk/
