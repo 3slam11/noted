@@ -7,7 +7,7 @@
 
 </div>
 
-Noted helps you organize movies, TV series, books, and games across **To-Do** and **Finished** lists. Discover new titles, track progress, and analyze your habits—all in one app.  
+Noted is a tracker that helps you organize movies, TV series, books, and games across **To-Do** and **Finished** lists. Discover new titles, and analyze your habits—all in one app.  
 
 <p float="left">
   <img src="https://github.com/user-attachments/assets/d31e6a87-9f18-4e14-ae26-013d9ffbd3cb" width="30%"/>
