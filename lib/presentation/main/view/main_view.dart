@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:noted/app/app_prefs.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/app/functions.dart';
 import 'package:noted/domain/model/models.dart';
@@ -12,7 +12,6 @@ import 'package:noted/presentation/main/viewModel/main_view_model.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
 
-final AppPrefs prefs = instance<AppPrefs>();
 final MainViewModel viewModel = instance<MainViewModel>();
 
 class MainView extends StatefulWidget {
@@ -27,25 +26,12 @@ class MainViewState extends State<MainView> {
     super.initState();
     viewModel.start();
     monthChecker();
-    _checkFirstTime();
   }
 
   Future<void> monthChecker() async {
     if (await checkForNewMonth()) {
       if (!mounted) return;
       await handleNewMonth();
-    }
-  }
-
-  Future<void> _checkFirstTime() async {
-    if (!await prefs.getHasSeenDisclaimer()) {
-      if (!mounted) return;
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const NoResponsibilityDialog(),
-      );
-      await prefs.setHasSeenDisclaimer(true);
     }
   }
 
@@ -163,11 +149,15 @@ class MainViewState extends State<MainView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CategoryFilterWidget(viewModel: viewModel),
+            CategoryFilterWidget(
+              viewModel: viewModel,
+            ).animate().fadeIn(duration: 400.ms),
             const SizedBox(height: 20),
-            TodoSectionWidget(viewModel: viewModel),
+            TodoSectionWidget(
+              viewModel: viewModel,
+            ).animate().fadeIn(duration: 500.ms),
             const SizedBox(height: 8),
-            FinishedSectionWidget(),
+            FinishedSectionWidget().animate().fadeIn(duration: 500.ms),
           ],
         ),
       ),
@@ -178,6 +168,7 @@ class MainViewState extends State<MainView> {
 class CategoryFilterWidget extends StatelessWidget {
   final MainViewModel viewModel;
   const CategoryFilterWidget({super.key, required this.viewModel});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Category>(
@@ -187,28 +178,42 @@ class CategoryFilterWidget extends StatelessWidget {
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: Category.values.map((category) {
+            children: Category.values.asMap().entries.map((entry) {
+              final category = entry.value;
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
-                child: ChoiceChip(
-                  label: Text(category.localizedCategory()),
-                  selected: selectedCategory == category,
-                  onSelected: (selected) {
-                    if (selected) {
-                      viewModel.setCategory(category);
-                    }
-                  },
-                  selectedColor: Theme.of(context).colorScheme.primary,
-                  backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                  labelStyle: TextStyle(
-                    color: selectedCategory == category
-                        ? Theme.of(context).colorScheme.surface
-                        : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: selectedCategory == category
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                  ),
-                ),
+                child:
+                    ChoiceChip(
+                          label: Text(category.localizedCategory()),
+                          selected: selectedCategory == category,
+                          onSelected: (selected) {
+                            if (selected) {
+                              viewModel.setCategory(category);
+                            }
+                          },
+                          selectedColor: Theme.of(context).colorScheme.primary,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onPrimary,
+                          labelStyle: TextStyle(
+                            color: selectedCategory == category
+                                ? Theme.of(context).colorScheme.surface
+                                : Theme.of(context).colorScheme.onSurface,
+                            fontWeight: selectedCategory == category
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms)
+                        .slideX(begin: -0.2, end: 0)
+                        .then()
+                        .animate(target: selectedCategory == category ? 1 : 0)
+                        .scale(
+                          begin: const Offset(1.0, 1.0),
+                          end: const Offset(1.05, 1.05),
+                          duration: 200.ms,
+                        ),
               );
             }).toList(),
           ),
@@ -250,6 +255,7 @@ class TodoSectionWidget extends StatelessWidget {
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
+
                       const SizedBox(height: 5),
                       Text(
                         t.months[DateTime.now().month - 1],
@@ -259,7 +265,7 @@ class TodoSectionWidget extends StatelessWidget {
                           shadows: List.generate(
                             4,
                             (i) => Shadow(
-                              blurRadius: 40,
+                              blurRadius: 50,
                               color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
@@ -293,34 +299,42 @@ class TodoSectionWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () async {
-                    await Navigator.of(
-                      context,
-                    ).pushNamed(RoutesManager.searchRoute);
-                    viewModel.start();
-                  },
-                  child: Icon(
-                    Icons.add,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () async {
+                        await Navigator.of(
+                          context,
+                        ).pushNamed(RoutesManager.searchRoute);
+                        viewModel.start();
+                      },
+                      child: Icon(
+                        Icons.add,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    )
+                    .animate()
+                    .scale(begin: const Offset(0.8, 0.8))
+                    .then()
+                    .shake(duration: 500.ms, delay: 2000.ms)
+                    .then(delay: 3000.ms)
+                    .shake(duration: 500.ms),
               ],
             ),
           ),
           Divider(
-            color: Theme.of(context).colorScheme.primary,
-            thickness: 1,
-            indent: 16,
-            endIndent: 16,
-          ),
+                color: Theme.of(context).colorScheme.primary,
+                thickness: 1,
+                indent: 16,
+                endIndent: 16,
+              )
+              .animate()
+              .fadeIn(duration: 400.ms, delay: 600.ms)
+              .scaleX(begin: 0, end: 1),
           const SizedBox(height: 8),
           StreamBuilder<MainObject?>(
             stream: viewModel.outputMainData,
@@ -342,22 +356,25 @@ class TodoSectionWidget extends StatelessWidget {
                   }
 
                   return Column(
-                    children: filteredTodos
-                        .map(
-                          (todo) => buildItem(
+                    children: filteredTodos.asMap().entries.map((entry) {
+                      final todo = entry.value;
+                      return buildItem(
                             context,
                             todo,
                             'todo-${todo.id}-${todo.category?.name}',
                             (direction) => viewModel.deleteTodo(todo),
                             () => viewModel.moveToFinished(todo),
+                            Icons.check_rounded,
                             RoutesManager.detailsRoute,
                             arguments: DetailsView(
                               id: todo.id!,
                               category: todo.category!,
                             ),
-                          ),
-                        )
-                        .toList(),
+                          )
+                          .animate()
+                          .fadeIn(duration: 300.ms)
+                          .slideY(begin: 0.3, end: 0);
+                    }).toList(),
                   );
                 },
               );
@@ -365,7 +382,7 @@ class TodoSectionWidget extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ).animate().fadeIn(duration: 400.ms);
   }
 }
 
@@ -397,11 +414,14 @@ class FinishedSectionWidget extends StatelessWidget {
             ),
           ),
           Divider(
-            color: Theme.of(context).colorScheme.primary,
-            thickness: 1,
-            indent: 16,
-            endIndent: 16,
-          ),
+                color: Theme.of(context).colorScheme.primary,
+                thickness: 1,
+                indent: 16,
+                endIndent: 16,
+              )
+              .animate()
+              .fadeIn(duration: 400.ms, delay: 600.ms)
+              .scaleX(begin: 0, end: 1),
           const SizedBox(height: 8),
           StreamBuilder<MainObject?>(
             stream: viewModel.outputMainData,
@@ -424,22 +444,25 @@ class FinishedSectionWidget extends StatelessWidget {
                   }
 
                   return Column(
-                    children: filteredFinished
-                        .map(
-                          (finished) => buildItem(
+                    children: filteredFinished.asMap().entries.map((entry) {
+                      final finished = entry.value;
+                      return buildItem(
                             context,
                             finished,
                             'finished-${finished.id}-${finished.category?.name}',
                             (direction) => viewModel.deleteFinished(finished),
                             () => viewModel.moveToTodo(finished),
+                            Icons.undo_rounded,
                             RoutesManager.detailsRoute,
                             arguments: DetailsView(
                               id: finished.id!,
                               category: finished.category!,
                             ),
-                          ),
-                        )
-                        .toList(),
+                          )
+                          .animate()
+                          .fadeIn(duration: 300.ms)
+                          .slideY(begin: -0.3, end: 0);
+                    }).toList(),
                   );
                 },
               );
@@ -447,7 +470,7 @@ class FinishedSectionWidget extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ).animate().fadeIn(duration: 400.ms);
   }
 }
 
@@ -458,12 +481,22 @@ Widget _buildEmptyState(BuildContext context) {
       child: Column(
         children: [
           Icon(
-            Icons.list_alt,
-            size: 40,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+                Icons.list_alt,
+                size: 40,
+                color: Theme.of(context).colorScheme.primary,
+              )
+              .animate()
+              .fadeIn(duration: 300.ms)
+              .scale(begin: const Offset(0.5, 0.5))
+              .then()
+              .shake(duration: 500.ms, delay: 1000.ms)
+              .then(delay: 2000.ms)
+              .shake(duration: 500.ms),
           const SizedBox(height: 10),
-          Text(t.home.emptySection, style: const TextStyle(fontSize: 15)),
+          Text(t.home.emptySection, style: const TextStyle(fontSize: 15))
+              .animate()
+              .fadeIn(duration: 500.ms, delay: 200.ms)
+              .slideY(begin: 0.3, end: 0),
           const SizedBox(height: 30),
         ],
       ),
@@ -477,84 +510,73 @@ Widget buildItem(
   String value,
   Function(DismissDirection) onDismissed,
   VoidCallback onIconPressed,
+  IconData icon,
   String route, {
   Object? arguments,
 }) {
-  return Dismissible(
-    key: ValueKey(value),
-    direction: DismissDirection.startToEnd,
-    onDismissed: onDismissed,
-    background: Container(
-      color: Colors.red,
-      alignment: Alignment.centerRight,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: const Icon(Icons.delete, color: Colors.white),
-    ),
-    child: Card(
-      elevation: AppSize.s0,
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: ListTile(
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(4.0),
-          child: item.posterUrl != null && item.posterUrl!.isNotEmpty
-              ? Image.network(
-                  item.posterUrl!,
-                  width: 50,
-                  height: 75,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+    child: Dismissible(
+      key: ValueKey(value),
+      direction: DismissDirection.startToEnd,
+      onDismissed: onDismissed,
+      background: Container(
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        alignment: Directionality.of(context) == TextDirection.rtl
+            ? Alignment.centerRight
+            : Alignment.centerLeft,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: const Icon(Icons.delete, color: Colors.white, size: 24),
+      ),
+      child: Card(
+        elevation: AppSize.s0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: ListTile(
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(4.0),
+            child: item.posterUrl != null && item.posterUrl!.isNotEmpty
+                ? Image.network(
+                    item.posterUrl!,
+                    width: 50,
+                    height: 75,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      width: 50,
+                      height: 75,
+                      color: Colors.grey,
+                      child: const Icon(Icons.broken_image, size: 30),
+                    ),
+                  )
+                : Container(
                     width: 50,
                     height: 75,
                     color: Colors.grey,
-                    child: const Icon(Icons.broken_image, size: 30),
+                    child: const Icon(Icons.list_alt, size: 30),
                   ),
-                )
-              : Container(
-                  width: 50,
-                  height: 75,
-                  color: Colors.grey,
-                  child: const Icon(Icons.list_alt, size: 30),
-                ),
-        ),
-        title: Text(item.title ?? 'Untitled', style: TextStyle(fontSize: 16)),
-        subtitle: Text(
-          item.category!.localizedCategory(),
-          style: TextStyle(
-            fontSize: 12,
-            color: Theme.of(context).colorScheme.secondary,
           ),
-        ),
-        trailing: IconButton(
-          icon: Icon(
-            Icons.undo_rounded,
-            color: Theme.of(context).colorScheme.primary,
+          title: Text(item.title ?? 'Untitled', style: TextStyle(fontSize: 16)),
+          subtitle: Text(
+            item.category!.localizedCategory(),
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
           ),
-          onPressed: onIconPressed,
+          trailing: IconButton(
+            icon: Icon(icon, color: Theme.of(context).colorScheme.primary),
+            onPressed: onIconPressed,
+          ),
+          onTap: () {
+            Navigator.pushNamed(context, route, arguments: arguments);
+          },
         ),
-        onTap: () {
-          Navigator.pushNamed(context, route, arguments: arguments);
-        },
       ),
     ),
   );
-}
-
-class NoResponsibilityDialog extends StatelessWidget {
-  const NoResponsibilityDialog({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(t.disclaimer.title),
-      content: Text(t.disclaimer.content),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(t.disclaimer.acceptButton),
-        ),
-      ],
-    );
-  }
 }
 
 class NewMonthDialog extends StatefulWidget {
@@ -570,11 +592,6 @@ class _NewMonthDialogState extends State<NewMonthDialog> {
   final Set<String> selectedItemKeys = <String>{};
   bool selectAll = false;
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   List<Item> getSelectedItems() {
     return widget.unfinishedItems
         .where(
@@ -584,151 +601,162 @@ class _NewMonthDialogState extends State<NewMonthDialog> {
         .toList();
   }
 
+  void _toggleSelectAll(bool? value) {
+    setState(() {
+      selectAll = value ?? false;
+      if (selectAll) {
+        selectedItemKeys.addAll(
+          widget.unfinishedItems.map(
+            (item) => '${item.id}-${item.category?.name}',
+          ),
+        );
+      } else {
+        selectedItemKeys.clear();
+      }
+    });
+  }
+
+  void _toggleItem(String itemKey, bool? value) {
+    setState(() {
+      if (value == true) {
+        selectedItemKeys.add(itemKey);
+        selectAll = selectedItemKeys.length == widget.unfinishedItems.length;
+      } else {
+        selectedItemKeys.remove(itemKey);
+        selectAll = false;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final hasUnfinished = widget.unfinishedItems.isNotEmpty;
+
     return AlertDialog(
       title: Text(
         t.home.newMonthStarted,
         style: TextStyle(
           fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.primary,
+          fontWeight: FontWeight.w600,
+          color: colorScheme.primary,
         ),
       ),
       content: SizedBox(
         width: double.maxFinite,
-        height: widget.unfinishedItems.isEmpty
-            ? MediaQuery.of(context).size.height * 0.3
-            : MediaQuery.of(context).size.height * 0.6,
+        height: hasUnfinished
+            ? MediaQuery.of(context).size.height * 0.5
+            : MediaQuery.of(context).size.height * 0.25,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Main description
             Text(
               t.home.description(month: t.months[DateTime.now().month - 1]),
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
-            const SizedBox(height: 4),
-            if (widget.unfinishedItems.isNotEmpty) Text(t.home.description2),
-            const SizedBox(height: 16),
-            if (widget.unfinishedItems.isNotEmpty) ...[
-              Row(
-                children: [
-                  Checkbox(
-                    value: selectAll,
-                    onChanged: (value) {
-                      setState(() {
-                        selectAll = value ?? false;
-                        if (selectAll) {
-                          selectedItemKeys.addAll(
-                            widget.unfinishedItems.map(
-                              (item) => '${item.id}-${item.category?.name}',
-                            ),
-                          );
-                        } else {
-                          selectedItemKeys.clear();
-                        }
-                      });
-                    },
-                  ),
-                  Text(t.home.selectAll),
-                ],
+            const SizedBox(height: 12),
+
+            if (hasUnfinished) ...[
+              Text(
+                t.home.description2,
+                style: TextStyle(color: colorScheme.onSurfaceVariant),
               ),
-              const Divider(),
+              const SizedBox(height: 16),
+
+              // Select all checkbox
+              InkWell(
+                onTap: () => _toggleSelectAll(!selectAll),
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    children: [
+                      Checkbox(value: selectAll, onChanged: _toggleSelectAll),
+                      const SizedBox(width: 8),
+                      Text(
+                        t.home.selectAll,
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Items list
               Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
+                child: ListView.separated(
                   itemCount: widget.unfinishedItems.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 4),
                   itemBuilder: (context, index) {
                     final item = widget.unfinishedItems[index];
                     final itemKey = '${item.id}-${item.category?.name}';
                     final isSelected = selectedItemKeys.contains(itemKey);
 
-                    return CheckboxListTile(
-                      value: isSelected,
-                      onChanged: (value) {
-                        setState(() {
-                          if (value == true) {
-                            selectedItemKeys.add(itemKey);
-                            if (selectedItemKeys.length ==
-                                widget.unfinishedItems.length) {
-                              selectAll = true;
-                            }
-                          } else {
-                            selectedItemKeys.remove(itemKey);
-                            selectAll = false;
-                          }
-                        });
-                      },
-                      title: Text(
-                        item.title ?? '',
-                        style: const TextStyle(fontSize: 14),
+                    return Card(
+                      elevation: 0,
+                      color: colorScheme.primaryContainer.withValues(
+                        alpha: 0.6,
                       ),
-                      subtitle: Text(
-                        item.category?.localizedCategory() ?? '',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).colorScheme.secondary,
+                      child: CheckboxListTile(
+                        value: isSelected,
+                        onChanged: (value) => _toggleItem(itemKey, value),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
                         ),
-                      ),
-                      secondary: ClipRRect(
-                        borderRadius: BorderRadius.circular(4.0),
-                        child:
-                            item.posterUrl != null && item.posterUrl!.isNotEmpty
-                            ? Image.network(
-                                item.posterUrl!,
-                                width: 40,
-                                height: 60,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                      width: 40,
-                                      height: 60,
-                                      color: Colors.grey[300],
-                                      child: Icon(
-                                        Icons.broken_image,
-                                        size: 20,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                              )
-                            : Container(
-                                width: 40,
-                                height: 60,
-                                color: Colors.grey[300],
-                                child: Icon(
-                                  Icons.list_alt,
-                                  size: 20,
-                                  color: Colors.grey[600],
+                        title: Text(
+                          item.title ?? '',
+                          style: const TextStyle(fontSize: 14),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: item.category?.localizedCategory() != null
+                            ? Text(
+                                item.category!.localizedCategory(),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: colorScheme.onSurfaceVariant,
                                 ),
-                              ),
+                              )
+                            : null,
+                        secondary: _buildItemImage(item),
                       ),
                     );
                   },
                 ),
               ),
             ] else ...[
+              // Success state
               Expanded(
-                // Ensure this part also takes available space
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.check_circle,
-                        size: 60,
-                        color: Theme.of(context).colorScheme.primary,
+                        Icons.check_circle_rounded,
+                        size: 48,
+                        color: colorScheme.primary,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         t.home.congratulations,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 16),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: colorScheme.primary,
+                        ),
                       ),
+                      const SizedBox(height: 4),
                       Text(
                         t.home.todosDone,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 16),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
@@ -738,46 +766,63 @@ class _NewMonthDialogState extends State<NewMonthDialog> {
           ],
         ),
       ),
-      actions: [
-        if (widget.unfinishedItems.isNotEmpty) ...[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(<Item>[]);
-            },
-            child: Text(
-              t.home.deleteAll,
-              style: TextStyle(color: Colors.red[700]),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(getSelectedItems());
-            },
-            child: Text(t.home.keepSelected),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(
-                context,
-              ).pop(List<Item>.from(widget.unfinishedItems));
-            },
-            child: Text(
-              t.home.addAll,
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            ),
-          ),
-        ] else ...[
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(<Item>[]);
-            },
-            child: Text(
-              t.home.close,
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            ),
-          ),
-        ],
-      ],
+      actions: hasUnfinished
+          ? [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(<Item>[]),
+                child: Text(
+                  t.home.deleteAll,
+                  style: TextStyle(color: colorScheme.error),
+                ),
+              ),
+              TextButton(
+                onPressed: selectedItemKeys.isEmpty
+                    ? null
+                    : () => Navigator.of(context).pop(getSelectedItems()),
+                child: Text(t.home.keepSelected),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(
+                  context,
+                ).pop(List<Item>.from(widget.unfinishedItems)),
+                child: Text(t.home.addAll),
+              ),
+            ]
+          : [
+              FilledButton(
+                onPressed: () => Navigator.of(context).pop(<Item>[]),
+                child: Text(t.home.close),
+              ),
+            ],
+    );
+  }
+
+  Widget _buildItemImage(Item item) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: SizedBox(
+        width: 32,
+        height: 48,
+        child: item.posterUrl != null && item.posterUrl!.isNotEmpty
+            ? Image.network(
+                item.posterUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    _buildPlaceholder(),
+              )
+            : _buildPlaceholder(),
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      child: Icon(
+        Icons.image_outlined,
+        size: 16,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
     );
   }
 }

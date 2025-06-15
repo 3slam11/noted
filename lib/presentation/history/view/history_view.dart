@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
@@ -86,26 +87,39 @@ class HistoryViewState extends State<HistoryView> {
             children: Category.values.map((category) {
               return Padding(
                 padding: const EdgeInsets.only(right: AppPadding.p8),
-                child: ChoiceChip(
-                  label: Text(category.localizedCategory()),
-                  selected: selectedCategory == category,
-                  onSelected: (selected) {
-                    if (selected) {
-                      _viewModel.setCategory(category);
-                    }
-                  },
-                  selectedColor: Theme.of(context).colorScheme.primary,
-                  backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                  labelStyle: TextStyle(
-                    color: selectedCategory == category
-                        ? Theme.of(context).colorScheme.surface
-                        : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: selectedCategory == category
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                  ),
-                  checkmarkColor: Theme.of(context).colorScheme.surface,
-                ),
+                child:
+                    ChoiceChip(
+                          label: Text(category.localizedCategory()),
+                          selected: selectedCategory == category,
+                          onSelected: (selected) {
+                            if (selected) {
+                              _viewModel.setCategory(category);
+                            }
+                          },
+                          selectedColor: Theme.of(context).colorScheme.primary,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onPrimary,
+                          labelStyle: TextStyle(
+                            color: selectedCategory == category
+                                ? Theme.of(context).colorScheme.surface
+                                : Theme.of(context).colorScheme.onSurface,
+                            fontWeight: selectedCategory == category
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                          checkmarkColor: Theme.of(context).colorScheme.surface,
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms)
+                        .slideX(begin: -0.2, end: 0)
+                        .then()
+                        .animate(target: selectedCategory == category ? 1 : 0)
+                        .scale(
+                          begin: const Offset(1.0, 1.0),
+                          end: const Offset(1.05, 1.05),
+                          duration: 200.ms,
+                        ),
               );
             }).toList(),
           ),
@@ -191,7 +205,10 @@ class HistoryViewState extends State<HistoryView> {
                       itemCount: filteredItems.length,
                       itemBuilder: (context, index) {
                         final item = filteredItems[index];
-                        return _buildHistoryItemTile(context, item);
+                        return _buildHistoryItemTile(
+                          context,
+                          item,
+                        ).animate().fadeIn(duration: 300.ms);
                       },
                     ),
                   ),
@@ -318,23 +335,31 @@ class HistoryViewState extends State<HistoryView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.history_edu_outlined,
-              size: AppSize.s80,
-              color: Theme.of(
-                context,
-              ).colorScheme.primary.withValues(alpha: 0.6),
-            ),
+                  Icons.history_edu_outlined,
+                  size: AppSize.s80,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.6),
+                )
+                .animate()
+                .fadeIn(duration: 300.ms)
+                .scale(begin: const Offset(0.5, 0.5))
+                .then()
+                .shake(duration: 500.ms, delay: 1000.ms),
             const SizedBox(height: AppSize.s20),
             Text(
-              t.history.noHistory,
-              style: TextStyle(
-                fontSize: AppSize.s18,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-              textAlign: TextAlign.center,
-            ),
+                  t.history.noHistory,
+                  style: TextStyle(
+                    fontSize: AppSize.s18,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                  textAlign: TextAlign.center,
+                )
+                .animate()
+                .fadeIn(duration: 500.ms, delay: 200.ms)
+                .slideY(begin: 0.3, end: 0),
           ],
         ),
       ),

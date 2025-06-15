@@ -1,5 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
@@ -53,59 +54,72 @@ class _SettingsViewState extends State<SettingsView> {
       body: Padding(
         padding: const EdgeInsets.all(AppPadding.p16),
         child: ListView(
-          children: [
-            _buildLanguageSettings(context),
-            const SizedBox(height: AppSize.s12),
-            _buildThemeSettings(context),
-            const SizedBox(height: AppSize.s12),
-            _buildSettingCard(
-              context,
-              title: t.settings.history,
-              icon: Icons.history,
-              onTap: () {
-                Navigator.pushNamed(context, RoutesManager.historyRoute);
-              },
-            ),
-            const SizedBox(height: AppSize.s12),
-            _buildSettingCard(
-              context,
-              title: t.settings.apiChange,
-              icon: Icons.api,
-              onTap: () {
-                Navigator.pushNamed(context, RoutesManager.changeApiRoute);
-              },
-            ),
-            const SizedBox(height: AppSize.s12),
-            _buildSettingCard(
-              context,
-              title: t.settings.backupAndRestore,
-              icon: Icons.backup,
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  RoutesManager.backupAndRestoreRoute,
-                );
-              },
-            ),
-            const SizedBox(height: AppSize.s12),
-            _buildSettingCard(
-              context,
-              title: t.settings.statistics,
-              icon: Icons.bar_chart,
-              onTap: () {
-                Navigator.pushNamed(context, RoutesManager.statisticsRoute);
-              },
-            ),
-            const SizedBox(height: AppSize.s12),
-            _buildSettingCard(
-              context,
-              title: t.settings.about,
-              icon: Icons.info_outline,
-              onTap: () {
-                Navigator.pushNamed(context, RoutesManager.aboutRoute);
-              },
-            ),
-          ],
+          children:
+              [
+                    _buildLanguageSettings(context),
+                    const SizedBox(height: AppSize.s12),
+                    _buildThemeSettings(context),
+                    const SizedBox(height: AppSize.s12),
+                    _buildSettingCard(
+                      context,
+                      title: t.settings.history,
+                      icon: Icons.history,
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          RoutesManager.historyRoute,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: AppSize.s12),
+                    _buildSettingCard(
+                      context,
+                      title: t.settings.apiChange,
+                      icon: Icons.api,
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          RoutesManager.changeApiRoute,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: AppSize.s12),
+                    _buildSettingCard(
+                      context,
+                      title: t.settings.backupAndRestore,
+                      icon: Icons.backup,
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          RoutesManager.backupAndRestoreRoute,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: AppSize.s12),
+                    _buildSettingCard(
+                      context,
+                      title: t.settings.statistics,
+                      icon: Icons.bar_chart,
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          RoutesManager.statisticsRoute,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: AppSize.s12),
+                    _buildSettingCard(
+                      context,
+                      title: t.settings.about,
+                      icon: Icons.info_outline,
+                      onTap: () {
+                        Navigator.pushNamed(context, RoutesManager.aboutRoute);
+                      },
+                    ),
+                  ]
+                  .animate(interval: 100.ms)
+                  .fadeIn(duration: 300.ms)
+                  .slideX(begin: -0.1),
         ),
       ),
     );

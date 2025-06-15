@@ -7,6 +7,7 @@ import 'package:noted/data/data_source/remote_data_source.dart';
 import 'package:noted/data/network/app_api.dart';
 import 'package:noted/data/network/dio_factory.dart';
 import 'package:noted/data/network/network_info.dart';
+import 'package:noted/data/objectbox/objectbox_manager.dart';
 import 'package:noted/data/repository/repository_impl.dart';
 import 'package:noted/domain/repository/repository.dart';
 import 'package:noted/domain/usecases/details_usecase.dart';
@@ -25,8 +26,14 @@ import 'package:noted/presentation/statistics/viewModel/statistics_viewmodel.dar
 import 'package:shared_preferences/shared_preferences.dart';
 
 final instance = GetIt.instance;
+// module to store all generic dependency injections
 Future<void> initAppModule() async {
-  // module to store all generic dependency injections
+  await ObjectBoxManager.initialize();
+
+  instance.registerLazySingleton<ObjectBoxManager>(
+    () => ObjectBoxManager.instance,
+  );
+
   instance.registerLazySingleton<DataGlobalNotifier>(
     () => DataGlobalNotifier(),
   );
@@ -49,8 +56,9 @@ Future<void> initAppModule() async {
   instance.registerLazySingleton<TmdbApiClient>(() => TmdbApiClient(dio));
 
   // local data source
-  instance.registerLazySingleton<LocalDataSource>(() => LocalDataSourceImpl());
-  // remote data source
+  instance.registerLazySingleton<LocalDataSource>(
+    () => LocalDataSourceImpl(instance()),
+  ); // remote data source
   instance.registerLazySingleton<RemoteDataSource>(
     () => RemoteDataSourceImpl(
       instance(),

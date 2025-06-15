@@ -70,7 +70,6 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	late final TranslationsApiSettingsEn apiSettings = TranslationsApiSettingsEn._(_root);
 	late final TranslationsStatisticsEn statistics = TranslationsStatisticsEn._(_root);
 	late final TranslationsAboutEn about = TranslationsAboutEn._(_root);
-	late final TranslationsDisclaimerEn disclaimer = TranslationsDisclaimerEn._(_root);
 }
 
 // Path: routes
@@ -345,18 +344,6 @@ class TranslationsAboutEn {
 	String get thanksMessage => 'Thanks to their free plan, the app became usable as it is now.';
 }
 
-// Path: disclaimer
-class TranslationsDisclaimerEn {
-	TranslationsDisclaimerEn._(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-	String get title => 'Disclaimer';
-	String get content => 'The developer is not responsible for how users utilize the app or the website or their searches. Users are solely responsible for their actions and the content they access through the application or the website.';
-	String get acceptButton => 'I Understand';
-}
-
 /// Flat map(s) containing all translations.
 /// Only for edge cases! For simple maps, use the map function of this library.
 extension on Translations {
@@ -503,9 +490,6 @@ extension on Translations {
 			case 'about.moviesAndTvSeriesDescription': return 'All data about movies and TV series came from TMDB site';
 			case 'about.booksDescription': return 'All data about books came from Google Books API';
 			case 'about.thanksMessage': return 'Thanks to their free plan, the app became usable as it is now.';
-			case 'disclaimer.title': return 'Disclaimer';
-			case 'disclaimer.content': return 'The developer is not responsible for how users utilize the app or the website or their searches. Users are solely responsible for their actions and the content they access through the application or the website.';
-			case 'disclaimer.acceptButton': return 'I Understand';
 			default: return null;
 		}
 	}

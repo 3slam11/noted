@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
@@ -164,8 +165,6 @@ class StatisticsViewState extends State<StatisticsView> {
       stream: _viewModel.outputStatisticsData,
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == null) {
-          // This case should ideally be handled by StateFlowHandler's loading state
-          // or show a specific "no data yet" message if ContentState is emitted with null data.
           return Center(child: Text(t.statistics.noData));
         }
 
@@ -185,67 +184,82 @@ class StatisticsViewState extends State<StatisticsView> {
                   final bool showCurrentMonth =
                       isCurrentMonthSnapshot.data ?? true;
                   return Card(
-                    elevation: 0,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                if (!showCurrentMonth) {
-                                  _viewModel.toggleTimePeriod();
-                                }
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(
-                                  showCurrentMonth
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Colors.transparent,
+                        elevation: 0,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextButton(
+                                  onPressed: () {
+                                    if (!showCurrentMonth) {
+                                      _viewModel.toggleTimePeriod();
+                                    }
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStateProperty.all(
+                                      showCurrentMonth
+                                          ? Theme.of(
+                                              context,
+                                            ).colorScheme.primary
+                                          : Colors.transparent,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    t.statistics.thisMonth,
+                                    style: TextStyle(
+                                      color: showCurrentMonth
+                                          ? Theme.of(
+                                              context,
+                                            ).colorScheme.onPrimary
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                    ),
+                                  ),
                                 ),
                               ),
-                              child: Text(
-                                t.statistics.thisMonth,
-                                style: TextStyle(
-                                  color: showCurrentMonth
-                                      ? Theme.of(context).colorScheme.onPrimary
-                                      : Theme.of(context).colorScheme.primary,
+                              Expanded(
+                                child: TextButton(
+                                  onPressed: () {
+                                    if (showCurrentMonth) {
+                                      _viewModel.toggleTimePeriod();
+                                    }
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStateProperty.all(
+                                      !showCurrentMonth
+                                          ? Theme.of(
+                                              context,
+                                            ).colorScheme.primary
+                                          : Colors.transparent,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    t.statistics.allTime,
+                                    style: TextStyle(
+                                      color: !showCurrentMonth
+                                          ? Theme.of(
+                                              context,
+                                            ).colorScheme.onPrimary
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                if (showCurrentMonth) {
-                                  _viewModel.toggleTimePeriod();
-                                }
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(
-                                  !showCurrentMonth
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Colors.transparent,
-                                ),
-                              ),
-                              child: Text(
-                                t.statistics.allTime,
-                                style: TextStyle(
-                                  color: !showCurrentMonth
-                                      ? Theme.of(context).colorScheme.onPrimary
-                                      : Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                        ),
+                      )
+                      .animate()
+                      .fadeIn(duration: 400.ms)
+                      .slideY(begin: -0.2, end: 0);
                 },
               ),
               const SizedBox(height: 16),
@@ -291,25 +305,41 @@ class StatisticsViewState extends State<StatisticsView> {
                         Center(
                           child: Padding(
                             padding: const EdgeInsets.all(32.0),
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.list_alt,
-                                  size: 40,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  t.statistics.noData,
-                                  style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.7),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            child:
+                                Column(
+                                      children: [
+                                        Icon(
+                                              Icons.list_alt,
+                                              size: 40,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
+                                            )
+                                            .animate()
+                                            .fadeIn(duration: 300.ms)
+                                            .scale(
+                                              begin: const Offset(0.5, 0.5),
+                                            )
+                                            .then()
+                                            .shake(
+                                              duration: 500.ms,
+                                              delay: 1000.ms,
+                                            ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          t.statistics.noData,
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withValues(alpha: 0.7),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                    .animate()
+                                    .fadeIn(duration: 500.ms, delay: 200.ms)
+                                    .slideY(begin: 0.3, end: 0),
                           ),
                         ),
                     ],
@@ -337,9 +367,7 @@ class StatisticsViewState extends State<StatisticsView> {
           ),
         ),
         title: Text(
-          t
-              .settings
-              .statistics, // Using the string from settings for consistency
+          t.settings.statistics,
           style: TextStyle(
             fontSize: 23,
             color: Theme.of(context).colorScheme.onPrimary,
@@ -349,7 +377,7 @@ class StatisticsViewState extends State<StatisticsView> {
       body: StateFlowHandler(
         stream: _viewModel.outputState,
         retryAction: () {
-          _viewModel.start(); // Or a specific retry method if needed
+          _viewModel.start();
         },
         contentBuilder: (context) => _getContentWidget(),
       ),

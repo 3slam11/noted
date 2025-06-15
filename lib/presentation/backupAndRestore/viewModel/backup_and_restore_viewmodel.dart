@@ -79,8 +79,8 @@ class BackupAndRestoreViewModel extends BaseViewModel
         final String jsonData = utf8.decode(fileBytes);
         final Map<String, dynamic> backupData = jsonDecode(jsonData);
 
-        if (backupData.containsKey('todos') &&
-            backupData.containsKey('finished') &&
+        if (backupData.containsKey('todos') ||
+            backupData.containsKey('finished') ||
             backupData.containsKey('history')) {
           await _localDataSource.clearTodo();
           await _localDataSource.clearFinished();

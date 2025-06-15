@@ -1,0 +1,4 @@
+- Improved I/O operations
+- Icon change based on the list (check or undo)
+- Added animations globally
+- Changed app icon

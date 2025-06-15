@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/backupAndRestore/viewModel/backup_and_restore_viewmodel.dart';
@@ -70,18 +71,21 @@ class _BackupAndRestoreViewState extends State<BackupAndRestoreView> {
           onPressed: () {
             _viewModel.backupData();
           },
-        ),
+        ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0),
         const SizedBox(height: AppSize.s16),
         _buildOptionCard(
-          context: context,
-          icon: Icons.restore_rounded,
-          title: t.backupAndRestore.restoreData,
-          description: t.backupAndRestore.restoreDescription,
-          buttonText: t.backupAndRestore.restoreData,
-          onPressed: () async {
-            await _viewModel.restoreData();
-          },
-        ),
+              context: context,
+              icon: Icons.restore_rounded,
+              title: t.backupAndRestore.restoreData,
+              description: t.backupAndRestore.restoreDescription,
+              buttonText: t.backupAndRestore.restoreData,
+              onPressed: () async {
+                await _viewModel.restoreData();
+              },
+            )
+            .animate()
+            .fadeIn(duration: 400.ms, delay: 200.ms)
+            .slideY(begin: 0.2, end: 0),
       ],
     );
   }

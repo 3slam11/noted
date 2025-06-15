@@ -33,7 +33,7 @@ jobs:
 
       # 4. gets Flutter dependencies
       - name: Get Flutter dependencies
-        run: dart pub get
+        run: flutter pub get
 
       # 5. create the .env file
       - name: Create .env file

@@ -190,11 +190,5 @@
     "moviesAndTvSeriesDescription": "All data about movies and TV series came from TMDB site",
     "booksDescription": "All data about books came from Google Books API",
     "thanksMessage": "Thanks to their free plan, the app became usable as it is now."
-  },
-
-  "disclaimer": {
-    "title": "Disclaimer",
-    "content": "The developer is not responsible for how users utilize the app or the website or their searches. Users are solely responsible for their actions and the content they access through the application or the website.",
-    "acceptButton": "I Understand"
   }
 }

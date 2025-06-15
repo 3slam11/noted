@@ -1,16 +1,17 @@
 import 'dart:convert';
 import 'package:noted/data/network/error_handler.dart';
+import 'package:noted/data/objectbox/objectbox.dart';
+import 'package:noted/data/objectbox/objectbox_manager.dart';
 import 'package:noted/data/responses/responses.dart';
 import 'package:noted/domain/model/models.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 // Constants
 const String cacheHomeKey = "CACHE_HOME_KEY";
 const String cacheStoreKey = "CACHE_STORE_KEY";
 const int cacheTime = 60000;
-const String todoListKey = "TODO_LIST_KEY";
-const String finishedListKey = "FINISHED_LIST_KEY";
-const String historyListKey = "HISTORY_LIST_KEY";
+const String todoListType = "todo";
+const String finishedListType = "finished";
+const String historyListType = "history";
 
 abstract class LocalDataSource {
   // Cache operations
@@ -41,23 +42,24 @@ abstract class LocalDataSource {
 }
 
 class LocalDataSourceImpl implements LocalDataSource {
-  // Runtime cache for temporary data
-  final Map<String, CachedItem> _cachedMap = {};
+  final ObjectBoxManager _objectBoxManager;
 
-  // SharedPreferences instance (cached for performance)
-  SharedPreferences? _prefs;
-
-  Future<SharedPreferences> get _sharedPreferences async {
-    return _prefs ??= await SharedPreferences.getInstance();
-  }
+  LocalDataSourceImpl(this._objectBoxManager);
 
   // Cache operations
   @override
   Future<MainResponse> getHomeData() async {
-    final cachedItem = _cachedMap[cacheHomeKey];
+    final cachedItem = _objectBoxManager.getCache(cacheHomeKey);
 
     if (cachedItem?.isValid(cacheTime) == true) {
-      return cachedItem!.data as MainResponse;
+      try {
+        final jsonMap =
+            jsonDecode(cachedItem!.jsonData) as Map<String, dynamic>;
+        return MainResponse.fromJson(jsonMap);
+      } catch (e) {
+        // If parsing fails, remove invalid cache
+        _objectBoxManager.removeCache(cacheHomeKey);
+      }
     }
 
     throw ErrorHandler.handle(DataSource.CACHE_ERROR);
@@ -65,73 +67,73 @@ class LocalDataSourceImpl implements LocalDataSource {
 
   @override
   Future<void> saveHomeToCache(MainResponse homeResponse) async {
-    _cachedMap[cacheHomeKey] = CachedItem(homeResponse);
+    try {
+      final jsonData = jsonEncode(homeResponse.toJson());
+      _objectBoxManager.setCache(cacheHomeKey, jsonData);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
   void clearCache() {
-    _cachedMap.clear();
+    _objectBoxManager.clearAllCache();
   }
 
   @override
   void removeFromCache(String key) {
-    _cachedMap.remove(key);
+    _objectBoxManager.removeCache(key);
   }
 
   // Todo operations
   @override
-  Future<List<ItemResponse>> getTodo() => _getItemList(todoListKey);
+  Future<List<ItemResponse>> getTodo() => _getItemList(todoListType);
 
   @override
   Future<void> addTodo(ItemResponse todoResponse) async {
-    await _addItemToList(todoListKey, todoResponse, "Todo");
+    await _addItemToList(todoResponse, todoListType);
   }
 
   @override
   Future<void> removeTodo(String id, Category category) async {
-    await _removeItemFromList(todoListKey, id, category);
+    await _removeItemFromList(id, category, todoListType);
   }
 
   // Finished operations
   @override
-  Future<List<ItemResponse>> getFinished() => _getItemList(finishedListKey);
+  Future<List<ItemResponse>> getFinished() => _getItemList(finishedListType);
 
   @override
   Future<void> addFinished(ItemResponse finishedResponse) async {
-    await _addItemToList(finishedListKey, finishedResponse, "Finished");
+    await _addItemToList(finishedResponse, finishedListType);
   }
 
   @override
   Future<void> removeFinished(String id, Category category) async {
-    await _removeItemFromList(finishedListKey, id, category);
+    await _removeItemFromList(id, category, finishedListType);
   }
 
   // History operations
   @override
-  Future<List<ItemResponse>> getHistory() => _getItemList(historyListKey);
+  Future<List<ItemResponse>> getHistory() => _getItemList(historyListType);
 
   @override
   Future<void> addHistory(ItemResponse historyResponse) async {
-    await _addItemToList(historyListKey, historyResponse, "History");
+    await _addItemToList(historyResponse, historyListType);
   }
 
   @override
   Future<void> removeHistory(String id, Category category) async {
-    await _removeItemFromList(historyListKey, id, category);
+    await _removeItemFromList(id, category, historyListType);
   }
 
   // Private helper methods
-  Future<List<ItemResponse>> _getItemList(String key) async {
+  Future<List<ItemResponse>> _getItemList(String listType) async {
     try {
-      final prefs = await _sharedPreferences;
-      final jsonList = prefs.getStringList(key);
+      final entities = _objectBoxManager.getItemsByType(listType);
 
-      if (jsonList == null || jsonList.isEmpty) {
-        return [];
-      }
-
-      return jsonList
-          .map(_parseItemFromJson)
+      return entities
+          .map(_convertEntityToResponse)
           .where((item) => item != null)
           .cast<ItemResponse>()
           .toList();
@@ -140,95 +142,79 @@ class LocalDataSourceImpl implements LocalDataSource {
     }
   }
 
-  ItemResponse? _parseItemFromJson(String jsonString) {
+  ItemResponse? _convertEntityToResponse(ItemEntity entity) {
     try {
-      return ItemResponse.fromJson(jsonDecode(jsonString));
+      return ItemResponse(
+        entity.itemId,
+        entity.title,
+        entity.category,
+        entity.posterUrl,
+        entity.releaseDate,
+      );
     } catch (error) {
       return null;
     }
   }
 
-  Future<void> _addItemToList(
-    String key,
-    ItemResponse item,
-    String listType,
-  ) async {
+  Future<void> _addItemToList(ItemResponse item, String listType) async {
     try {
-      final items = await _getItemList(key);
-
-      if (_itemExists(items, item)) {
+      // Check if item already exists
+      if (_itemExists(item, listType)) {
         return;
       }
 
-      items.add(item);
-      await _saveItemList(key, items);
+      final entity = ItemEntity.fromDomain(
+        item.id ?? '',
+        item.title,
+        item.category,
+        item.posterUrl,
+        item.releaseDate,
+        listType,
+      );
+
+      _objectBoxManager.addItem(entity);
     } catch (error) {
       rethrow;
     }
   }
 
   Future<void> _removeItemFromList(
-    String key,
     String id,
     Category category,
+    String listType,
   ) async {
     try {
-      final items = await _getItemList(key);
-      final originalLength = items.length;
-
-      items.removeWhere((item) => item.id == id && item.category == category);
-
-      if (items.length < originalLength) {
-        await _saveItemList(key, items);
-      } else {}
+      _objectBoxManager.removeItem(id, category.name, listType);
     } catch (error) {
       rethrow;
     }
   }
 
-  Future<void> _saveItemList(String key, List<ItemResponse> items) async {
-    try {
-      final prefs = await _sharedPreferences;
-      final jsonList = items
-          .map(_encodeItemToJson)
-          .where((jsonString) => jsonString != null)
-          .cast<String>()
-          .toList();
-
-      await prefs.setStringList(key, jsonList);
-    } catch (error) {
-      rethrow;
+  bool _itemExists(ItemResponse targetItem, String listType) {
+    if (targetItem.id == null || targetItem.category == null) {
+      return false;
     }
-  }
 
-  String? _encodeItemToJson(ItemResponse item) {
-    try {
-      return jsonEncode(item.toJson());
-    } catch (error) {
-      return null;
-    }
-  }
-
-  bool _itemExists(List<ItemResponse> items, ItemResponse targetItem) {
-    return items.any(
-      (item) =>
-          item.id == targetItem.id && item.category == targetItem.category,
+    return _objectBoxManager.itemExists(
+      targetItem.id!,
+      targetItem.category!.name,
+      listType,
     );
   }
 
   @override
   Future<void> clearTodo() async {
-    await _saveItemList(todoListKey, []);
+    _objectBoxManager.clearItemsByType(todoListType);
   }
 
   @override
   Future<void> clearFinished() async {
-    await _saveItemList(finishedListKey, []);
+    _objectBoxManager.clearItemsByType(finishedListType);
   }
 
   @override
   Future<void> clearHistory() async {
-    await _saveItemList(historyListKey, []);
+    _objectBoxManager.clearItemsByType(historyListType);
   }
 }
 

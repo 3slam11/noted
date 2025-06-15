@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
@@ -86,20 +87,29 @@ class SearchViewState extends State<SearchView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.search,
-                          size: 48,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                              Icons.search,
+                              size: 48,
+                              color: Theme.of(context).colorScheme.primary,
+                            )
+                            .animate()
+                            .fadeIn(duration: 300.ms)
+                            .scale(begin: const Offset(0.5, 0.5))
+                            .then()
+                            .shake(duration: 500.ms, delay: 1000.ms),
                         const SizedBox(height: 16),
                         Text(
-                          t.search.searchForSomething,
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.6),
-                              ),
-                        ),
+                              t.search.searchForSomething,
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.6),
+                                  ),
+                            )
+                            .animate()
+                            .fadeIn(duration: 300.ms)
+                            .scale(begin: const Offset(0.5, 0.5)),
                       ],
                     ),
                   );
@@ -109,20 +119,29 @@ class SearchViewState extends State<SearchView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.search_off,
-                          size: 48,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                              Icons.search_off,
+                              size: 48,
+                              color: Theme.of(context).colorScheme.primary,
+                            )
+                            .animate()
+                            .fadeIn(duration: 300.ms)
+                            .scale(begin: const Offset(0.5, 0.5))
+                            .then()
+                            .shake(duration: 500.ms, delay: 1000.ms),
                         const SizedBox(height: 16),
                         Text(
-                          t.search.noResultsFound,
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.6),
-                              ),
-                        ),
+                              t.search.noResultsFound,
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.6),
+                                  ),
+                            )
+                            .animate()
+                            .fadeIn(duration: 500.ms, delay: 200.ms)
+                            .slideY(begin: 0.3, end: 0),
                       ],
                     ),
                   );
@@ -132,7 +151,9 @@ class SearchViewState extends State<SearchView> {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
-                        child: _buildResultItem(results[index]),
+                        child: _buildResultItem(
+                          results[index],
+                        ).animate().fadeIn(duration: 300.ms),
                       );
                     },
                   );
@@ -246,7 +267,7 @@ class SearchViewState extends State<SearchView> {
           ),
         ],
       ),
-    );
+    ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.2, end: 0);
   }
 
   Widget _buildResultItem(SearchItem item) {

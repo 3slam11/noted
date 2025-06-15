@@ -85,7 +85,7 @@ class StatisticsViewModel extends BaseViewModel
     final bool isCurrentMonth = _isCurrentMonthViewSubject.value;
     final List<Item> itemsToProcess = isCurrentMonth
         ? _currentMonthFinishedItems
-        : [..._currentMonthFinishedItems, ..._allHistoryItems];
+        : _allHistoryItems;
 
     final Map<Category, int> categoryCounts = _calculateCategoryCounts(
       itemsToProcess,

@@ -67,7 +67,6 @@ class TranslationsAr implements Translations {
 	@override late final _TranslationsApiSettingsAr apiSettings = _TranslationsApiSettingsAr._(_root);
 	@override late final _TranslationsStatisticsAr statistics = _TranslationsStatisticsAr._(_root);
 	@override late final _TranslationsAboutAr about = _TranslationsAboutAr._(_root);
-	@override late final _TranslationsDisclaimerAr disclaimer = _TranslationsDisclaimerAr._(_root);
 }
 
 // Path: routes
@@ -342,18 +341,6 @@ class _TranslationsAboutAr implements TranslationsAboutEn {
 	@override String get thanksMessage => 'بفضل خطتهم المجانية، أصبح التطبيق قابلًا للاستخدام كما هو الآن.';
 }
 
-// Path: disclaimer
-class _TranslationsDisclaimerAr implements TranslationsDisclaimerEn {
-	_TranslationsDisclaimerAr._(this._root);
-
-	final TranslationsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'إخلاء المسؤولية';
-	@override String get content => 'المطور غير مسؤول عن كيفية استخدام المستخدمين للتطبيق أو الموقع الإلكتروني أو عمليات البحث الخاصة بهم. يتحمل المستخدمون المسؤولية الكاملة عن أفعالهم والمحتوى الذي يصلون إليه من خلال التطبيق أو الموقع الإلكتروني.';
-	@override String get acceptButton => 'أتفهم ذلك';
-}
-
 /// Flat map(s) containing all translations.
 /// Only for edge cases! For simple maps, use the map function of this library.
 extension on TranslationsAr {
@@ -500,9 +487,6 @@ extension on TranslationsAr {
 			case 'about.moviesAndTvSeriesDescription': return 'جميع البيانات حول الأفلام والمسلسلات التلفزيونية جاءت من موقع TMDB';
 			case 'about.booksDescription': return 'جميع البيانات حول الكتب جاءت من موقع Google Books API';
 			case 'about.thanksMessage': return 'بفضل خطتهم المجانية، أصبح التطبيق قابلًا للاستخدام كما هو الآن.';
-			case 'disclaimer.title': return 'إخلاء المسؤولية';
-			case 'disclaimer.content': return 'المطور غير مسؤول عن كيفية استخدام المستخدمين للتطبيق أو الموقع الإلكتروني أو عمليات البحث الخاصة بهم. يتحمل المستخدمون المسؤولية الكاملة عن أفعالهم والمحتوى الذي يصلون إليه من خلال التطبيق أو الموقع الإلكتروني.';
-			case 'disclaimer.acceptButton': return 'أتفهم ذلك';
 			default: return null;
 		}
 	}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/changeApi/viewModel/change_api_viewmodel.dart';
@@ -98,29 +99,35 @@ class _ChangeApiViewState extends State<ChangeApiView> {
               apiKeyType: ApiKeyType.rawg,
               isSavedStream: _viewModel.outputIsRawgKeySaved,
               isVisibleStream: _viewModel.outputIsRawgKeyVisible,
-            ),
+            ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0),
             const SizedBox(height: 16),
             _buildApiInfoCard(
-              context,
-              title: t.apiSettings.moviesApiTitle,
-              description: t.apiSettings.moviesApiDescription,
-              url: 'https://www.themoviedb.org/settings/api',
-              controller: _tmdbController,
-              apiKeyType: ApiKeyType.tmdb,
-              isSavedStream: _viewModel.outputIsTmdbKeySaved,
-              isVisibleStream: _viewModel.outputIsTmdbKeyVisible,
-            ),
+                  context,
+                  title: t.apiSettings.moviesApiTitle,
+                  description: t.apiSettings.moviesApiDescription,
+                  url: 'https://www.themoviedb.org/settings/api',
+                  controller: _tmdbController,
+                  apiKeyType: ApiKeyType.tmdb,
+                  isSavedStream: _viewModel.outputIsTmdbKeySaved,
+                  isVisibleStream: _viewModel.outputIsTmdbKeyVisible,
+                )
+                .animate()
+                .fadeIn(duration: 400.ms, delay: 200.ms)
+                .slideY(begin: 0.2, end: 0),
             const SizedBox(height: 16),
             _buildApiInfoCard(
-              context,
-              title: t.apiSettings.booksApiTitle,
-              description: t.apiSettings.booksApiDescription,
-              url: 'https://console.cloud.google.com/apis/credentials',
-              controller: _googleBooksController,
-              apiKeyType: ApiKeyType.books,
-              isSavedStream: _viewModel.outputIsBooksKeySaved,
-              isVisibleStream: _viewModel.outputIsBooksKeyVisible,
-            ),
+                  context,
+                  title: t.apiSettings.booksApiTitle,
+                  description: t.apiSettings.booksApiDescription,
+                  url: 'https://console.cloud.google.com/apis/credentials',
+                  controller: _googleBooksController,
+                  apiKeyType: ApiKeyType.books,
+                  isSavedStream: _viewModel.outputIsBooksKeySaved,
+                  isVisibleStream: _viewModel.outputIsBooksKeyVisible,
+                )
+                .animate()
+                .fadeIn(duration: 400.ms, delay: 400.ms)
+                .slideY(begin: 0.2, end: 0),
           ],
         ),
       ),

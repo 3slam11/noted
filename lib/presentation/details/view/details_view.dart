@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/app/constants.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
@@ -60,10 +61,9 @@ class DetailsViewState extends State<DetailsView> {
       width: currentPage == imageIndex ? 20.0 : 10.0,
       height: 8.0,
       decoration: BoxDecoration(
-        color:
-            currentPage == imageIndex
-                ? Theme.of(context).colorScheme.primary
-                : Colors.grey.shade400,
+        color: currentPage == imageIndex
+            ? Theme.of(context).colorScheme.primary
+            : Colors.grey.shade400,
         borderRadius: BorderRadius.circular(10),
       ),
     );
@@ -169,7 +169,10 @@ class DetailsViewState extends State<DetailsView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildImageGallery(details.imageUrls),
+                _buildImageGallery(details.imageUrls)
+                    .animate()
+                    .fadeIn(duration: 300.ms)
+                    .scale(begin: const Offset(0.9, 0.9)),
                 const SizedBox(height: AppSize.s16),
                 Text(
                   details.title,
@@ -177,14 +180,14 @@ class DetailsViewState extends State<DetailsView> {
                     fontSize: AppSize.s24,
                     fontWeight: FontWeight.bold,
                   ),
-                ),
+                ).animate(delay: 200.ms).fadeIn(duration: 400.ms),
                 const SizedBox(height: AppSize.s8),
                 Text(
                   details.category.localizedCategory(),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                ),
+                ).animate(delay: 300.ms).fadeIn(duration: 400.ms),
                 if (details.description != null &&
                     details.description!.isNotEmpty) ...[
                   const SizedBox(height: AppSize.s8),
@@ -192,9 +195,8 @@ class DetailsViewState extends State<DetailsView> {
                     context,
                     t.details.description,
                     details.description ?? Constants.empty,
-                  ),
+                  ).animate(delay: 400.ms).fadeIn(duration: 400.ms),
                 ],
-
                 if (details.platforms != null &&
                     details.platforms!.isNotEmpty) ...[
                   const SizedBox(height: AppSize.s16),
@@ -202,7 +204,7 @@ class DetailsViewState extends State<DetailsView> {
                     context,
                     t.details.platforms,
                     details.platforms?.join(', ') ?? Constants.empty,
-                  ),
+                  ).animate(delay: 500.ms).fadeIn(duration: 400.ms),
                 ],
                 if (details.releaseDate != null &&
                     details.releaseDate!.isNotEmpty) ...[
@@ -211,7 +213,7 @@ class DetailsViewState extends State<DetailsView> {
                     context,
                     t.details.releaseDate,
                     details.releaseDate ?? Constants.empty,
-                  ),
+                  ).animate(delay: 600.ms).fadeIn(duration: 400.ms),
                 ],
 
                 if (details.rating != null) ...[
@@ -220,7 +222,7 @@ class DetailsViewState extends State<DetailsView> {
                     context,
                     t.details.rating,
                     details.rating.toString(),
-                  ),
+                  ).animate(delay: 700.ms).fadeIn(duration: 400.ms),
                 ],
 
                 if (details.publisher != null &&
@@ -230,7 +232,7 @@ class DetailsViewState extends State<DetailsView> {
                     context,
                     getPublisherLabel(details.category),
                     details.publisher ?? Constants.empty,
-                  ),
+                  ).animate(delay: 800.ms).fadeIn(duration: 400.ms),
                 ],
               ],
             ),
@@ -287,8 +289,9 @@ class DetailsViewState extends State<DetailsView> {
             itemBuilder: (context, index) {
               return Container(
                 margin: EdgeInsets.symmetric(
-                  horizontal:
-                      screenWidth > 600 ? AppPadding.p16 : AppPadding.p8,
+                  horizontal: screenWidth > 600
+                      ? AppPadding.p16
+                      : AppPadding.p8,
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(
@@ -301,11 +304,10 @@ class DetailsViewState extends State<DetailsView> {
                       if (loadingProgress == null) return child;
                       return Center(
                         child: CircularProgressIndicator(
-                          value:
-                              loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                              : null,
                         ),
                       );
                     },

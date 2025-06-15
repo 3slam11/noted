@@ -6,7 +6,6 @@ const String languagePref = 'LANGUAGE_PREF';
 const String loggedInPref = 'IS_LOGGED_IN_PREF';
 const String themeModePref = 'THEME_MODE_PREF';
 const String manualThemePref = 'MANUAL_THEME_PREF';
-const String hasSeenDisclaimer = 'HAS_SEEN_DISCLAIMER';
 const String lastOpenedMonth = 'LAST_OPENED_MONTH';
 const String customRawgApiKeyPref = 'CUSTOM_RAWG_API_KEY';
 const String customTmdbApiKeyPref = 'CUSTOM_TMDB_API_KEY';
@@ -38,14 +37,6 @@ class AppPrefs {
 
   Future<void> logout() async {
     await sharedPreferences.setBool(loggedInPref, false);
-  }
-
-  Future<void> setHasSeenDisclaimer(bool viewed) async {
-    await sharedPreferences.setBool(hasSeenDisclaimer, viewed);
-  }
-
-  Future<bool> getHasSeenDisclaimer() async {
-    return sharedPreferences.getBool(hasSeenDisclaimer) ?? false;
   }
 
   Future<void> setThemeMode(int mode) async {
