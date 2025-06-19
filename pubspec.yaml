@@ -1,7 +1,7 @@
 name: noted
 description: "A note app where you can save, sync your movies, tv series, and games."
 publish_to: 'none'
-version: 1.5.0+9
+version: 1.6.0+10
 
 environment:
   sdk: ^3.8.1
