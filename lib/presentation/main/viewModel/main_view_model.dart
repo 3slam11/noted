@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:noted/app/app_events.dart';
 import 'package:noted/data/network/failure.dart';
@@ -106,13 +107,77 @@ class MainViewModel extends BaseViewModel
   }
 
   @override
-  Future<void> deleteTodo(Item item) async {
-    await _performItemOperation(() => _mainUsecase.deleteTodo(item));
+  int? deleteTodoTemporarily(Item item) {
+    if (!hasData) return null;
+    final index = _currentObject!.mainData!.todos.indexWhere(
+      (i) => _isSameItem(i, item),
+    );
+    if (index != -1) {
+      _currentObject!.mainData!.todos.removeAt(index);
+      inputMainData.add(_currentObject);
+      return index;
+    }
+    return null;
   }
 
   @override
-  Future<void> deleteFinished(Item item) async {
-    await _performItemOperation(() => _mainUsecase.deleteFinished(item));
+  void undoDeleteTodo(Item item, int index) {
+    if (!hasData) return;
+    if (index >= 0 && index <= _currentObject!.mainData!.todos.length) {
+      _currentObject!.mainData!.todos.insert(index, item);
+      inputMainData.add(_currentObject);
+    }
+  }
+
+  @override
+  Future<void> confirmDeleteTodo(Item item) async {
+    final result = await _mainUsecase.deleteTodo(item);
+    result.fold(
+      (failure) {
+        _handlePopupError(failure);
+        loadMainData(); // On failure, restore state by reloading
+      },
+      (_) {
+        // On success, do nothing. The UI and ViewModel state are already correct.
+      },
+    );
+  }
+
+  @override
+  int? deleteFinishedTemporarily(Item item) {
+    if (!hasData) return null;
+    final index = _currentObject!.mainData!.finished.indexWhere(
+      (i) => _isSameItem(i, item),
+    );
+    if (index != -1) {
+      _currentObject!.mainData!.finished.removeAt(index);
+      inputMainData.add(_currentObject);
+      return index;
+    }
+    return null;
+  }
+
+  @override
+  void undoDeleteFinished(Item item, int index) {
+    if (!hasData) return;
+    if (index >= 0 && index <= _currentObject!.mainData!.finished.length) {
+      _currentObject!.mainData!.finished.insert(index, item);
+      inputMainData.add(_currentObject);
+    }
+  }
+
+  @override
+  Future<void> confirmDeleteFinished(Item item) async {
+    final result = await _mainUsecase.deleteFinished(item);
+    result.fold(
+      (failure) {
+        _handlePopupError(failure);
+        loadMainData(); // On failure, restore state by reloading
+      },
+      (_) {
+        // On success, do nothing. The UI and ViewModel state are already correct.
+      },
+    );
   }
 
   @override
@@ -179,10 +244,17 @@ abstract class MainViewModelInputs {
   void setCategory(Category category);
   Future<void> moveToFinished(Item item);
   Future<void> moveToTodo(Item item);
-  Future<void> deleteTodo(Item item);
-  Future<void> deleteFinished(Item item);
   Future<void> moveToHistory(Item item);
   MainObject? getCurrentMainData();
+
+  // Deletion with Undo flow
+  int? deleteTodoTemporarily(Item item);
+  void undoDeleteTodo(Item item, int index);
+  Future<void> confirmDeleteTodo(Item item);
+
+  int? deleteFinishedTemporarily(Item item);
+  void undoDeleteFinished(Item item, int index);
+  Future<void> confirmDeleteFinished(Item item);
 }
 
 abstract class MainViewModelOutputs {

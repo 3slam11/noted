@@ -28,10 +28,64 @@ class MainViewState extends State<MainView> {
     monthChecker();
   }
 
+  Future<void> timeBackwards(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            t.home.timeWrong,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            maxLines: 2,
+          ),
+          content: Text(
+            t.home.timeWrongDescription,
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                t.home.continueAnyway,
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> monthChecker() async {
-    if (await checkForNewMonth()) {
-      if (!mounted) return;
-      await handleNewMonth();
+    final monthCheckResult = await checkForNewMonth();
+
+    if (!mounted) return;
+
+    switch (monthCheckResult) {
+      case 1:
+        break;
+      case 2:
+        await timeBackwards(context);
+        break;
+      case 3:
+        await handleNewMonth();
+        break;
     }
   }
 
@@ -84,7 +138,7 @@ class MainViewState extends State<MainView> {
       for (final oldItem in allUnfinishedItemsFromLastMonth) {
         final oldItemKey = '${oldItem.id}-${oldItem.category?.name}';
         if (!idsToKeep.contains(oldItemKey)) {
-          await viewModel.deleteTodo(oldItem);
+          await viewModel.confirmDeleteTodo(oldItem);
         }
       }
     }
@@ -104,8 +158,6 @@ class MainViewState extends State<MainView> {
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        toolbarHeight: 50,
-        centerTitle: false,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(30),
@@ -301,7 +353,6 @@ class TodoSectionWidget extends StatelessWidget {
                   ),
                 ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -362,7 +413,7 @@ class TodoSectionWidget extends StatelessWidget {
                             context,
                             todo,
                             'todo-${todo.id}-${todo.category?.name}',
-                            (direction) => viewModel.deleteTodo(todo),
+                            true,
                             () => viewModel.moveToFinished(todo),
                             Icons.check_rounded,
                             RoutesManager.detailsRoute,
@@ -450,7 +501,7 @@ class FinishedSectionWidget extends StatelessWidget {
                             context,
                             finished,
                             'finished-${finished.id}-${finished.category?.name}',
-                            (direction) => viewModel.deleteFinished(finished),
+                            false,
                             () => viewModel.moveToTodo(finished),
                             Icons.undo_rounded,
                             RoutesManager.detailsRoute,
@@ -508,7 +559,7 @@ Widget buildItem(
   BuildContext context,
   Item item,
   String value,
-  Function(DismissDirection) onDismissed,
+  bool isTodo,
   VoidCallback onIconPressed,
   IconData icon,
   String route, {
@@ -519,7 +570,46 @@ Widget buildItem(
     child: Dismissible(
       key: ValueKey(value),
       direction: DismissDirection.startToEnd,
-      onDismissed: onDismissed,
+      onDismissed: (direction) {
+        int? index;
+        if (isTodo) {
+          index = viewModel.deleteTodoTemporarily(item);
+        } else {
+          index = viewModel.deleteFinishedTemporarily(item);
+        }
+
+        if (index == null) return;
+
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
+              SnackBar(
+                content: Text("'${item.title ?? 'Item'}' ${t.home.deleted}."),
+                duration: const Duration(seconds: 3),
+                behavior: SnackBarBehavior.floating,
+                action: SnackBarAction(
+                  label: t.home.undo,
+                  onPressed: () {
+                    if (isTodo) {
+                      viewModel.undoDeleteTodo(item, index!);
+                    } else {
+                      viewModel.undoDeleteFinished(item, index!);
+                    }
+                  },
+                ),
+              ),
+            )
+            .closed
+            .then((reason) {
+              if (reason != SnackBarClosedReason.action) {
+                if (isTodo) {
+                  viewModel.confirmDeleteTodo(item);
+                } else {
+                  viewModel.confirmDeleteFinished(item);
+                }
+              }
+            });
+      },
       background: Container(
         decoration: BoxDecoration(
           color: Colors.red,
@@ -728,7 +818,6 @@ class _NewMonthDialogState extends State<NewMonthDialog> {
                 ),
               ),
             ] else ...[
-              // Success state
               Expanded(
                 child: Center(
                   child: Column(
@@ -768,30 +857,73 @@ class _NewMonthDialogState extends State<NewMonthDialog> {
       ),
       actions: hasUnfinished
           ? [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(<Item>[]),
-                child: Text(
-                  t.home.deleteAll,
-                  style: TextStyle(color: colorScheme.error),
-                ),
-              ),
-              TextButton(
-                onPressed: selectedItemKeys.isEmpty
-                    ? null
-                    : () => Navigator.of(context).pop(getSelectedItems()),
-                child: Text(t.home.keepSelected),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.of(
-                  context,
-                ).pop(List<Item>.from(widget.unfinishedItems)),
-                child: Text(t.home.addAll),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: () => Navigator.of(
+                            context,
+                          ).pop(List<Item>.from(widget.unfinishedItems)),
+                          label: Text(
+                            t.home.addAll,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: selectedItemKeys.isEmpty
+                              ? null
+                              : () => Navigator.of(
+                                  context,
+                                ).pop(getSelectedItems()),
+                          label: Text(t.home.keepSelected),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton.icon(
+                      style: TextButton.styleFrom(
+                        foregroundColor: colorScheme.error,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                      ),
+                      onPressed: () => Navigator.of(context).pop(<Item>[]),
+                      icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                      label: Text(t.home.deleteAll),
+                    ),
+                  ),
+                ],
               ),
             ]
           : [
-              FilledButton(
-                onPressed: () => Navigator.of(context).pop(<Item>[]),
-                child: Text(t.home.close),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  onPressed: () => Navigator.of(context).pop(<Item>[]),
+                  label: Text(t.home.close),
+                ),
               ),
             ],
     );

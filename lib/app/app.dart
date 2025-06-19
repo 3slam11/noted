@@ -38,11 +38,16 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<FlexScheme>(
-      future: themeManager.getCurrentTheme(),
+    return FutureBuilder<({FlexScheme scheme, String? fontFamily})>(
+      future: () async {
+        final scheme = await themeManager.getCurrentTheme();
+        final fontFamily = await themeManager.getCurrentFontFamily();
+        return (scheme: scheme, fontFamily: fontFamily);
+      }(),
       builder: (context, snapshot) {
-        FlexScheme currentScheme;
-        currentScheme = snapshot.data ?? themeManager.getMonthlyTheme();
+        final FlexScheme currentScheme =
+            snapshot.data?.scheme ?? themeManager.getMonthlyTheme();
+        final String? currentFontFamily = snapshot.data?.fontFamily;
 
         return MaterialApp(
           title: t.appName,
@@ -52,7 +57,11 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           onGenerateRoute: RouteGenerator.getRoute,
           initialRoute: RoutesManager.mainRoute,
-          theme: getApplicationTheme(currentScheme, context),
+          theme: getApplicationTheme(
+            currentScheme,
+            context,
+            fontFamily: currentFontFamily,
+          ),
         );
       },
     );

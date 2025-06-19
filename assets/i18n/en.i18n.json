@@ -62,13 +62,15 @@
 
   "home": {
     "titleSection": "Entertainment list for ",
-    "emptySection": "The list is empty",
+    "emptySection": "This list is empty",
     "finishedList": "Finished List",
     "movies": "Movies",
     "series": "Series",
     "games": "Games",
     "books": "Books",
     "all": "All",
+    "deleted": "Deleted",
+    "undo": "Undo",
     "newMonthStarted": "New Month Started! 🎉",
     "description": "Welcome to ${month}!",
     "description2": "Your finished items have been moved to history. Here are your unfinished items from last month:",
@@ -82,7 +84,10 @@
     "noCompleted": "No completed items yet",
     "congratulations": "Congratulations!",
     "todosDone": "You have completed everything last month!",
-    "close": "Close"
+    "close": "Close",
+    "timeWrong": "Either you're a time traveler or you messed with your date settings! 🕰️",
+    "timeWrongDescription": "The app detected that your current date may be wrong. This could mess with your lists.",
+    "continueAnyway": "Continue"
   },
 
   "search": {
@@ -113,6 +118,11 @@
     "settings": "Settings",
     "language": "Language",
     "theme": "Theme",
+    "font": "Font",
+    "appDefaultFont": "App Default",
+    "systemFont": "System Default",
+    "customFont": "Custom Font",
+    "customFontDetails":"Custom Font Details",
     "history": "History",
     "apiChange": "Change API",
     "statistics": "Statistics",
@@ -131,6 +141,14 @@
     "manualTheme": "Manual Theme",
     "autoThemeDescription": "Automatically changes theme based on current month",
     "selectTheme": "Select Theme:"
+  },
+
+  "fontSettings": {
+    "title": "Font Settings",
+    "change": "Change",
+    "remove": "Remove",
+    "noCustomFont": "No custom font selected",
+    "selectFontFile": "Select Font File (.ttf, .otf)'"
   },
 
    "backupAndRestore": {

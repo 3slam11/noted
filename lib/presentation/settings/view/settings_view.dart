@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -59,6 +60,8 @@ class _SettingsViewState extends State<SettingsView> {
                     _buildLanguageSettings(context),
                     const SizedBox(height: AppSize.s12),
                     _buildThemeSettings(context),
+                    const SizedBox(height: AppSize.s12),
+                    _buildFontSettings(context),
                     const SizedBox(height: AppSize.s12),
                     _buildSettingCard(
                       context,
@@ -176,6 +179,37 @@ class _SettingsViewState extends State<SettingsView> {
           subtitle: themeDescription,
           icon: Icons.palette,
           onTap: () => _showThemeDialog(context),
+        );
+      },
+    );
+  }
+
+  Widget _buildFontSettings(BuildContext context) {
+    return StreamBuilder<FontType>(
+      stream: viewModel.outputCurrentFontType,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const SizedBox.shrink();
+
+        final fontType = snapshot.data!;
+        String subtitle;
+        switch (fontType) {
+          case FontType.appDefault:
+            subtitle = t.settings.appDefaultFont;
+            break;
+          case FontType.systemDefault:
+            subtitle = t.settings.systemFont;
+            break;
+          case FontType.custom:
+            subtitle = t.settings.customFont;
+            break;
+        }
+
+        return _buildSettingCard(
+          context,
+          title: t.settings.font,
+          subtitle: subtitle,
+          icon: Icons.font_download,
+          onTap: () => _showFontDialog(context),
         );
       },
     );
@@ -319,7 +353,6 @@ class _SettingsViewState extends State<SettingsView> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Auto theme toggle
                   SwitchListTile(
                     title: Text(t.themeSettings.autoTheme),
                     subtitle: Text(
@@ -334,8 +367,6 @@ class _SettingsViewState extends State<SettingsView> {
                     },
                   ),
                   const Divider(),
-
-                  // Manual theme selection
                   if (currentThemeMode == ThemeType.manual) ...[
                     Text(
                       t.themeSettings.selectTheme,
@@ -400,6 +431,13 @@ class _SettingsViewState extends State<SettingsView> {
     );
   }
 
+  void _showFontDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => FontSelectionDialog(viewModel: viewModel),
+    );
+  }
+
   String getLanguageName(String code) {
     switch (code) {
       case 'en':
@@ -409,5 +447,231 @@ class _SettingsViewState extends State<SettingsView> {
       default:
         return code;
     }
+  }
+}
+
+class FontSelectionDialog extends StatefulWidget {
+  final SettingsViewModel viewModel;
+  const FontSelectionDialog({super.key, required this.viewModel});
+
+  @override
+  State<FontSelectionDialog> createState() => _FontSelectionDialogState();
+}
+
+class _FontSelectionDialogState extends State<FontSelectionDialog> {
+  final TextEditingController _fontFamilyController = TextEditingController();
+
+  @override
+  void dispose() {
+    _fontFamilyController.dispose();
+    super.dispose();
+  }
+
+  void _pickAndSetFont() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['ttf', 'otf'],
+      dialogTitle: t.fontSettings.selectFontFile,
+    );
+
+    if (result != null && result.files.single.path != null) {
+      final filePath = result.files.single.path!;
+      final fontFamilyName = 'custom';
+
+      if (fontFamilyName.isNotEmpty) {
+        await widget.viewModel.setCustomFont(filePath, fontFamilyName);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(t.fontSettings.title),
+      content: StreamBuilder<FontType>(
+        stream: widget.viewModel.outputCurrentFontType,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Padding(
+              padding: EdgeInsets.all(32),
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          final currentType = snapshot.data!;
+
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildFontOption(
+                  context: context,
+                  title: t.settings.appDefaultFont,
+                  fontType: FontType.appDefault,
+                  currentType: currentType,
+                  onChanged: (v) => widget.viewModel.setFontType(v!),
+                ),
+
+                _buildFontOption(
+                  context: context,
+                  title: t.settings.systemFont,
+                  fontType: FontType.systemDefault,
+                  currentType: currentType,
+                  onChanged: (v) => widget.viewModel.setFontType(v!),
+                ),
+
+                _buildFontOption(
+                  context: context,
+                  title: t.settings.customFont,
+                  fontType: FontType.custom,
+                  currentType: currentType,
+                  onChanged: (v) async {
+                    if (v != null) {
+                      await widget.viewModel.setFontType(v);
+                      final path = await widget.viewModel.appPrefs
+                          .getCustomFontPath();
+                      if (v == FontType.custom && path.isEmpty) {
+                        _pickAndSetFont();
+                      }
+                    }
+                  },
+                ),
+
+                if (currentType == FontType.custom) ...[
+                  const SizedBox(height: 20),
+                  _buildCustomFontDetails(context),
+                ],
+              ],
+            ),
+          );
+        },
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(t.home.close),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFontOption({
+    required BuildContext context,
+    required String title,
+    required FontType fontType,
+    required FontType currentType,
+    required ValueChanged<FontType?> onChanged,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isSelected = currentType == fontType;
+
+    return InkWell(
+      onTap: () => onChanged(fontType),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: isSelected
+                      ? colorScheme.primary
+                      : colorScheme.onSurface,
+                ),
+              ),
+            ),
+            Radio<FontType>(
+              value: fontType,
+              groupValue: currentType,
+              onChanged: onChanged,
+              activeColor: colorScheme.primary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCustomFontDetails(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return StreamBuilder<String>(
+      stream: widget.viewModel.outputCustomFontInfo,
+      builder: (context, infoSnapshot) {
+        final info = infoSnapshot.data ?? t.fontSettings.noCustomFont;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 20,
+                  color: colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  t.settings.customFontDetails,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                info,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton.icon(
+                  onPressed: () => widget.viewModel.clearCustomFont(),
+                  icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                  label: Text(t.fontSettings.remove),
+                  style: TextButton.styleFrom(
+                    foregroundColor: colorScheme.error,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton.icon(
+                  onPressed: _pickAndSetFont,
+                  icon: const Icon(Icons.upload_rounded, size: 18),
+                  label: Text(t.fontSettings.change),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
   }
 }

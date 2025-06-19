@@ -7,6 +7,8 @@ import 'package:noted/presentation/resources/values_manager.dart';
 
 enum ThemeType { auto, manual }
 
+enum FontType { appDefault, systemDefault, custom }
+
 class ThemeManager extends ChangeNotifier {
   final AppPrefs appPrefs;
 
@@ -41,6 +43,21 @@ class ThemeManager extends ChangeNotifier {
     return getMonthlyTheme();
   }
 
+  Future<String?> getCurrentFontFamily() async {
+    final fontTypeIndex = await appPrefs.getFontType();
+    final fontType = FontType.values[fontTypeIndex];
+
+    switch (fontType) {
+      case FontType.appDefault:
+        return FontConstants.fontFamily;
+      case FontType.systemDefault:
+        return null;
+      case FontType.custom:
+        final familyName = await appPrefs.getCustomFontFamilyName();
+        return familyName.isNotEmpty ? familyName : FontConstants.fontFamily;
+    }
+  }
+
   FlexScheme getMonthlyTheme() {
     final currentMonth = DateTime.now().month;
     return monthlySchemes[currentMonth] ?? monthlySchemes.values.first;
@@ -64,7 +81,11 @@ class ThemeManager extends ChangeNotifier {
   }
 }
 
-ThemeData getApplicationTheme(FlexScheme scheme, BuildContext context) {
+ThemeData getApplicationTheme(
+  FlexScheme scheme,
+  BuildContext context, {
+  String? fontFamily,
+}) {
   final baseTheme = FlexThemeData.light(
     scheme: scheme,
     surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
@@ -80,11 +101,28 @@ ThemeData getApplicationTheme(FlexScheme scheme, BuildContext context) {
       inputDecoratorRadius: AppSize.s8,
     ),
     visualDensity: FlexColorScheme.comfortablePlatformDensity,
-    fontFamily: 'El Messiri',
+    fontFamily: fontFamily,
   );
 
-  // card theme
   return baseTheme.copyWith(
+    textTheme: baseTheme.textTheme.copyWith(
+      displayLarge: getSemiBoldStyle(
+        fontSize: FontSize.s16,
+        color: baseTheme.colorScheme.primary,
+      ).copyWith(fontFamily: fontFamily),
+      titleMedium: getMediumStyle(
+        fontSize: FontSize.s16,
+        color: baseTheme.colorScheme.primary,
+      ).copyWith(fontFamily: fontFamily),
+      bodyLarge: getRegularStyle(
+        color: baseTheme.colorScheme.onSurface,
+      ).copyWith(fontFamily: fontFamily),
+      bodySmall: getRegularStyle(
+        color: baseTheme.colorScheme.onSurfaceVariant,
+      ).copyWith(fontFamily: fontFamily),
+    ),
+
+    // card theme
     cardTheme: baseTheme.cardTheme.copyWith(
       color: baseTheme.colorScheme.primaryContainer,
       shadowColor: baseTheme.colorScheme.shadow,
@@ -98,7 +136,7 @@ ThemeData getApplicationTheme(FlexScheme scheme, BuildContext context) {
       titleTextStyle: getRegularStyle(
         fontSize: FontSize.s16,
         color: baseTheme.colorScheme.onPrimary,
-      ),
+      ).copyWith(fontFamily: fontFamily),
     ),
 
     // elevatedButtonTheme:
@@ -107,7 +145,7 @@ ThemeData getApplicationTheme(FlexScheme scheme, BuildContext context) {
         textStyle: getRegularStyle(
           fontSize: FontSize.s17,
           color: baseTheme.colorScheme.onPrimary,
-        ),
+        ).copyWith(fontFamily: fontFamily),
         backgroundColor: baseTheme.colorScheme.primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSize.s12),
@@ -115,36 +153,24 @@ ThemeData getApplicationTheme(FlexScheme scheme, BuildContext context) {
       ),
     ),
 
-    // text theme
-    textTheme: baseTheme.textTheme.copyWith(
-      displayLarge: getSemiBoldStyle(
-        fontSize: FontSize.s16,
-        color: baseTheme.colorScheme.primary,
-      ),
-      titleMedium: getMediumStyle(
-        fontSize: FontSize.s16,
-        color: baseTheme.colorScheme.primary,
-      ),
-      bodyLarge: getRegularStyle(color: baseTheme.colorScheme.onSurface),
-      bodySmall: getRegularStyle(color: baseTheme.colorScheme.onSurfaceVariant),
-    ),
-
-    // decoration theme
+    // input decoration theme
     inputDecorationTheme: baseTheme.inputDecorationTheme.copyWith(
-      contentPadding: EdgeInsets.all(AppPadding.p8),
+      contentPadding: const EdgeInsets.all(AppPadding.p8),
       hintStyle: getRegularStyle(
         fontSize: FontSize.s14,
         color: baseTheme.colorScheme.onSurfaceVariant,
-      ),
+      ).copyWith(fontFamily: fontFamily),
 
       // label style
       labelStyle: getMediumStyle(
         fontSize: FontSize.s14,
         color: baseTheme.colorScheme.primary,
-      ),
+      ).copyWith(fontFamily: fontFamily),
 
       // error style
-      errorStyle: getRegularStyle(color: baseTheme.colorScheme.error),
+      errorStyle: getRegularStyle(
+        color: baseTheme.colorScheme.error,
+      ).copyWith(fontFamily: fontFamily),
 
       // enabled border style
       enabledBorder: OutlineInputBorder(
@@ -152,7 +178,7 @@ ThemeData getApplicationTheme(FlexScheme scheme, BuildContext context) {
           color: ColorScheme.of(context).outline,
           width: AppSize.s1_5,
         ),
-        borderRadius: BorderRadius.all(Radius.circular(AppSize.s8)),
+        borderRadius: const BorderRadius.all(Radius.circular(AppSize.s8)),
       ),
 
       // focused border style
@@ -161,7 +187,7 @@ ThemeData getApplicationTheme(FlexScheme scheme, BuildContext context) {
           color: baseTheme.colorScheme.primary,
           width: AppSize.s1_5,
         ),
-        borderRadius: BorderRadius.all(Radius.circular(AppSize.s8)),
+        borderRadius: const BorderRadius.all(Radius.circular(AppSize.s8)),
       ),
 
       // error border style
@@ -170,7 +196,7 @@ ThemeData getApplicationTheme(FlexScheme scheme, BuildContext context) {
           color: baseTheme.colorScheme.error,
           width: AppSize.s1_5,
         ),
-        borderRadius: BorderRadius.all(Radius.circular(AppSize.s8)),
+        borderRadius: const BorderRadius.all(Radius.circular(AppSize.s8)),
       ),
 
       // focused error border style
@@ -179,7 +205,7 @@ ThemeData getApplicationTheme(FlexScheme scheme, BuildContext context) {
           color: baseTheme.colorScheme.primary,
           width: AppSize.s1_5,
         ),
-        borderRadius: BorderRadius.all(Radius.circular(AppSize.s8)),
+        borderRadius: const BorderRadius.all(Radius.circular(AppSize.s8)),
       ),
     ),
   );

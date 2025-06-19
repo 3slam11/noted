@@ -45,7 +45,7 @@ class TranslationsAr implements Translations {
 		'مايو',
 		'يونيو',
 		'يوليو',
-		'اؔغسطس',
+		'اغسطس',
 		'سبتمبر',
 		'أكتوبر',
 		'نوفمبر',
@@ -62,6 +62,7 @@ class TranslationsAr implements Translations {
 	@override late final _TranslationsSettingsAr settings = _TranslationsSettingsAr._(_root);
 	@override late final _TranslationsLanguageSettingsAr languageSettings = _TranslationsLanguageSettingsAr._(_root);
 	@override late final _TranslationsThemeSettingsAr themeSettings = _TranslationsThemeSettingsAr._(_root);
+	@override late final _TranslationsFontSettingsAr fontSettings = _TranslationsFontSettingsAr._(_root);
 	@override late final _TranslationsBackupAndRestoreAr backupAndRestore = _TranslationsBackupAndRestoreAr._(_root);
 	@override late final _TranslationsHistoryAr history = _TranslationsHistoryAr._(_root);
 	@override late final _TranslationsApiSettingsAr apiSettings = _TranslationsApiSettingsAr._(_root);
@@ -158,6 +159,8 @@ class _TranslationsHomeAr implements TranslationsHomeEn {
 	@override String get games => 'الألعاب';
 	@override String get books => 'الكتب';
 	@override String get all => 'الكل';
+	@override String get deleted => 'حذفت';
+	@override String get undo => 'تراجع';
 	@override String get newMonthStarted => 'بدأ شهر جديد! 🎉';
 	@override String description({required Object month}) => 'مرحبا بـ ${month}!';
 	@override String get description2 => 'تم نقل العناصر المكتملة للسجل. هذه هي العناصر المتبقية من شهر الماضي:';
@@ -172,6 +175,9 @@ class _TranslationsHomeAr implements TranslationsHomeEn {
 	@override String get congratulations => 'تهانينا!';
 	@override String get todosDone => 'لقد اكملت كل عناصر الشهر الماضي!';
 	@override String get close => 'اغلاق';
+	@override String get timeWrong => 'إما انك مسافر بالزمن أو قمت بتغيير التاريخ! 🕰️';
+	@override String get timeWrongDescription => 'التطبيق لاحظ ان تاريخ هاتفك ربما لا يكون صحيحاً. هذا قد يعبث بالقوائم.';
+	@override String get continueAnyway => 'استمر';
 }
 
 // Path: search
@@ -220,6 +226,11 @@ class _TranslationsSettingsAr implements TranslationsSettingsEn {
 	@override String get settings => 'الإعدادات';
 	@override String get language => 'اللغة';
 	@override String get theme => 'السمة';
+	@override String get font => 'الخط';
+	@override String get appDefaultFont => 'الخط الافتراضي';
+	@override String get systemFont => 'خط النظام';
+	@override String get customFont => 'خط مخصص';
+	@override String get customFontDetails => 'تفاصيل الخط المخصص';
 	@override String get history => 'السجل';
 	@override String get apiChange => 'تغيير الـAPI';
 	@override String get statistics => 'الإحصائيات';
@@ -250,6 +261,20 @@ class _TranslationsThemeSettingsAr implements TranslationsThemeSettingsEn {
 	@override String get manualTheme => 'السمة اليدوية';
 	@override String get autoThemeDescription => 'تتغير السمة تلقائياً بناءً على الشهر الحالي';
 	@override String get selectTheme => 'اختر السمة:';
+}
+
+// Path: fontSettings
+class _TranslationsFontSettingsAr implements TranslationsFontSettingsEn {
+	_TranslationsFontSettingsAr._(this._root);
+
+	final TranslationsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'إعدادات الخط';
+	@override String get change => 'تغيير';
+	@override String get remove => 'إزالة';
+	@override String get noCustomFont => 'لم يتم تحديد خط مخصص';
+	@override String get selectFontFile => 'اختر ملف الخط (.ttf, .otf)\'';
 }
 
 // Path: backupAndRestore
@@ -354,7 +379,7 @@ extension on TranslationsAr {
 			case 'months.4': return 'مايو';
 			case 'months.5': return 'يونيو';
 			case 'months.6': return 'يوليو';
-			case 'months.7': return 'اؔغسطس';
+			case 'months.7': return 'اغسطس';
 			case 'months.8': return 'سبتمبر';
 			case 'months.9': return 'أكتوبر';
 			case 'months.10': return 'نوفمبر';
@@ -396,6 +421,8 @@ extension on TranslationsAr {
 			case 'home.games': return 'الألعاب';
 			case 'home.books': return 'الكتب';
 			case 'home.all': return 'الكل';
+			case 'home.deleted': return 'حذفت';
+			case 'home.undo': return 'تراجع';
 			case 'home.newMonthStarted': return 'بدأ شهر جديد! 🎉';
 			case 'home.description': return ({required Object month}) => 'مرحبا بـ ${month}!';
 			case 'home.description2': return 'تم نقل العناصر المكتملة للسجل. هذه هي العناصر المتبقية من شهر الماضي:';
@@ -410,6 +437,9 @@ extension on TranslationsAr {
 			case 'home.congratulations': return 'تهانينا!';
 			case 'home.todosDone': return 'لقد اكملت كل عناصر الشهر الماضي!';
 			case 'home.close': return 'اغلاق';
+			case 'home.timeWrong': return 'إما انك مسافر بالزمن أو قمت بتغيير التاريخ! 🕰️';
+			case 'home.timeWrongDescription': return 'التطبيق لاحظ ان تاريخ هاتفك ربما لا يكون صحيحاً. هذا قد يعبث بالقوائم.';
+			case 'home.continueAnyway': return 'استمر';
 			case 'search.search': return 'بحث';
 			case 'search.searchPlaceholder': return 'ابحث...';
 			case 'search.searchForSomething': return 'ابحث عن اي شيء';
@@ -431,6 +461,11 @@ extension on TranslationsAr {
 			case 'settings.settings': return 'الإعدادات';
 			case 'settings.language': return 'اللغة';
 			case 'settings.theme': return 'السمة';
+			case 'settings.font': return 'الخط';
+			case 'settings.appDefaultFont': return 'الخط الافتراضي';
+			case 'settings.systemFont': return 'خط النظام';
+			case 'settings.customFont': return 'خط مخصص';
+			case 'settings.customFontDetails': return 'تفاصيل الخط المخصص';
 			case 'settings.history': return 'السجل';
 			case 'settings.apiChange': return 'تغيير الـAPI';
 			case 'settings.statistics': return 'الإحصائيات';
@@ -443,6 +478,11 @@ extension on TranslationsAr {
 			case 'themeSettings.manualTheme': return 'السمة اليدوية';
 			case 'themeSettings.autoThemeDescription': return 'تتغير السمة تلقائياً بناءً على الشهر الحالي';
 			case 'themeSettings.selectTheme': return 'اختر السمة:';
+			case 'fontSettings.title': return 'إعدادات الخط';
+			case 'fontSettings.change': return 'تغيير';
+			case 'fontSettings.remove': return 'إزالة';
+			case 'fontSettings.noCustomFont': return 'لم يتم تحديد خط مخصص';
+			case 'fontSettings.selectFontFile': return 'اختر ملف الخط (.ttf, .otf)\'';
 			case 'backupAndRestore.title': return 'النسخ الإحتياطي والاستعادة';
 			case 'backupAndRestore.backupData': return 'النسخ الإحتياطي للبيانات';
 			case 'backupAndRestore.restoreData': return 'إستعادة البيانات';

@@ -65,6 +65,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	late final TranslationsSettingsEn settings = TranslationsSettingsEn._(_root);
 	late final TranslationsLanguageSettingsEn languageSettings = TranslationsLanguageSettingsEn._(_root);
 	late final TranslationsThemeSettingsEn themeSettings = TranslationsThemeSettingsEn._(_root);
+	late final TranslationsFontSettingsEn fontSettings = TranslationsFontSettingsEn._(_root);
 	late final TranslationsBackupAndRestoreEn backupAndRestore = TranslationsBackupAndRestoreEn._(_root);
 	late final TranslationsHistoryEn history = TranslationsHistoryEn._(_root);
 	late final TranslationsApiSettingsEn apiSettings = TranslationsApiSettingsEn._(_root);
@@ -154,13 +155,15 @@ class TranslationsHomeEn {
 
 	// Translations
 	String get titleSection => 'Entertainment list for ';
-	String get emptySection => 'The list is empty';
+	String get emptySection => 'This list is empty';
 	String get finishedList => 'Finished List';
 	String get movies => 'Movies';
 	String get series => 'Series';
 	String get games => 'Games';
 	String get books => 'Books';
 	String get all => 'All';
+	String get deleted => 'Deleted';
+	String get undo => 'Undo';
 	String get newMonthStarted => 'New Month Started! 🎉';
 	String description({required Object month}) => 'Welcome to ${month}!';
 	String get description2 => 'Your finished items have been moved to history. Here are your unfinished items from last month:';
@@ -175,6 +178,9 @@ class TranslationsHomeEn {
 	String get congratulations => 'Congratulations!';
 	String get todosDone => 'You have completed everything last month!';
 	String get close => 'Close';
+	String get timeWrong => 'Either you\'re a time traveler or you messed with your date settings! 🕰️';
+	String get timeWrongDescription => 'The app detected that your current date may be wrong. This could mess with your lists.';
+	String get continueAnyway => 'Continue';
 }
 
 // Path: search
@@ -223,6 +229,11 @@ class TranslationsSettingsEn {
 	String get settings => 'Settings';
 	String get language => 'Language';
 	String get theme => 'Theme';
+	String get font => 'Font';
+	String get appDefaultFont => 'App Default';
+	String get systemFont => 'System Default';
+	String get customFont => 'Custom Font';
+	String get customFontDetails => 'Custom Font Details';
 	String get history => 'History';
 	String get apiChange => 'Change API';
 	String get statistics => 'Statistics';
@@ -253,6 +264,20 @@ class TranslationsThemeSettingsEn {
 	String get manualTheme => 'Manual Theme';
 	String get autoThemeDescription => 'Automatically changes theme based on current month';
 	String get selectTheme => 'Select Theme:';
+}
+
+// Path: fontSettings
+class TranslationsFontSettingsEn {
+	TranslationsFontSettingsEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	String get title => 'Font Settings';
+	String get change => 'Change';
+	String get remove => 'Remove';
+	String get noCustomFont => 'No custom font selected';
+	String get selectFontFile => 'Select Font File (.ttf, .otf)\'';
 }
 
 // Path: backupAndRestore
@@ -392,13 +417,15 @@ extension on Translations {
 			case 'stateRenderer.retry': return 'Retry';
 			case 'stateRenderer.ok': return 'Ok';
 			case 'home.titleSection': return 'Entertainment list for ';
-			case 'home.emptySection': return 'The list is empty';
+			case 'home.emptySection': return 'This list is empty';
 			case 'home.finishedList': return 'Finished List';
 			case 'home.movies': return 'Movies';
 			case 'home.series': return 'Series';
 			case 'home.games': return 'Games';
 			case 'home.books': return 'Books';
 			case 'home.all': return 'All';
+			case 'home.deleted': return 'Deleted';
+			case 'home.undo': return 'Undo';
 			case 'home.newMonthStarted': return 'New Month Started! 🎉';
 			case 'home.description': return ({required Object month}) => 'Welcome to ${month}!';
 			case 'home.description2': return 'Your finished items have been moved to history. Here are your unfinished items from last month:';
@@ -413,6 +440,9 @@ extension on Translations {
 			case 'home.congratulations': return 'Congratulations!';
 			case 'home.todosDone': return 'You have completed everything last month!';
 			case 'home.close': return 'Close';
+			case 'home.timeWrong': return 'Either you\'re a time traveler or you messed with your date settings! 🕰️';
+			case 'home.timeWrongDescription': return 'The app detected that your current date may be wrong. This could mess with your lists.';
+			case 'home.continueAnyway': return 'Continue';
 			case 'search.search': return 'Search';
 			case 'search.searchPlaceholder': return 'Search...';
 			case 'search.searchForSomething': return 'Search for anything';
@@ -434,6 +464,11 @@ extension on Translations {
 			case 'settings.settings': return 'Settings';
 			case 'settings.language': return 'Language';
 			case 'settings.theme': return 'Theme';
+			case 'settings.font': return 'Font';
+			case 'settings.appDefaultFont': return 'App Default';
+			case 'settings.systemFont': return 'System Default';
+			case 'settings.customFont': return 'Custom Font';
+			case 'settings.customFontDetails': return 'Custom Font Details';
 			case 'settings.history': return 'History';
 			case 'settings.apiChange': return 'Change API';
 			case 'settings.statistics': return 'Statistics';
@@ -446,6 +481,11 @@ extension on Translations {
 			case 'themeSettings.manualTheme': return 'Manual Theme';
 			case 'themeSettings.autoThemeDescription': return 'Automatically changes theme based on current month';
 			case 'themeSettings.selectTheme': return 'Select Theme:';
+			case 'fontSettings.title': return 'Font Settings';
+			case 'fontSettings.change': return 'Change';
+			case 'fontSettings.remove': return 'Remove';
+			case 'fontSettings.noCustomFont': return 'No custom font selected';
+			case 'fontSettings.selectFontFile': return 'Select Font File (.ttf, .otf)\'';
 			case 'backupAndRestore.title': return 'Backup & Restore';
 			case 'backupAndRestore.backupData': return 'Backup Data';
 			case 'backupAndRestore.restoreData': return 'Restore Data';

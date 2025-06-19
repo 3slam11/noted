@@ -1,10 +1,16 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:noted/app/app_prefs.dart';
-import 'package:noted/gen/strings.g.dart'; // For AppLocale and LocaleSettings
+import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/base/base_view_model.dart';
+import 'package:noted/presentation/common/state_renderer/state_renderer.dart';
+import 'package:noted/presentation/common/state_renderer/state_renderer_impl.dart';
 import 'package:noted/presentation/resources/theme_manager.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SettingsViewModel extends BaseViewModel
@@ -12,18 +18,17 @@ class SettingsViewModel extends BaseViewModel
   final AppPrefs appPrefs;
   final ThemeManager themeManager;
 
-  // --- Output Streams ---
   final _currentLanguageStreamController = BehaviorSubject<String>();
   final _currentThemeModeStreamController = BehaviorSubject<ThemeType>();
   final _currentManualThemeStreamController = BehaviorSubject<FlexScheme>();
   final _availableLanguagesStreamController = BehaviorSubject<List<Locale>>();
   final _availableManualThemesStreamController =
       BehaviorSubject<List<FlexScheme>>();
+  final _currentFontTypeController = BehaviorSubject<FontType>();
+  final _customFontInfoController = BehaviorSubject<String>();
 
-  // --- Constructor ---
   SettingsViewModel(this.appPrefs, this.themeManager);
 
-  // --- BaseViewModel Overrides ---
   @override
   void start() {
     _loadAppSettings();
@@ -40,10 +45,11 @@ class SettingsViewModel extends BaseViewModel
     _currentManualThemeStreamController.close();
     _availableLanguagesStreamController.close();
     _availableManualThemesStreamController.close();
+    _currentFontTypeController.close();
+    _customFontInfoController.close();
     super.dispose();
   }
 
-  // --- Private Helper Methods ---
   Future<void> _loadAppSettings() async {
     // Language
     final language = await appPrefs.getLanguage();
@@ -61,14 +67,24 @@ class SettingsViewModel extends BaseViewModel
       inputCurrentManualTheme.add(
         ThemeManager.monthlySchemes.values.elementAt(manualThemeIndex),
       );
-    } else {
-      inputCurrentManualTheme.add(
-        ThemeManager.monthlySchemes.values.first,
-      ); // Default
+    }
+
+    final fontTypeIndex = await appPrefs.getFontType();
+    final fontType = FontType.values[fontTypeIndex];
+    inputCurrentFontType.add(fontType);
+
+    if (fontType == FontType.custom) {
+      final path = await appPrefs.getCustomFontPath();
+      final name = await appPrefs.getCustomFontFamilyName();
+      if (path.isNotEmpty && name.isNotEmpty) {
+        final fileName = path.split(Platform.pathSeparator).last;
+        inputCustomFontInfo.add(fileName);
+      } else {
+        inputCustomFontInfo.add(t.fontSettings.noCustomFont);
+      }
     }
   }
 
-  // --- Inputs Implementation ---
   @override
   Sink<String> get inputCurrentLanguage =>
       _currentLanguageStreamController.sink;
@@ -82,40 +98,85 @@ class SettingsViewModel extends BaseViewModel
       _currentManualThemeStreamController.sink;
 
   @override
+  Sink<FontType> get inputCurrentFontType => _currentFontTypeController.sink;
+
+  @override
+  Sink<String> get inputCustomFontInfo => _customFontInfoController.sink;
+
+  @override
   Future<void> setLanguage(String languageCode) async {
     await appPrefs.setLanguage(languageCode);
-    LocaleSettings.setLocaleRaw(languageCode); // Update slang's active locale
+    LocaleSettings.setLocaleRaw(languageCode);
     inputCurrentLanguage.add(languageCode);
-    // MyApp will rebuild due to LocaleProvider, and other widgets will get new translations.
   }
 
   @override
   Future<void> setThemeMode(ThemeType mode) async {
-    if (mode == ThemeType.auto) {
-      await themeManager.setAutoTheme(); // This will notify listeners
-    } else {
-      // mode == tm.ThemeMode.manual
-      // Set the preference for manual mode. ThemeManager will notify.
-      // The currently selected manual theme (or default) will be used.
-      await appPrefs.setThemeMode(ThemeType.manual.index);
-      themeManager.notifyThemeChange();
-    }
+    await appPrefs.setThemeMode(mode.index);
+    themeManager.notifyThemeChange();
     inputCurrentThemeMode.add(mode);
   }
 
   @override
   Future<void> setManualTheme(FlexScheme scheme) async {
-    await themeManager.setManualTheme(
-      scheme,
-    ); // This sets mode to manual and notifies
+    await themeManager.setManualTheme(scheme);
     inputCurrentManualTheme.add(scheme);
-    // Ensure theme mode stream also reflects manual
     if (_currentThemeModeStreamController.valueOrNull != ThemeType.manual) {
       inputCurrentThemeMode.add(ThemeType.manual);
     }
   }
 
-  // --- Outputs Implementation ---
+  @override
+  Future<void> setFontType(FontType type) async {
+    await appPrefs.setFontType(type.index);
+    inputCurrentFontType.add(type);
+    themeManager.notifyThemeChange();
+  }
+
+  @override
+  Future<void> setCustomFont(String filePath, String fontFamilyName) async {
+    try {
+      final appDir = await getApplicationDocumentsDirectory();
+      final newPath =
+          '${appDir.path}/fonts/${filePath.split(Platform.pathSeparator).last}';
+      final newFile = File(newPath);
+      if (!await newFile.parent.exists()) {
+        await newFile.parent.create(recursive: true);
+      }
+      await File(filePath).copy(newPath);
+
+      await appPrefs.setCustomFontPath(newPath);
+      await appPrefs.setCustomFontFamilyName(fontFamilyName);
+      await appPrefs.setFontType(FontType.custom.index);
+
+      final fontLoader = FontLoader(fontFamilyName);
+      fontLoader.addFont(
+        newFile.readAsBytes().then((bytes) => ByteData.view(bytes.buffer)),
+      );
+      await fontLoader.load();
+      debugPrint("Custom font '$fontFamilyName' loaded dynamically.");
+
+      inputCurrentFontType.add(FontType.custom);
+      final fileName = newPath.split(Platform.pathSeparator).last;
+      inputCustomFontInfo.add('$fontFamilyName ($fileName)');
+      themeManager.notifyThemeChange();
+    } catch (e) {
+      inputState.add(
+        ErrorState(
+          stateRendererType: StateRendererType.popupErrorState,
+          message: "Failed to load font. ${e.toString()}",
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<void> clearCustomFont() async {
+    await appPrefs.clearCustomFont();
+    await setFontType(FontType.appDefault);
+    inputCustomFontInfo.add(t.fontSettings.noCustomFont);
+  }
+
   @override
   Stream<String> get outputCurrentLanguage =>
       _currentLanguageStreamController.stream;
@@ -135,17 +196,28 @@ class SettingsViewModel extends BaseViewModel
   @override
   Stream<List<FlexScheme>> get outputAvailableManualThemes =>
       _availableManualThemesStreamController.stream;
+
+  @override
+  Stream<FontType> get outputCurrentFontType =>
+      _currentFontTypeController.stream;
+
+  @override
+  Stream<String> get outputCustomFontInfo => _customFontInfoController.stream;
 }
 
-// --- Abstract Interfaces ---
 abstract class SettingsViewModelInputs {
   Sink<String> get inputCurrentLanguage;
   Sink<ThemeType> get inputCurrentThemeMode;
   Sink<FlexScheme> get inputCurrentManualTheme;
+  Sink<FontType> get inputCurrentFontType;
+  Sink<String> get inputCustomFontInfo;
 
   Future<void> setLanguage(String languageCode);
   Future<void> setThemeMode(ThemeType mode);
   Future<void> setManualTheme(FlexScheme scheme);
+  Future<void> setFontType(FontType type);
+  Future<void> setCustomFont(String filePath, String fontFamilyName);
+  Future<void> clearCustomFont();
 }
 
 abstract class SettingsViewModelOutputs {
@@ -154,4 +226,6 @@ abstract class SettingsViewModelOutputs {
   Stream<FlexScheme> get outputCurrentManualTheme;
   Stream<List<Locale>> get outputAvailableLanguages;
   Stream<List<FlexScheme>> get outputAvailableManualThemes;
+  Stream<FontType> get outputCurrentFontType;
+  Stream<String> get outputCustomFontInfo;
 }

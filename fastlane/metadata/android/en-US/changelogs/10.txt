@@ -1,0 +1,5 @@
+Note: You might get a popup the first time after updating, just press Enter and ignore it.
+
+- Added undo for deleted items
+- Slightly improved new month UI
+- Added option to change app font

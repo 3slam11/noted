@@ -10,6 +10,9 @@ const String lastOpenedMonth = 'LAST_OPENED_MONTH';
 const String customRawgApiKeyPref = 'CUSTOM_RAWG_API_KEY';
 const String customTmdbApiKeyPref = 'CUSTOM_TMDB_API_KEY';
 const String customBooksApiKeyPref = 'CUSTOM_BOOKS_API_KEY';
+const String fontTypePref = 'FONT_TYPE_PREF';
+const String customFontPathPref = 'CUSTOM_FONT_PATH_PREF';
+const String customFontFamilyNamePref = 'CUSTOM_FONT_FAMILY_NAME_PREF';
 
 class AppPrefs {
   final SharedPreferences sharedPreferences;
@@ -97,5 +100,34 @@ class AppPrefs {
 
   Future<void> removeCustomBooksApiKey() async {
     await sharedPreferences.remove(customBooksApiKeyPref);
+  }
+
+  Future<void> setFontType(int type) async {
+    await sharedPreferences.setInt(fontTypePref, type);
+  }
+
+  Future<int> getFontType() async {
+    return sharedPreferences.getInt(fontTypePref) ?? FontType.appDefault.index;
+  }
+
+  Future<void> setCustomFontPath(String path) async {
+    await sharedPreferences.setString(customFontPathPref, path);
+  }
+
+  Future<String> getCustomFontPath() async {
+    return sharedPreferences.getString(customFontPathPref) ?? '';
+  }
+
+  Future<void> setCustomFontFamilyName(String name) async {
+    await sharedPreferences.setString(customFontFamilyNamePref, name);
+  }
+
+  Future<String> getCustomFontFamilyName() async {
+    return sharedPreferences.getString(customFontFamilyNamePref) ?? '';
+  }
+
+  Future<void> clearCustomFont() async {
+    await sharedPreferences.remove(customFontPathPref);
+    await sharedPreferences.remove(customFontFamilyNamePref);
   }
 }
