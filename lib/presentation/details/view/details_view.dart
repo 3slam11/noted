@@ -21,6 +21,7 @@ class DetailsViewState extends State<DetailsView> {
   final DetailsViewModel _viewModel = instance<DetailsViewModel>();
   late PageController _pageController;
   late final ValueNotifier<int> _currentPageNotifier;
+  bool _isHovering = false;
 
   @override
   void initState() {
@@ -182,62 +183,117 @@ class DetailsViewState extends State<DetailsView> {
       );
     }
 
-    return SizedBox(
-      height: AppSize.s200,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          PageView.builder(
-            controller: _pageController,
-            itemCount: imageUrls.length,
-            itemBuilder: (context, index) {
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: AppPadding.p8),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(AppSize.s12),
-                  child: Image.network(
-                    imageUrls[index],
-                    fit: deviceWidth > 500 ? BoxFit.contain : BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: theme.colorScheme.secondary.withValues(
-                          alpha: 0.1,
-                        ),
-                        child: Icon(
-                          Icons.broken_image_outlined,
-                          size: AppSize.s50,
-                          color: theme.colorScheme.primary.withValues(
-                            alpha: 0.7,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovering = true),
+      onExit: (_) => setState(() => _isHovering = false),
+      child: SizedBox(
+        height: AppSize.s200,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            PageView.builder(
+              controller: _pageController,
+              itemCount: imageUrls.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: AppPadding.p8),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(AppSize.s12),
+                    child: Image.network(
+                      imageUrls[index],
+                      fit: deviceWidth > 500 ? BoxFit.contain : BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                : null,
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: theme.colorScheme.secondary.withValues(
+                            alpha: 0.1,
+                          ),
+                          child: Icon(
+                            Icons.broken_image_outlined,
+                            size: AppSize.s50,
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.7,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-          if (imageUrls.length > 1)
-            Positioned(
-              bottom: AppPadding.p8,
-              child: ImageGalleryIndicator(
-                pageController: _pageController,
-                pageNotifier: _currentPageNotifier,
-                imageCount: imageUrls.length,
-              ),
+                );
+              },
             ),
-        ],
+            if (imageUrls.length > 1)
+              Positioned(
+                bottom: AppPadding.p8,
+                child: ImageGalleryIndicator(
+                  pageController: _pageController,
+                  pageNotifier: _currentPageNotifier,
+                  imageCount: imageUrls.length,
+                ),
+              ),
+            if (_isHovering && imageUrls.length > 1) ...[
+              // Previous Button
+              Align(
+                alignment: Alignment.centerLeft,
+                child: _NavigationArrow(
+                  icon: Icons.arrow_back_ios_new_rounded,
+                  onPressed: () {
+                    _pageController.previousPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                ),
+              ),
+              // Next Button
+              Align(
+                alignment: Alignment.centerRight,
+                child: _NavigationArrow(
+                  icon: Icons.arrow_forward_ios_rounded,
+                  onPressed: () {
+                    _pageController.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NavigationArrow extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const _NavigationArrow({required this.icon, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: AppPadding.p8),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.4),
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: Colors.white),
+        onPressed: onPressed,
+        tooltip: 'Navigate images',
       ),
     );
   }

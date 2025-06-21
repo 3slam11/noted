@@ -25,7 +25,7 @@ class QrImportView extends StatelessWidget {
               Icon(
                 Icons.qr_code_scanner_rounded,
                 size: 80,
-                color: theme.colorScheme.primary.withOpacity(0.7),
+                color: theme.colorScheme.primary.withValues(alpha: 0.7),
               ),
               const SizedBox(height: 24),
               Text(

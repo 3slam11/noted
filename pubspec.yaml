@@ -1,7 +1,7 @@
 name: noted
 description: "A note app where you can save, sync your movies, tv series, and games."
 publish_to: 'none'
-version: 1.6.9+11
+version: 1.7.0+12
 
 environment:
   sdk: ^3.8.1
@@ -56,6 +56,10 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   image_path: "assets/icon.png"
+
+  windows:
+    generate: true
+    image_path: "assets/icon.png"
 
 flutter:
   uses-material-design: true
