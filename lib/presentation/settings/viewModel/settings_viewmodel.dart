@@ -10,6 +10,7 @@ import 'package:noted/presentation/base/base_view_model.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer_impl.dart';
 import 'package:noted/presentation/resources/theme_manager.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -137,8 +138,7 @@ class SettingsViewModel extends BaseViewModel
   Future<void> setCustomFont(String filePath, String fontFamilyName) async {
     try {
       final appDir = await getApplicationDocumentsDirectory();
-      final newPath =
-          '${appDir.path}/fonts/${filePath.split(Platform.pathSeparator).last}';
+      final newPath = p.join(appDir.path, 'fonts', p.basename(filePath));
       final newFile = File(newPath);
       if (!await newFile.parent.exists()) {
         await newFile.parent.create(recursive: true);

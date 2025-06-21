@@ -12,8 +12,6 @@ import 'package:noted/presentation/main/viewModel/main_view_model.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
 
-final MainViewModel viewModel = instance<MainViewModel>();
-
 class MainView extends StatefulWidget {
   const MainView({super.key});
   @override
@@ -21,6 +19,8 @@ class MainView extends StatefulWidget {
 }
 
 class MainViewState extends State<MainView> {
+  final MainViewModel viewModel = instance<MainViewModel>();
+
   @override
   void initState() {
     super.initState();
@@ -33,27 +33,24 @@ class MainViewState extends State<MainView> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        final theme = Theme.of(context);
         return AlertDialog(
           title: Text(
             t.home.timeWrong,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.error,
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: theme.colorScheme.error,
             ),
             maxLines: 2,
           ),
           content: Text(
             t.home.timeWrongDescription,
-            style: TextStyle(
-              fontSize: 14,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
+            style: theme.textTheme.bodyMedium,
           ),
-
           actions: [
             ElevatedButton(
               style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -61,10 +58,7 @@ class MainViewState extends State<MainView> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text(
-                t.home.continueAnyway,
-                style: TextStyle(color: Colors.white),
-              ),
+              child: Text(t.home.continueAnyway),
             ),
           ],
         );
@@ -186,15 +180,13 @@ class MainViewState extends State<MainView> {
       ),
       body: StateFlowHandler(
         stream: viewModel.outputState,
-        retryAction: () {
-          viewModel.start();
-        },
-        contentBuilder: (context) => _getContentWidget(viewModel),
+        retryAction: viewModel.start,
+        contentBuilder: (context) => _getContentWidget(),
       ),
     );
   }
 
-  Widget _getContentWidget(MainViewModel viewModel) {
+  Widget _getContentWidget() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
@@ -209,7 +201,9 @@ class MainViewState extends State<MainView> {
               viewModel: viewModel,
             ).animate().fadeIn(duration: 500.ms),
             const SizedBox(height: 8),
-            FinishedSectionWidget().animate().fadeIn(duration: 500.ms),
+            FinishedSectionWidget(
+              viewModel: viewModel,
+            ).animate().fadeIn(duration: 500.ms),
           ],
         ),
       ),
@@ -409,18 +403,10 @@ class TodoSectionWidget extends StatelessWidget {
                   return Column(
                     children: filteredTodos.asMap().entries.map((entry) {
                       final todo = entry.value;
-                      return buildItem(
-                            context,
-                            todo,
-                            'todo-${todo.id}-${todo.category?.name}',
-                            true,
-                            () => viewModel.moveToFinished(todo),
-                            Icons.check_rounded,
-                            RoutesManager.detailsRoute,
-                            arguments: DetailsView(
-                              id: todo.id!,
-                              category: todo.category!,
-                            ),
+                      return ItemTile(
+                            item: todo,
+                            isTodo: true,
+                            viewModel: viewModel,
                           )
                           .animate()
                           .fadeIn(duration: 300.ms)
@@ -438,13 +424,16 @@ class TodoSectionWidget extends StatelessWidget {
 }
 
 class FinishedSectionWidget extends StatelessWidget {
-  const FinishedSectionWidget({super.key});
+  final MainViewModel viewModel;
+
+  const FinishedSectionWidget({super.key, required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onPrimary,
+        color: theme.colorScheme.onPrimary,
         borderRadius: const BorderRadius.all(Radius.circular(20)),
       ),
       child: Column(
@@ -454,18 +443,12 @@ class FinishedSectionWidget extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  t.home.finishedList,
-                  style: TextStyle(
-                    fontSize: 25,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
+                Text(t.home.finishedList, style: theme.textTheme.headlineSmall),
               ],
             ),
           ),
           Divider(
-                color: Theme.of(context).colorScheme.primary,
+                color: theme.colorScheme.primary,
                 thickness: 1,
                 indent: 16,
                 endIndent: 16,
@@ -495,20 +478,11 @@ class FinishedSectionWidget extends StatelessWidget {
                   }
 
                   return Column(
-                    children: filteredFinished.asMap().entries.map((entry) {
-                      final finished = entry.value;
-                      return buildItem(
-                            context,
-                            finished,
-                            'finished-${finished.id}-${finished.category?.name}',
-                            false,
-                            () => viewModel.moveToTodo(finished),
-                            Icons.undo_rounded,
-                            RoutesManager.detailsRoute,
-                            arguments: DetailsView(
-                              id: finished.id!,
-                              category: finished.category!,
-                            ),
+                    children: filteredFinished.map((finished) {
+                      return ItemTile(
+                            item: finished,
+                            isTodo: false,
+                            viewModel: viewModel,
                           )
                           .animate()
                           .fadeIn(duration: 300.ms)
@@ -522,6 +496,143 @@ class FinishedSectionWidget extends StatelessWidget {
         ],
       ),
     ).animate().fadeIn(duration: 400.ms);
+  }
+}
+
+class ItemTile extends StatelessWidget {
+  final Item item;
+  final bool isTodo;
+  final MainViewModel viewModel;
+
+  const ItemTile({
+    super.key,
+    required this.item,
+    required this.isTodo,
+    required this.viewModel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final valueKey =
+        'item-${isTodo ? 'todo' : 'finished'}-${item.id}-${item.category?.name}';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+      child: Dismissible(
+        key: ValueKey(valueKey),
+        direction: DismissDirection.startToEnd,
+        onDismissed: (direction) {
+          int? index = isTodo
+              ? viewModel.deleteTodoTemporarily(item)
+              : viewModel.deleteFinishedTemporarily(item);
+
+          if (index == null) return;
+
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context)
+              .showSnackBar(
+                SnackBar(
+                  content: Text("'${item.title ?? 'Item'}' ${t.home.deleted}."),
+                  duration: const Duration(seconds: 3),
+                  behavior: SnackBarBehavior.floating,
+                  action: SnackBarAction(
+                    label: t.home.undo,
+                    onPressed: () {
+                      if (isTodo) {
+                        viewModel.undoDeleteTodo(item, index);
+                      } else {
+                        viewModel.undoDeleteFinished(item, index);
+                      }
+                    },
+                  ),
+                ),
+              )
+              .closed
+              .then((reason) {
+                if (reason != SnackBarClosedReason.action) {
+                  if (isTodo) {
+                    viewModel.confirmDeleteTodo(item);
+                  } else {
+                    viewModel.confirmDeleteFinished(item);
+                  }
+                }
+              });
+        },
+        background: Container(
+          decoration: BoxDecoration(
+            color: Colors.red,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          alignment: Directionality.of(context) == TextDirection.rtl
+              ? Alignment.centerRight
+              : Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: const Icon(Icons.delete, color: Colors.white, size: 24),
+        ),
+        child: Card(
+          elevation: AppSize.s0,
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: ListTile(
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(4.0),
+              child: (item.posterUrl != null && item.posterUrl!.isNotEmpty)
+                  ? Image.network(
+                      item.posterUrl!,
+                      width: 50,
+                      height: 75,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 50,
+                        height: 75,
+                        color: Colors.grey,
+                        child: const Icon(Icons.broken_image, size: 30),
+                      ),
+                    )
+                  : Container(
+                      width: 50,
+                      height: 75,
+                      color: Colors.grey,
+                      child: const Icon(Icons.list_alt, size: 30),
+                    ),
+            ),
+            title: Text(
+              item.title ?? 'Untitled',
+              style: const TextStyle(fontSize: 16),
+            ),
+            subtitle: Text(
+              item.category?.localizedCategory() ?? 'Uncategorized',
+              style: TextStyle(
+                fontSize: 12,
+                color: theme.colorScheme.secondary,
+              ),
+            ),
+            trailing: IconButton(
+              icon: Icon(
+                isTodo ? Icons.check_rounded : Icons.undo_rounded,
+                color: theme.colorScheme.primary,
+              ),
+              onPressed: () => isTodo
+                  ? viewModel.moveToFinished(item)
+                  : viewModel.moveToTodo(item),
+            ),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                RoutesManager.detailsRoute,
+                arguments: DetailsView(
+                  id: item.id ?? '',
+                  category: item.category ?? Category.all,
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -550,120 +661,6 @@ Widget _buildEmptyState(BuildContext context) {
               .slideY(begin: 0.3, end: 0),
           const SizedBox(height: 30),
         ],
-      ),
-    ),
-  );
-}
-
-Widget buildItem(
-  BuildContext context,
-  Item item,
-  String value,
-  bool isTodo,
-  VoidCallback onIconPressed,
-  IconData icon,
-  String route, {
-  Object? arguments,
-}) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-    child: Dismissible(
-      key: ValueKey(value),
-      direction: DismissDirection.startToEnd,
-      onDismissed: (direction) {
-        int? index;
-        if (isTodo) {
-          index = viewModel.deleteTodoTemporarily(item);
-        } else {
-          index = viewModel.deleteFinishedTemporarily(item);
-        }
-
-        if (index == null) return;
-
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context)
-            .showSnackBar(
-              SnackBar(
-                content: Text("'${item.title ?? 'Item'}' ${t.home.deleted}."),
-                duration: const Duration(seconds: 3),
-                behavior: SnackBarBehavior.floating,
-                action: SnackBarAction(
-                  label: t.home.undo,
-                  onPressed: () {
-                    if (isTodo) {
-                      viewModel.undoDeleteTodo(item, index!);
-                    } else {
-                      viewModel.undoDeleteFinished(item, index!);
-                    }
-                  },
-                ),
-              ),
-            )
-            .closed
-            .then((reason) {
-              if (reason != SnackBarClosedReason.action) {
-                if (isTodo) {
-                  viewModel.confirmDeleteTodo(item);
-                } else {
-                  viewModel.confirmDeleteFinished(item);
-                }
-              }
-            });
-      },
-      background: Container(
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        alignment: Directionality.of(context) == TextDirection.rtl
-            ? Alignment.centerRight
-            : Alignment.centerLeft,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: const Icon(Icons.delete, color: Colors.white, size: 24),
-      ),
-      child: Card(
-        elevation: AppSize.s0,
-        margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: ListTile(
-          leading: ClipRRect(
-            borderRadius: BorderRadius.circular(4.0),
-            child: item.posterUrl != null && item.posterUrl!.isNotEmpty
-                ? Image.network(
-                    item.posterUrl!,
-                    width: 50,
-                    height: 75,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: 50,
-                      height: 75,
-                      color: Colors.grey,
-                      child: const Icon(Icons.broken_image, size: 30),
-                    ),
-                  )
-                : Container(
-                    width: 50,
-                    height: 75,
-                    color: Colors.grey,
-                    child: const Icon(Icons.list_alt, size: 30),
-                  ),
-          ),
-          title: Text(item.title ?? 'Untitled', style: TextStyle(fontSize: 16)),
-          subtitle: Text(
-            item.category!.localizedCategory(),
-            style: TextStyle(
-              fontSize: 12,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-          trailing: IconButton(
-            icon: Icon(icon, color: Theme.of(context).colorScheme.primary),
-            onPressed: onIconPressed,
-          ),
-          onTap: () {
-            Navigator.pushNamed(context, route, arguments: arguments);
-          },
-        ),
       ),
     ),
   );

@@ -1,4 +1,4 @@
-name: Build and release APKs
+name: Build and Release
 
 on:
   push:
@@ -6,43 +6,33 @@ on:
       - '*.*.*'
 
 jobs:
-  build:
-    # specifing the OS to Linux.
+  # Job to build the Android APKs
+  build-android:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-
     steps:
-      # 1. checks out the repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. sets up the Java environment
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # 3. sets up Flutter SDK environment
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version-file: pubspec.yaml
-
-      # 4. gets Flutter dependencies
-      - name: Get Flutter dependencies
-        run: flutter pub get
-
-      # 5. create the .env file
+          
       - name: Create .env file
         run: |
           echo "DEFAULT_GOOGLE_BOOKS_API_KEY=${{ secrets.DEFAULT_GOOGLE_BOOKS_API_KEY }}" >> .env
           echo "DEFAULT_RAWG_API_KEY=${{ secrets.DEFAULT_RAWG_API_KEY }}" >> .env
           echo "DEFAULT_TMDB_API_KEY=${{ secrets.DEFAULT_TMDB_API_KEY }}" >> .env
 
-      # 6. decode the keystore and create the key.properties file
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
       - name: Create Keystore and key.properties
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
@@ -51,11 +41,9 @@ jobs:
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=keystore.jks" >> android/key.properties
 
-      # 7. Build the APKs
       - name: Build APK
         run: flutter build apk --release --split-per-abi
 
-      # 8. rename the generated APK files
       - name: Rename APK files
         run: |
           cd build/app/outputs/flutter-apk/
@@ -65,13 +53,80 @@ jobs:
           done
           ls -l
 
-      # 9. create a Release
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apks
+          path: build/app/outputs/flutter-apk/*.apk
+
+  build-windows:
+    runs-on: windows-latest 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: pubspec.yaml
+
+      - name: Create .env file
+        run: |
+          echo "DEFAULT_GOOGLE_BOOKS_API_KEY=${{ secrets.DEFAULT_GOOGLE_BOOKS_API_KEY }}" >> .env
+          echo "DEFAULT_RAWG_API_KEY=${{ secrets.DEFAULT_RAWG_API_KEY }}" >> .env
+          echo "DEFAULT_TMDB_API_KEY=${{ secrets.DEFAULT_TMDB_API_KEY }}" >> .env
+          
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Enable Windows build
+        run: flutter config --enable-windows-desktop
+
+      - name: Build Windows executable
+        run: flutter build windows --release
+
+      - name: Archive Windows release
+        run: |
+          $version = "${{ github.ref_name }}"
+          Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath "noted-windows-$version.zip"
+      
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          path: noted-windows-*.zip
+
+  # Job to create the GitHub Release after both builds succeed
+  release:
+    runs-on: ubuntu-latest
+    needs: [build-android, build-windows] 
+    permissions:
+      contents: write 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Android artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apks
+          path: release-assets
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-release
+          path: release-assets
+
+      - name: List downloaded files
+        run: ls -l release-assets
+        
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           CHANGELOG_FILE=$(ls -v fastlane/metadata/android/en-US/changelogs/*.txt | tail -n 1)
           gh release create ${{ github.ref_name }} \
-            --title "${{ github.ref_name }}" \
+            --title "Noted v${{ github.ref_name }}" \
             --notes-file "$CHANGELOG_FILE" \
-            build/app/outputs/flutter-apk/*.apk
+            release-assets/*

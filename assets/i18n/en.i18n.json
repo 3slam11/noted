@@ -129,6 +129,19 @@
     "about": "About"
   },
 
+  "qrSettings": {
+    "title": "QR Code Sync",
+    "desktop": "Feature Not Available on Desktop",
+    "desktopDescription": "QR code scanning is only available on the mobile version of the app.",
+    "subtitle": "Sync between devices with a QR code",
+    "description": "You can export and import your data and settings with QR code to another device.",
+    "alert": "Importing will overwrite all current settings and lists.",
+    "scan": "Scan",
+    "generate": "Generate",
+    "generating": "Generating QR Code...",
+    "generated": "QR Code Generated"
+  },
+
   "languageSettings": {
     "selectLanguage": "Select Language",
     "en": "English",

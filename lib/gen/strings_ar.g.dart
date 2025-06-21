@@ -60,6 +60,7 @@ class TranslationsAr implements Translations {
 	@override late final _TranslationsSearchAr search = _TranslationsSearchAr._(_root);
 	@override late final _TranslationsDetailsAr details = _TranslationsDetailsAr._(_root);
 	@override late final _TranslationsSettingsAr settings = _TranslationsSettingsAr._(_root);
+	@override late final _TranslationsQrSettingsAr qrSettings = _TranslationsQrSettingsAr._(_root);
 	@override late final _TranslationsLanguageSettingsAr languageSettings = _TranslationsLanguageSettingsAr._(_root);
 	@override late final _TranslationsThemeSettingsAr themeSettings = _TranslationsThemeSettingsAr._(_root);
 	@override late final _TranslationsFontSettingsAr fontSettings = _TranslationsFontSettingsAr._(_root);
@@ -235,6 +236,25 @@ class _TranslationsSettingsAr implements TranslationsSettingsEn {
 	@override String get apiChange => 'تغيير الـAPI';
 	@override String get statistics => 'الإحصائيات';
 	@override String get about => 'حول التطبيق';
+}
+
+// Path: qrSettings
+class _TranslationsQrSettingsAr implements TranslationsQrSettingsEn {
+	_TranslationsQrSettingsAr._(this._root);
+
+	final TranslationsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'مزامنة بالـQR';
+	@override String get desktop => 'الخاصية غير متوفرة على الكمبيوتر';
+	@override String get desktopDescription => 'قارئ الـQR متوفرة فقط على الهواتف.';
+	@override String get subtitle => 'مزامنة بين الأجهزة عن طريق الـQR';
+	@override String get description => 'يمكنك مزامنة بياناتك واعدادتك على جهاز اخر.';
+	@override String get alert => 'المزامنة ستستبدل بياناتك الحالية بالجديدة.';
+	@override String get scan => 'امسح';
+	@override String get generate => 'انشئ';
+	@override String get generating => 'جاري انشاء الـQR...';
+	@override String get generated => 'تم انشاء الـQR';
 }
 
 // Path: languageSettings
@@ -470,6 +490,16 @@ extension on TranslationsAr {
 			case 'settings.apiChange': return 'تغيير الـAPI';
 			case 'settings.statistics': return 'الإحصائيات';
 			case 'settings.about': return 'حول التطبيق';
+			case 'qrSettings.title': return 'مزامنة بالـQR';
+			case 'qrSettings.desktop': return 'الخاصية غير متوفرة على الكمبيوتر';
+			case 'qrSettings.desktopDescription': return 'قارئ الـQR متوفرة فقط على الهواتف.';
+			case 'qrSettings.subtitle': return 'مزامنة بين الأجهزة عن طريق الـQR';
+			case 'qrSettings.description': return 'يمكنك مزامنة بياناتك واعدادتك على جهاز اخر.';
+			case 'qrSettings.alert': return 'المزامنة ستستبدل بياناتك الحالية بالجديدة.';
+			case 'qrSettings.scan': return 'امسح';
+			case 'qrSettings.generate': return 'انشئ';
+			case 'qrSettings.generating': return 'جاري انشاء الـQR...';
+			case 'qrSettings.generated': return 'تم انشاء الـQR';
 			case 'languageSettings.selectLanguage': return 'اختر اللغة';
 			case 'languageSettings.en': return 'English';
 			case 'languageSettings.ar': return 'العربية';

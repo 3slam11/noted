@@ -6,6 +6,8 @@ import 'package:noted/presentation/backupAndRestore/view/backup_and_restore_view
 import 'package:noted/presentation/changeApi/view/change_api_view.dart';
 import 'package:noted/presentation/history/view/history_view.dart';
 import 'package:noted/presentation/main/view/main_view.dart';
+import 'package:noted/presentation/qr-export/view/qr_export_view.dart';
+import 'package:noted/presentation/qr-import/view/qr_import_view.dart';
 import 'package:noted/presentation/search/view/search_view.dart';
 import 'package:noted/presentation/settings/view/settings_view.dart';
 import 'package:noted/presentation/statistics/view/statistics_view.dart';
@@ -17,6 +19,8 @@ class RoutesManager {
   static const String searchRoute = '/search';
   static const String settingsRoute = '/settings';
   static const String backupAndRestoreRoute = '/backup-restore';
+  static const String qrExportRoute = '/qr-export';
+  static const String qrImportRoute = '/qr-import';
   static const String historyRoute = '/history';
   static const String changeApiRoute = '/change-api';
   static const String statisticsRoute = '/statistics';
@@ -50,6 +54,13 @@ class RouteGenerator {
       case RoutesManager.backupAndRestoreRoute:
         initBackupAndRestoreModule();
         return MaterialPageRoute(builder: (_) => BackupAndRestoreView());
+      case RoutesManager.qrExportRoute:
+        initQrExportModule();
+        return MaterialPageRoute(builder: (_) => const QrExportView());
+      case RoutesManager.qrImportRoute:
+        initBackupAndRestoreModule();
+        return MaterialPageRoute(builder: (_) => const QrImportView());
+
       case RoutesManager.changeApiRoute:
         initChangeApiModule();
         return MaterialPageRoute(builder: (_) => ChangeApiView());

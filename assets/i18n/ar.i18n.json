@@ -131,6 +131,19 @@
     "about": "حول التطبيق"
   },
 
+  "qrSettings": {
+    "title": "مزامنة بالـQR",
+    "desktop": "الخاصية غير متوفرة على الكمبيوتر",
+    "desktopDescription": "قارئ الـQR متوفرة فقط على الهواتف.",
+    "subtitle": "مزامنة بين الأجهزة عن طريق الـQR",
+    "description": "يمكنك مزامنة بياناتك واعدادتك على جهاز اخر.",
+    "alert": "المزامنة ستستبدل بياناتك الحالية بالجديدة.",
+    "scan": "امسح",
+    "generate": "انشئ",
+    "generating": "جاري انشاء الـQR...",
+    "generated": "تم انشاء الـQR"
+  },
+
   "languageSettings": {
     "selectLanguage": "اختر اللغة",
     "en": "English",

@@ -63,6 +63,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	late final TranslationsSearchEn search = TranslationsSearchEn._(_root);
 	late final TranslationsDetailsEn details = TranslationsDetailsEn._(_root);
 	late final TranslationsSettingsEn settings = TranslationsSettingsEn._(_root);
+	late final TranslationsQrSettingsEn qrSettings = TranslationsQrSettingsEn._(_root);
 	late final TranslationsLanguageSettingsEn languageSettings = TranslationsLanguageSettingsEn._(_root);
 	late final TranslationsThemeSettingsEn themeSettings = TranslationsThemeSettingsEn._(_root);
 	late final TranslationsFontSettingsEn fontSettings = TranslationsFontSettingsEn._(_root);
@@ -238,6 +239,25 @@ class TranslationsSettingsEn {
 	String get apiChange => 'Change API';
 	String get statistics => 'Statistics';
 	String get about => 'About';
+}
+
+// Path: qrSettings
+class TranslationsQrSettingsEn {
+	TranslationsQrSettingsEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	String get title => 'QR Code Sync';
+	String get desktop => 'Feature Not Available on Desktop';
+	String get desktopDescription => 'QR code scanning is only available on the mobile version of the app.';
+	String get subtitle => 'Sync between devices with a QR code';
+	String get description => 'You can export and import your data and settings with QR code to another device.';
+	String get alert => 'Importing will overwrite all current settings and lists.';
+	String get scan => 'Scan';
+	String get generate => 'Generate';
+	String get generating => 'Generating QR Code...';
+	String get generated => 'QR Code Generated';
 }
 
 // Path: languageSettings
@@ -473,6 +493,16 @@ extension on Translations {
 			case 'settings.apiChange': return 'Change API';
 			case 'settings.statistics': return 'Statistics';
 			case 'settings.about': return 'About';
+			case 'qrSettings.title': return 'QR Code Sync';
+			case 'qrSettings.desktop': return 'Feature Not Available on Desktop';
+			case 'qrSettings.desktopDescription': return 'QR code scanning is only available on the mobile version of the app.';
+			case 'qrSettings.subtitle': return 'Sync between devices with a QR code';
+			case 'qrSettings.description': return 'You can export and import your data and settings with QR code to another device.';
+			case 'qrSettings.alert': return 'Importing will overwrite all current settings and lists.';
+			case 'qrSettings.scan': return 'Scan';
+			case 'qrSettings.generate': return 'Generate';
+			case 'qrSettings.generating': return 'Generating QR Code...';
+			case 'qrSettings.generated': return 'QR Code Generated';
 			case 'languageSettings.selectLanguage': return 'Select Language';
 			case 'languageSettings.en': return 'English';
 			case 'languageSettings.ar': return 'العربية';

@@ -88,9 +88,9 @@ class _BooksApiClient implements BooksApiClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<BooksSearchResponse> searchBooks(String query, String apiKey) async {
+  Future<BooksSearchResponse> searchBooks(String query) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'q': query, r'key': apiKey};
+    final queryParameters = <String, dynamic>{r'q': query};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<BooksSearchResponse>(
@@ -115,9 +115,9 @@ class _BooksApiClient implements BooksApiClient {
   }
 
   @override
-  Future<BookDetailsResponse> getBookDetails(String id, String apiKey) async {
+  Future<BookDetailsResponse> getBookDetails(String id) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'key': apiKey};
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<BookDetailsResponse>(
@@ -184,15 +184,13 @@ class _GamesApiClient implements GamesApiClient {
 
   @override
   Future<GamesSearchResponse> searchGames(
-    String query,
-    String apiKey, {
+    String query, {
     int page = 1,
     int pageSize = 20,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'search': query,
-      r'key': apiKey,
       r'page': page,
       r'page_size': pageSize,
     };
@@ -220,9 +218,9 @@ class _GamesApiClient implements GamesApiClient {
   }
 
   @override
-  Future<GameDetailsResponse> getGameDetails(int id, String apiKey) async {
+  Future<GameDetailsResponse> getGameDetails(int id) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'key': apiKey};
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<GameDetailsResponse>(
@@ -289,16 +287,11 @@ class _TmdbApiClient implements TmdbApiClient {
 
   @override
   Future<MoviesSearchResponse> searchMovies(
-    String query,
-    String apiKey, {
+    String query, {
     int page = 1,
   }) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'query': query,
-      r'api_key': apiKey,
-      r'page': page,
-    };
+    final queryParameters = <String, dynamic>{r'query': query, r'page': page};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MoviesSearchResponse>(
@@ -324,13 +317,11 @@ class _TmdbApiClient implements TmdbApiClient {
 
   @override
   Future<MovieDetailsResponse> getMovieDetails(
-    int id,
-    String apiKey, {
+    int id, {
     String appendToResponse = 'images',
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'api_key': apiKey,
       r'append_to_response': appendToResponse,
     };
     final _headers = <String, dynamic>{};
@@ -357,17 +348,9 @@ class _TmdbApiClient implements TmdbApiClient {
   }
 
   @override
-  Future<TvSearchResponse> searchTVSeries(
-    String query,
-    String apiKey, {
-    int page = 1,
-  }) async {
+  Future<TvSearchResponse> searchTVSeries(String query, {int page = 1}) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'query': query,
-      r'api_key': apiKey,
-      r'page': page,
-    };
+    final queryParameters = <String, dynamic>{r'query': query, r'page': page};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<TvSearchResponse>(
@@ -393,13 +376,11 @@ class _TmdbApiClient implements TmdbApiClient {
 
   @override
   Future<TvDetailsResponse> getTVSeriesDetails(
-    int id,
-    String apiKey, {
+    int id, {
     String appendToResponse = 'images',
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'api_key': apiKey,
       r'append_to_response': appendToResponse,
     };
     final _headers = <String, dynamic>{};

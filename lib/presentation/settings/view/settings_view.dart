@@ -37,7 +37,6 @@ class _SettingsViewState extends State<SettingsView> {
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        toolbarHeight: 50,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(30),
@@ -98,6 +97,15 @@ class _SettingsViewState extends State<SettingsView> {
                         );
                       },
                     ),
+                    const SizedBox(height: AppSize.s12),
+                    _buildSettingCard(
+                      context,
+                      title: t.qrSettings.title,
+                      subtitle: t.qrSettings.subtitle,
+                      icon: Icons.qr_code_2_rounded,
+                      onTap: () => _showQrDialog(context),
+                    ),
+
                     const SizedBox(height: AppSize.s12),
                     _buildSettingCard(
                       context,
@@ -448,6 +456,112 @@ class _SettingsViewState extends State<SettingsView> {
         return code;
     }
   }
+}
+
+void _showQrDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(t.qrSettings.title),
+      actionsOverflowDirection: VerticalDirection.up,
+      actionsOverflowButtonSpacing: 8,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(t.qrSettings.description),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.errorContainer,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.warning_rounded,
+                  color: Theme.of(context).colorScheme.onErrorContainer,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    t.qrSettings.alert,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onErrorContainer,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        SizedBox(
+          width: double.infinity,
+          child: TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(t.errorHandler.cancel),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                icon: Icon(
+                  Icons.qr_code_scanner_rounded,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                label: Text(
+                  t.qrSettings.scan,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, RoutesManager.qrImportRoute);
+                },
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                icon: Icon(
+                  Icons.qr_code_rounded,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                label: Text(
+                  t.qrSettings.generate,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, RoutesManager.qrExportRoute);
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 }
 
 class FontSelectionDialog extends StatefulWidget {

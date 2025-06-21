@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:noted/app/constants.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
@@ -21,61 +20,38 @@ class DetailsView extends StatefulWidget {
 class DetailsViewState extends State<DetailsView> {
   final DetailsViewModel _viewModel = instance<DetailsViewModel>();
   late PageController _pageController;
-  int currentPage = 0;
-
-  void _bind() {
-    _viewModel.start();
-    _viewModel.loadItemDetails(widget.id, widget.category);
-  }
+  late final ValueNotifier<int> _currentPageNotifier;
 
   @override
   void initState() {
     super.initState();
-    _bind();
-    _pageController = PageController();
-    _pageController.addListener(_onPageChanged);
-  }
+    _viewModel.start();
+    _viewModel.loadItemDetails(widget.id, widget.category);
 
-  void _onPageChanged() {
-    if (_pageController.hasClients && _pageController.page != null) {
-      if (mounted) {
-        setState(() {
-          currentPage = _pageController.page!.round();
-        });
+    _pageController = PageController();
+    _currentPageNotifier = ValueNotifier<int>(0);
+
+    _pageController.addListener(() {
+      if (_pageController.hasClients && _pageController.page != null) {
+        _currentPageNotifier.value = _pageController.page!.round();
       }
-    }
+    });
   }
 
   @override
   void dispose() {
-    _pageController.removeListener(_onPageChanged);
     _pageController.dispose();
+    _currentPageNotifier.dispose();
     _viewModel.dispose();
     super.dispose();
   }
 
-  Widget _buildIndicator(BuildContext context, int imageIndex) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      margin: const EdgeInsets.symmetric(horizontal: AppPadding.p4),
-      width: currentPage == imageIndex ? 20.0 : 10.0,
-      height: 8.0,
-      decoration: BoxDecoration(
-        color: currentPage == imageIndex
-            ? Theme.of(context).colorScheme.primary
-            : Colors.grey.shade400,
-        borderRadius: BorderRadius.circular(10),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-
+      backgroundColor: theme.colorScheme.primaryContainer,
       appBar: AppBar(
-        toolbarHeight: 50,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(30),
@@ -84,58 +60,14 @@ class DetailsViewState extends State<DetailsView> {
         ),
         title: Text(
           t.details.title,
-          style: TextStyle(
-            fontSize: 23,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
+          style: theme.appBarTheme.titleTextStyle?.copyWith(fontSize: 23),
         ),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(AppSize.s20),
-          ),
-        ),
-        child: StateFlowHandler(
-          stream: _viewModel.outputState,
-          retryAction: () {
-            _viewModel.loadItemDetails(widget.id, widget.category);
-          },
-          contentBuilder: (context) => _getContentWidget(),
-        ),
-      ),
-    );
-  }
-
-  Widget buildInfoCard(BuildContext context, String title, String content) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppPadding.p16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppSize.s12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: AppSize.s18,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          const SizedBox(height: AppSize.s8),
-          Text(
-            content,
-            style: TextStyle(
-              fontSize: AppSize.s16,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-        ],
+      body: StateFlowHandler(
+        stream: _viewModel.outputState,
+        retryAction: () =>
+            _viewModel.loadItemDetails(widget.id, widget.category),
+        contentBuilder: (context) => _getContentWidget(),
       ),
     );
   }
@@ -145,24 +77,10 @@ class DetailsViewState extends State<DetailsView> {
       child: StreamBuilder<Details>(
         stream: _viewModel.outputItemDetails,
         builder: (context, snapshot) {
-          if (!snapshot.hasData || snapshot.data == null) {
+          if (!snapshot.hasData) {
             return const Center(child: Text('No details available'));
           }
           final details = snapshot.data!;
-
-          if (details.imageUrls.isNotEmpty &&
-              currentPage >= details.imageUrls.length) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted && _pageController.hasClients) {
-                setState(() {
-                  currentPage = 0;
-                });
-                _pageController.jumpToPage(0);
-              }
-            });
-          } else if (details.imageUrls.isEmpty) {
-            currentPage = 0;
-          }
 
           return Padding(
             padding: const EdgeInsets.all(AppPadding.p16),
@@ -176,62 +94,50 @@ class DetailsViewState extends State<DetailsView> {
                 const SizedBox(height: AppSize.s16),
                 Text(
                   details.title,
-                  style: const TextStyle(
-                    fontSize: AppSize.s24,
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ).animate(delay: 200.ms).fadeIn(duration: 400.ms),
                 const SizedBox(height: AppSize.s8),
                 Text(
                   details.category.localizedCategory(),
-                  style: TextStyle(
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ).animate(delay: 300.ms).fadeIn(duration: 400.ms),
-                if (details.description != null &&
-                    details.description!.isNotEmpty) ...[
-                  const SizedBox(height: AppSize.s8),
-                  buildInfoCard(
-                    context,
-                    t.details.description,
-                    details.description ?? Constants.empty,
+                if (details.description?.isNotEmpty ?? false) ...[
+                  const SizedBox(height: AppSize.s16),
+                  InfoCard(
+                    title: t.details.description,
+                    content: details.description!,
                   ).animate(delay: 400.ms).fadeIn(duration: 400.ms),
                 ],
-                if (details.platforms != null &&
-                    details.platforms!.isNotEmpty) ...[
+                if (details.platforms?.isNotEmpty ?? false) ...[
                   const SizedBox(height: AppSize.s16),
-                  buildInfoCard(
-                    context,
-                    t.details.platforms,
-                    details.platforms?.join(', ') ?? Constants.empty,
+                  InfoCard(
+                    title: t.details.platforms,
+                    content: details.platforms!.join(', '),
                   ).animate(delay: 500.ms).fadeIn(duration: 400.ms),
                 ],
-                if (details.releaseDate != null &&
-                    details.releaseDate!.isNotEmpty) ...[
+                if (details.releaseDate?.isNotEmpty ?? false) ...[
                   const SizedBox(height: AppSize.s16),
-                  buildInfoCard(
-                    context,
-                    t.details.releaseDate,
-                    details.releaseDate ?? Constants.empty,
+                  InfoCard(
+                    title: t.details.releaseDate,
+                    content: details.releaseDate!,
                   ).animate(delay: 600.ms).fadeIn(duration: 400.ms),
                 ],
-
                 if (details.rating != null) ...[
                   const SizedBox(height: AppSize.s16),
-                  buildInfoCard(
-                    context,
-                    t.details.rating,
-                    details.rating.toString(),
+                  InfoCard(
+                    title: t.details.rating,
+                    content: details.rating.toString(),
                   ).animate(delay: 700.ms).fadeIn(duration: 400.ms),
                 ],
-
-                if (details.publisher != null &&
-                    details.publisher!.isNotEmpty) ...[
+                if (details.publisher?.isNotEmpty ?? false) ...[
                   const SizedBox(height: AppSize.s16),
-                  buildInfoCard(
-                    context,
-                    getPublisherLabel(details.category),
-                    details.publisher ?? Constants.empty,
+                  InfoCard(
+                    title: getPublisherLabel(details.category),
+                    content: details.publisher!,
                   ).animate(delay: 800.ms).fadeIn(duration: 400.ms),
                 ],
               ],
@@ -257,29 +163,27 @@ class DetailsViewState extends State<DetailsView> {
   }
 
   Widget _buildImageGallery(List<String> imageUrls) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final double galleryHeight = AppSize.s200;
+    final theme = Theme.of(context);
+    final deviceWidth = MediaQuery.of(context).size.width;
 
     if (imageUrls.isEmpty) {
       return Container(
-        height: galleryHeight,
+        height: AppSize.s200,
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(
-            screenWidth > 600 ? AppSize.s20 : AppSize.s12,
-          ),
+          color: theme.colorScheme.secondary.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(AppSize.s12),
         ),
         child: Icon(
           Icons.image_not_supported_outlined,
-          size: screenWidth > 600 ? AppSize.s80 : AppSize.s50,
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+          size: AppSize.s50,
+          color: theme.colorScheme.primary.withValues(alpha: 0.7),
         ),
       );
     }
 
     return SizedBox(
-      height: galleryHeight,
+      height: AppSize.s200,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -288,18 +192,12 @@ class DetailsViewState extends State<DetailsView> {
             itemCount: imageUrls.length,
             itemBuilder: (context, index) {
               return Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: screenWidth > 600
-                      ? AppPadding.p16
-                      : AppPadding.p8,
-                ),
+                margin: const EdgeInsets.symmetric(horizontal: AppPadding.p8),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(
-                    screenWidth > 600 ? AppSize.s20 : AppSize.s12,
-                  ),
+                  borderRadius: BorderRadius.circular(AppSize.s12),
                   child: Image.network(
                     imageUrls[index],
-                    fit: BoxFit.contain,
+                    fit: deviceWidth > 500 ? BoxFit.contain : BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
                       return Center(
@@ -313,15 +211,15 @@ class DetailsViewState extends State<DetailsView> {
                     },
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.secondary.withValues(alpha: 0.1),
+                        color: theme.colorScheme.secondary.withValues(
+                          alpha: 0.1,
+                        ),
                         child: Icon(
                           Icons.broken_image_outlined,
                           size: AppSize.s50,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.primary.withValues(alpha: 0.7),
+                          color: theme.colorScheme.primary.withValues(
+                            alpha: 0.7,
+                          ),
                         ),
                       );
                     },
@@ -330,47 +228,157 @@ class DetailsViewState extends State<DetailsView> {
               );
             },
           ),
-
-          // Page indicators
           if (imageUrls.length > 1)
             Positioned(
               bottom: AppPadding.p8,
-              left: 0,
-              right: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: () {
-                  const int maxVisibleIndicators = 5;
-                  final int totalImages = imageUrls.length;
-                  List<Widget> indicators = [];
-
-                  if (totalImages <= maxVisibleIndicators) {
-                    for (int i = 0; i < totalImages; i++) {
-                      indicators.add(_buildIndicator(context, i));
-                    }
-                  } else {
-                    int start = currentPage - (maxVisibleIndicators ~/ 2);
-                    int end = start + maxVisibleIndicators - 1;
-
-                    if (start < 0) {
-                      start = 0;
-                      end = maxVisibleIndicators - 1;
-                    } else if (end >= totalImages) {
-                      end = totalImages - 1;
-                      start = end - maxVisibleIndicators + 1;
-                    }
-
-                    for (int i = start; i <= end; i++) {
-                      if (i >= 0 && i < totalImages) {
-                        indicators.add(_buildIndicator(context, i));
-                      }
-                    }
-                  }
-                  return indicators;
-                }(),
+              child: ImageGalleryIndicator(
+                pageController: _pageController,
+                pageNotifier: _currentPageNotifier,
+                imageCount: imageUrls.length,
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class InfoCard extends StatelessWidget {
+  final String title;
+  final String content;
+
+  const InfoCard({super.key, required this.title, required this.content});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppPadding.p16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppSize.s12),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.shadow.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          const SizedBox(height: AppSize.s8),
+          Text(content, style: theme.textTheme.bodyLarge),
+        ],
+      ),
+    );
+  }
+}
+
+class ImageGalleryIndicator extends StatelessWidget {
+  final PageController pageController;
+  final ValueNotifier<int> pageNotifier;
+  final int imageCount;
+
+  const ImageGalleryIndicator({
+    super.key,
+    required this.pageController,
+    required this.pageNotifier,
+    required this.imageCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (imageCount <= 1) return const SizedBox.shrink();
+
+    return ValueListenableBuilder<int>(
+      valueListenable: pageNotifier,
+      builder: (context, currentPage, child) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: _buildSlidingDots(context, currentPage),
+        );
+      },
+    );
+  }
+
+  List<Widget> _buildSlidingDots(BuildContext context, int currentPage) {
+    List<Widget> dots = [];
+
+    int dotsToShow = imageCount >= 3 ? 3 : imageCount;
+
+    for (int i = 0; i < dotsToShow; i++) {
+      int dotIndex;
+      bool isActive = false;
+
+      if (imageCount <= 3) {
+        dotIndex = i;
+        isActive = (i == currentPage);
+      } else {
+        if (currentPage == 0) {
+          dotIndex = i;
+          isActive = (i == 0);
+        } else if (currentPage == imageCount - 1) {
+          dotIndex = imageCount - 3 + i;
+          isActive = (i == 2);
+        } else {
+          dotIndex = currentPage - 1 + i;
+          isActive = (i == 1);
+        }
+      }
+
+      dots.add(
+        Animate(
+          key: ValueKey(dotIndex),
+          effects: [
+            FadeEffect(
+              duration: const Duration(milliseconds: 500),
+              begin: dotIndex == currentPage ? 0.3 : 1.0,
+              end: dotIndex == currentPage ? 1.0 : 0.3,
+              curve: Curves.easeInOut,
+            ),
+            SlideEffect(
+              duration: const Duration(milliseconds: 500),
+              begin: dotIndex < currentPage
+                  ? const Offset(-0.3, 0)
+                  : const Offset(0.3, 0),
+              end: const Offset(0, 0),
+              curve: Curves.easeInOut,
+            ),
+          ],
+          child: _buildDot(context, isActive),
+        ),
+      );
+
+      // Add spacing between dots
+      if (i < dotsToShow - 1) {
+        dots.add(const SizedBox(width: 8));
+      }
+    }
+
+    return dots;
+  }
+
+  Widget _buildDot(BuildContext context, bool isActive) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      width: isActive ? 20.0 : 8.0,
+      height: 8.0,
+      decoration: BoxDecoration(
+        color: isActive
+            ? Theme.of(context).colorScheme.primary
+            : Colors.white.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(10),
       ),
     );
   }

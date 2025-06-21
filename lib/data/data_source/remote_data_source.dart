@@ -43,7 +43,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (apiKey.isEmpty) {
       apiKey = ApiKeys.defaultTmdb;
     }
-    return await _tmdbApiClient.searchMovies(query, apiKey);
+    return await _tmdbApiClient.searchMovies(query);
   }
 
   @override
@@ -52,7 +52,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (apiKey.isEmpty) {
       apiKey = ApiKeys.defaultTmdb;
     }
-    return await _tmdbApiClient.getMovieDetails(id, apiKey);
+    return await _tmdbApiClient.getMovieDetails(id);
   }
 
   @override
@@ -61,7 +61,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (apiKey.isEmpty) {
       apiKey = ApiKeys.defaultTmdb;
     }
-    return await _tmdbApiClient.searchTVSeries(query, apiKey);
+    return await _tmdbApiClient.searchTVSeries(query);
   }
 
   @override
@@ -70,7 +70,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (apiKey.isEmpty) {
       apiKey = ApiKeys.defaultTmdb;
     }
-    return await _tmdbApiClient.getTVSeriesDetails(id, apiKey);
+    return await _tmdbApiClient.getTVSeriesDetails(id);
   }
 
   @override
@@ -79,7 +79,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (apiKey.isEmpty) {
       apiKey = ApiKeys.defaultGoogleBooks;
     }
-    return await _booksApiClient.searchBooks(query, apiKey);
+    return await _booksApiClient.searchBooks(query);
   }
 
   @override
@@ -88,7 +88,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (apiKey.isEmpty) {
       apiKey = ApiKeys.defaultGoogleBooks;
     }
-    return await _booksApiClient.getBookDetails(id, apiKey);
+    return await _booksApiClient.getBookDetails(id);
   }
 
   @override
@@ -97,7 +97,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (apiKey.isEmpty) {
       apiKey = ApiKeys.defaultRawg;
     }
-    return await _gamesApiClient.searchGames(query, apiKey);
+    return await _gamesApiClient.searchGames(query);
   }
 
   @override
@@ -106,6 +106,6 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (apiKey.isEmpty) {
       apiKey = ApiKeys.defaultRawg;
     }
-    return await _gamesApiClient.getGameDetails(id, apiKey);
+    return await _gamesApiClient.getGameDetails(id);
   }
 }

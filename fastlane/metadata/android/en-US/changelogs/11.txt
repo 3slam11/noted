@@ -1,0 +1,2 @@
+- Added QR code and scanner to easily transfer data and settings between devices
+- Miscellaneous fixes and tweaks all around the app

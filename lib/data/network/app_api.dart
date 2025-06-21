@@ -18,16 +18,10 @@ abstract class BooksApiClient {
   factory BooksApiClient(Dio dio, {String baseUrl}) = _BooksApiClient;
 
   @GET('/volumes')
-  Future<BooksSearchResponse> searchBooks(
-    @Query('q') String query,
-    @Query('key') String apiKey,
-  );
+  Future<BooksSearchResponse> searchBooks(@Query('q') String query);
 
   @GET('/volumes/{id}')
-  Future<BookDetailsResponse> getBookDetails(
-    @Path('id') String id,
-    @Query('key') String apiKey,
-  );
+  Future<BookDetailsResponse> getBookDetails(@Path('id') String id);
 }
 
 // games API Client
@@ -37,17 +31,13 @@ abstract class GamesApiClient {
 
   @GET('/games')
   Future<GamesSearchResponse> searchGames(
-    @Query('search') String query,
-    @Query('key') String apiKey, {
+    @Query('search') String query, {
     @Query('page') int page = 1,
     @Query('page_size') int pageSize = 20,
   });
 
   @GET('/games/{id}')
-  Future<GameDetailsResponse> getGameDetails(
-    @Path('id') int id,
-    @Query('key') String apiKey,
-  );
+  Future<GameDetailsResponse> getGameDetails(@Path('id') int id);
 }
 
 // movies & TV Series API Client
@@ -58,30 +48,26 @@ abstract class TmdbApiClient {
   // movies
   @GET('/search/movie')
   Future<MoviesSearchResponse> searchMovies(
-    @Query('query') String query,
-    @Query('api_key') String apiKey, {
+    @Query('query') String query, {
     @Query('page') int page = 1,
   });
 
   @GET('/movie/{id}')
   Future<MovieDetailsResponse> getMovieDetails(
-    @Path('id') int id,
-    @Query('api_key') String apiKey, {
+    @Path('id') int id, {
     @Query('append_to_response') String appendToResponse = 'images',
   });
 
   // TV Series
   @GET('/search/tv')
   Future<TvSearchResponse> searchTVSeries(
-    @Query('query') String query,
-    @Query('api_key') String apiKey, {
+    @Query('query') String query, {
     @Query('page') int page = 1,
   });
 
   @GET('/tv/{id}')
   Future<TvDetailsResponse> getTVSeriesDetails(
-    @Path('id') int id,
-    @Query('api_key') String apiKey, {
+    @Path('id') int id, {
     @Query('append_to_response') String appendToResponse = 'images',
   });
 }
