@@ -1,7 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
@@ -54,83 +53,62 @@ class _SettingsViewState extends State<SettingsView> {
       body: Padding(
         padding: const EdgeInsets.all(AppPadding.p16),
         child: ListView(
-          children:
-              [
-                    _buildLanguageSettings(context),
-                    const SizedBox(height: AppSize.s12),
-                    _buildThemeSettings(context),
-                    const SizedBox(height: AppSize.s12),
-                    _buildFontSettings(context),
-                    const SizedBox(height: AppSize.s12),
-                    _buildSettingCard(
-                      context,
-                      title: t.settings.history,
-                      icon: Icons.history,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          RoutesManager.historyRoute,
-                        );
-                      },
-                    ),
-                    const SizedBox(height: AppSize.s12),
-                    _buildSettingCard(
-                      context,
-                      title: t.settings.apiChange,
-                      icon: Icons.api,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          RoutesManager.changeApiRoute,
-                        );
-                      },
-                    ),
-                    const SizedBox(height: AppSize.s12),
-                    _buildSettingCard(
-                      context,
-                      title: t.settings.backupAndRestore,
-                      icon: Icons.backup,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          RoutesManager.backupAndRestoreRoute,
-                        );
-                      },
-                    ),
-                    const SizedBox(height: AppSize.s12),
-                    _buildSettingCard(
-                      context,
-                      title: t.qrSettings.title,
-                      subtitle: t.qrSettings.subtitle,
-                      icon: Icons.qr_code_2_rounded,
-                      onTap: () => _showQrDialog(context),
-                    ),
+          children: [
+            _buildLanguageSettings(context),
+            const SizedBox(height: AppSize.s12),
+            _buildThemeSettings(context),
+            const SizedBox(height: AppSize.s12),
+            _buildFontSettings(context),
+            const SizedBox(height: AppSize.s12),
+            _buildSettingCard(
+              context,
+              title: t.settings.history,
+              icon: Icons.history,
+              onTap: () {
+                Navigator.pushNamed(context, RoutesManager.historyRoute);
+              },
+            ),
+            const SizedBox(height: AppSize.s12),
+            _buildSettingCard(
+              context,
+              title: t.settings.apiChange,
+              icon: Icons.api,
+              onTap: () {
+                Navigator.pushNamed(context, RoutesManager.changeApiRoute);
+              },
+            ),
+            const SizedBox(height: AppSize.s12),
+            _buildSettingCard(
+              context,
+              title: t.settings.backupAndRestore,
+              icon: Icons.backup,
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  RoutesManager.backupAndRestoreRoute,
+                );
+              },
+            ),
 
-                    const SizedBox(height: AppSize.s12),
-                    _buildSettingCard(
-                      context,
-                      title: t.settings.statistics,
-                      icon: Icons.bar_chart,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          RoutesManager.statisticsRoute,
-                        );
-                      },
-                    ),
-                    const SizedBox(height: AppSize.s12),
-                    _buildSettingCard(
-                      context,
-                      title: t.settings.about,
-                      icon: Icons.info_outline,
-                      onTap: () {
-                        Navigator.pushNamed(context, RoutesManager.aboutRoute);
-                      },
-                    ),
-                  ]
-                  .animate(interval: 100.ms)
-                  .fadeIn(duration: 300.ms)
-                  .slideX(begin: -0.1),
+            const SizedBox(height: AppSize.s12),
+            _buildSettingCard(
+              context,
+              title: t.settings.statistics,
+              icon: Icons.bar_chart,
+              onTap: () {
+                Navigator.pushNamed(context, RoutesManager.statisticsRoute);
+              },
+            ),
+            const SizedBox(height: AppSize.s12),
+            _buildSettingCard(
+              context,
+              title: t.settings.about,
+              icon: Icons.info_outline,
+              onTap: () {
+                Navigator.pushNamed(context, RoutesManager.aboutRoute);
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -456,112 +434,6 @@ class _SettingsViewState extends State<SettingsView> {
         return code;
     }
   }
-}
-
-void _showQrDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(t.qrSettings.title),
-      actionsOverflowDirection: VerticalDirection.up,
-      actionsOverflowButtonSpacing: 8,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(t.qrSettings.description),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.errorContainer,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.warning_rounded,
-                  color: Theme.of(context).colorScheme.onErrorContainer,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    t.qrSettings.alert,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onErrorContainer,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      actions: [
-        SizedBox(
-          width: double.infinity,
-          child: TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(t.errorHandler.cancel),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Expanded(
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                icon: Icon(
-                  Icons.qr_code_scanner_rounded,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                label: Text(
-                  t.qrSettings.scan,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, RoutesManager.qrImportRoute);
-                },
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                icon: Icon(
-                  Icons.qr_code_rounded,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                label: Text(
-                  t.qrSettings.generate,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, RoutesManager.qrExportRoute);
-                },
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
 }
 
 class FontSelectionDialog extends StatefulWidget {

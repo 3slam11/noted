@@ -290,60 +290,63 @@ class TodoSectionWidget extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (screenWidth < 500)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        t.home.titleSection,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Theme.of(context).colorScheme.onSurface,
+                if (screenWidth < 600)
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          t.home.titleSection,
+                          style: TextStyle(
+                            fontSize: 25,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                         ),
-                      ),
-
-                      const SizedBox(height: 5),
-                      Text(
-                        t.months[DateTime.now().month - 1],
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          shadows: List.generate(
-                            4,
-                            (i) => Shadow(
-                              blurRadius: 50,
-                              color: Theme.of(context).colorScheme.primary,
+                        const SizedBox(height: 5),
+                        Text(
+                          t.months[DateTime.now().month - 1],
+                          style: TextStyle(
+                            fontSize: 25,
+                            color: Theme.of(context).colorScheme.onSurface,
+                            shadows: List.generate(
+                              4,
+                              (i) => Shadow(
+                                blurRadius: 50,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   )
                 else
-                  Row(
-                    children: [
-                      Text(
-                        t.home.titleSection,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Theme.of(context).colorScheme.onSurface,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Text(
+                          t.home.titleSection,
+                          style: TextStyle(
+                            fontSize: 25,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                         ),
-                      ),
-                      Text(
-                        t.months[DateTime.now().month - 1],
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          shadows: List.generate(
-                            4,
-                            (i) => Shadow(
-                              blurRadius: 40,
-                              color: Theme.of(context).colorScheme.primary,
+                        Text(
+                          t.months[DateTime.now().month - 1],
+                          style: TextStyle(
+                            fontSize: 25,
+                            color: Theme.of(context).colorScheme.onSurface,
+                            shadows: List.generate(
+                              4,
+                              (i) => Shadow(
+                                blurRadius: 40,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ElevatedButton(
                       style: ElevatedButton.styleFrom(

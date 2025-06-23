@@ -1,0 +1,2 @@
+- Removed QR code for now as it was using Google dependencies
+- Fixed Font size problem

@@ -88,14 +88,10 @@ ThemeData getApplicationTheme(
 }) {
   final baseTheme = FlexThemeData.light(
     scheme: scheme,
-    surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
-    blendLevel: 7,
     subThemesData: const FlexSubThemesData(
-      blendOnLevel: 10,
-      blendOnColors: false,
       elevatedButtonSchemeColor: SchemeColor.primary,
       elevatedButtonSecondarySchemeColor: SchemeColor.primaryContainer,
-      cardElevation: AppSize.s4,
+      cardElevation: AppSize.s0,
       inputDecoratorBorderType: FlexInputBorderType.outline,
       inputDecoratorUnfocusedBorderIsColored: false,
       inputDecoratorRadius: AppSize.s8,
@@ -126,17 +122,27 @@ ThemeData getApplicationTheme(
     cardTheme: baseTheme.cardTheme.copyWith(
       color: baseTheme.colorScheme.primaryContainer,
       shadowColor: baseTheme.colorScheme.shadow,
-      elevation: AppSize.s4,
+      margin: EdgeInsets.zero,
+      elevation: AppSize.s0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     ),
 
     // app bar theme
     appBarTheme: baseTheme.appBarTheme.copyWith(
       color: baseTheme.colorScheme.primary,
-      elevation: AppSize.s4,
+      elevation: AppSize.s0,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(AppSize.s30),
+          bottomRight: Radius.circular(AppSize.s30),
+        ),
+      ),
       titleTextStyle: getRegularStyle(
-        fontSize: FontSize.s16,
+        fontSize: FontSize.s22,
         color: baseTheme.colorScheme.onPrimary,
       ).copyWith(fontFamily: fontFamily),
+      iconTheme: IconThemeData(color: baseTheme.colorScheme.onPrimary),
+      actionsIconTheme: IconThemeData(color: baseTheme.colorScheme.onPrimary),
     ),
 
     // elevatedButtonTheme:
@@ -147,8 +153,9 @@ ThemeData getApplicationTheme(
           color: baseTheme.colorScheme.onPrimary,
         ).copyWith(fontFamily: fontFamily),
         backgroundColor: baseTheme.colorScheme.primary,
+        foregroundColor: baseTheme.colorScheme.onPrimary,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSize.s12),
+          borderRadius: BorderRadius.circular(AppSize.s8),
         ),
       ),
     ),
@@ -207,6 +214,30 @@ ThemeData getApplicationTheme(
         ),
         borderRadius: const BorderRadius.all(Radius.circular(AppSize.s8)),
       ),
+    ),
+
+    // icon theme
+    iconTheme: baseTheme.iconTheme.copyWith(
+      color: baseTheme.colorScheme.primary,
+    ),
+
+    // divider theme
+    dividerTheme: baseTheme.dividerTheme.copyWith(
+      color: baseTheme.colorScheme.primary,
+      thickness: AppSize.s1,
+      indent: AppSize.s20,
+      endIndent: AppSize.s20,
+    ),
+
+    // chip theme
+    chipTheme: baseTheme.chipTheme.copyWith(
+      backgroundColor: baseTheme.colorScheme.primaryContainer,
+      side: BorderSide(
+        width: AppSize.s0,
+        color: baseTheme.colorScheme.primaryContainer,
+      ),
+      elevation: AppSize.s0,
+      selectedColor: baseTheme.colorScheme.primary,
     ),
   );
 }

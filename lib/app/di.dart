@@ -18,7 +18,6 @@ import 'package:noted/presentation/backupAndRestore/viewModel/backup_and_restore
 import 'package:noted/presentation/changeApi/viewModel/change_api_viewmodel.dart';
 import 'package:noted/presentation/history/viewModel/history_view_model.dart';
 import 'package:noted/presentation/main/viewModel/main_view_model.dart';
-import 'package:noted/presentation/qr-export/viewmodel/qr_export_viewmodel.dart';
 import 'package:noted/presentation/resources/theme_manager.dart';
 import 'package:noted/presentation/search/viewModel/search_viewmodel.dart';
 import 'package:noted/presentation/details/viewModel/details_viewmodel.dart';
@@ -141,20 +140,7 @@ void initChangeApiModule() {
 void initBackupAndRestoreModule() {
   if (!GetIt.I.isRegistered<BackupAndRestoreViewModel>()) {
     instance.registerFactory<BackupAndRestoreViewModel>(
-      () => BackupAndRestoreViewModel(
-        instance(),
-        instance(),
-        instance(),
-        instance(),
-      ),
-    );
-  }
-}
-
-void initQrExportModule() {
-  if (!GetIt.I.isRegistered<QrExportViewModel>()) {
-    instance.registerFactory<QrExportViewModel>(
-      () => QrExportViewModel(instance(), instance()),
+      () => BackupAndRestoreViewModel(instance(), instance()),
     );
   }
 }

@@ -267,7 +267,7 @@ class SearchViewState extends State<SearchView> {
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 500.ms).slideY(begin: -0.2, end: 0);
+    ).animate().fadeIn(duration: 500.ms).slideY(begin: -1, end: 0);
   }
 
   Widget _buildResultItem(SearchItem item) {
