@@ -49,6 +49,10 @@ Noted uses:
 ## Download  
 <p align="center">
   <a href='https://apt.izzysoft.de/packages/com.app.noted'>
-    <img src='https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png' width='150' alt='Get it on IzzyOnDroid'>
+    <img src='https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png' width='200' alt='Get it on IzzyOnDroid'>
+  </a>
+   
+  <a href='https://openapk.net/noted/com.app.noted/'>
+    <img src='https://www.openapk.net/images/openapk-badge.png' width='200' alt='Get it on OpenAPK'>
   </a>
 </p>
