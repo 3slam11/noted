@@ -6,6 +6,7 @@ import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/common/state_renderer/state_flow_handler.dart';
 import 'package:noted/presentation/details/view/details_view.dart';
 import 'package:noted/presentation/history/viewModel/history_view_model.dart';
+import 'package:noted/presentation/main/view/main_view.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
 
@@ -183,16 +184,14 @@ class HistoryViewState extends State<HistoryView> {
                             fontSize: AppSize.s16,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.7),
+                            ).colorScheme.onSurface.withAlpha(180),
                           ),
                         ),
                       ],
                     ),
                   ),
                   Divider(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.5),
+                    color: Theme.of(context).colorScheme.primary.withAlpha(128),
                     thickness: 1,
                     indent: AppPadding.p16,
                     endIndent: AppPadding.p16,
@@ -221,73 +220,132 @@ class HistoryViewState extends State<HistoryView> {
     );
   }
 
+  void _showItemActions(BuildContext context, Item item) {
+    showDialog(
+      context: context,
+      builder: (_) => ItemActionsDialog(
+        item: item,
+        currentList: ItemListType.history,
+        onMoveToTodo: () => _viewModel.moveToTodo(item),
+        onMoveToFinished: () => _viewModel.moveToFinished(item),
+        onDelete: () => _viewModel.deleteHistoryItem(item),
+      ),
+    );
+  }
+
   Widget _buildHistoryItemTile(BuildContext context, Item item) {
-    return Card(
-      elevation: AppSize.s0,
-      color: Theme.of(context).colorScheme.onPrimary,
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppPadding.p16,
-        vertical: AppPadding.p6,
+    final valueKey = 'history-item-${item.id}-${item.category?.name}';
+    return Dismissible(
+      key: ValueKey(valueKey),
+      direction: DismissDirection.startToEnd,
+      onDismissed: (direction) {
+        final index = _viewModel.deleteHistoryItemTemporarily(item);
+        if (index == null) return;
+
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
+              SnackBar(
+                content: Text("'${item.title ?? 'Item'}' ${t.home.deleted}."),
+                duration: const Duration(seconds: 3),
+                behavior: SnackBarBehavior.floating,
+                action: SnackBarAction(
+                  label: t.home.undo,
+                  onPressed: () =>
+                      _viewModel.undoDeleteHistoryItem(item, index),
+                ),
+              ),
+            )
+            .closed
+            .then((reason) {
+              if (reason != SnackBarClosedReason.action) {
+                _viewModel.confirmDeleteHistoryItem(item);
+              }
+            });
+      },
+      background: Container(
+        margin: const EdgeInsets.symmetric(
+          horizontal: AppPadding.p16,
+          vertical: AppPadding.p6,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(AppSize.s10),
+        ),
+        alignment: Directionality.of(context) == TextDirection.rtl
+            ? Alignment.centerRight
+            : Alignment.centerLeft,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: const Icon(Icons.delete, color: Colors.white, size: 24),
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSize.s10),
-      ),
-      child: ListTile(
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(AppSize.s8),
-          child: item.posterUrl != null && item.posterUrl!.isNotEmpty
-              ? Image.network(
-                  item.posterUrl!,
-                  width: 55,
-                  height: 80,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      _buildPlaceholderIcon(item.category, 55, 80),
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return SizedBox(
-                      width: 55,
-                      height: 80,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.0,
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                              : null,
+      child: Card(
+        elevation: AppSize.s0,
+        color: Theme.of(context).colorScheme.onPrimary,
+        margin: const EdgeInsets.symmetric(
+          horizontal: AppPadding.p16,
+          vertical: AppPadding.p6,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSize.s10),
+        ),
+        child: ListTile(
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(AppSize.s8),
+            child: item.posterUrl != null && item.posterUrl!.isNotEmpty
+                ? Image.network(
+                    item.posterUrl!,
+                    width: 55,
+                    height: 80,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        _buildPlaceholderIcon(item.category, 55, 80),
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return SizedBox(
+                        width: 55,
+                        height: 80,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.0,
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                )
-              : _buildPlaceholderIcon(item.category, 55, 80),
-        ),
-        title: Text(
-          item.title ?? '',
-          style: TextStyle(
-            fontSize: AppSize.s16,
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).colorScheme.onSurface,
+                      );
+                    },
+                  )
+                : _buildPlaceholderIcon(item.category, 55, 80),
           ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text(
-          item.category?.localizedCategory() ?? '',
-          style: TextStyle(
-            fontSize: AppSize.s12,
-            color: Theme.of(context).colorScheme.primary,
+          title: Text(
+            item.title ?? '',
+            style: TextStyle(
+              fontSize: AppSize.s16,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
+          subtitle: Text(
+            item.category?.localizedCategory() ?? '',
+            style: TextStyle(
+              fontSize: AppSize.s12,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          onTap: () {
+            if (item.id != null && item.category != null) {
+              Navigator.pushNamed(
+                context,
+                RoutesManager.detailsRoute,
+                arguments: DetailsView(id: item.id!, category: item.category!),
+              );
+            }
+          },
+          onLongPress: () => _showItemActions(context, item),
         ),
-        onTap: () {
-          if (item.id != null && item.category != null) {
-            Navigator.pushNamed(
-              context,
-              RoutesManager.detailsRoute,
-              arguments: DetailsView(id: item.id!, category: item.category!),
-            );
-          }
-        },
       ),
     );
   }
@@ -301,13 +359,13 @@ class HistoryViewState extends State<HistoryView> {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
+        color: Theme.of(context).colorScheme.secondary.withAlpha(25),
         borderRadius: BorderRadius.circular(AppSize.s8),
       ),
       child: Icon(
         _getIconForCategory(category),
         size: AppSize.s30,
-        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+        color: Theme.of(context).colorScheme.primary.withAlpha(180),
       ),
     );
   }
@@ -337,9 +395,7 @@ class HistoryViewState extends State<HistoryView> {
             Icon(
                   Icons.history_edu_outlined,
                   size: AppSize.s80,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.primary.withValues(alpha: 0.6),
+                  color: Theme.of(context).colorScheme.primary.withAlpha(150),
                 )
                 .animate()
                 .fadeIn(duration: 300.ms)
@@ -353,7 +409,7 @@ class HistoryViewState extends State<HistoryView> {
                     fontSize: AppSize.s18,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.7),
+                    ).colorScheme.onSurface.withAlpha(180),
                   ),
                   textAlign: TextAlign.center,
                 )

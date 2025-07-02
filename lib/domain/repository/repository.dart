@@ -21,4 +21,5 @@ abstract class Repository {
   Future<Either<Failure, void>> moveToHistory(Item item);
 
   Future<Either<Failure, List<Item>>> getHistory();
+  Future<Either<Failure, void>> deleteHistoryItem(Item item);
 }

@@ -1,6 +1,6 @@
 base_locale: en
-input_directory: assets/i18n
-input_file_pattern: .i18n.json
+input_directory: assets/loc
+input_file_pattern: .loc.json
 output_directory: lib/gen
 output_file_name: strings.g.dart
 locale_handling: true

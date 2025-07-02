@@ -26,22 +26,12 @@ class AboutView extends StatelessWidget {
           style: theme.appBarTheme.titleTextStyle?.copyWith(fontSize: 23),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: const Padding(
+        padding: EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _AboutAppCard()
-                  .animate()
-                  .fadeIn(duration: 400.ms)
-                  .slideY(begin: 0.2, end: 0),
-              const SizedBox(height: 16),
-              _ApisUsedCard()
-                  .animate()
-                  .fadeIn(duration: 400.ms, delay: 200.ms)
-                  .slideY(begin: 0.2, end: 0),
-            ],
+            children: [_AboutAppCard(), SizedBox(height: 16), _ApisUsedCard()],
           ),
         ),
       ),
@@ -49,8 +39,9 @@ class AboutView extends StatelessWidget {
   }
 }
 
-// Extracted into a separate, reusable widget for clarity.
 class _AboutAppCard extends StatelessWidget {
+  const _AboutAppCard();
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -75,61 +66,66 @@ class _AboutAppCard extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0);
   }
 }
 
-// Extracted into a separate, reusable widget.
 class _ApisUsedCard extends StatelessWidget {
+  const _ApisUsedCard();
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Card(
-      elevation: 0,
-      color: theme.colorScheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              t.about.apisUsed,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary,
-              ),
+          elevation: 0,
+          color: theme.colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  t.about.apisUsed,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _ApiInfo(
+                  title: t.home.games,
+                  description: t.about.gamesDescription,
+                ),
+                const SizedBox(height: 8),
+                _ApiInfo(
+                  title: t.about.moviesAndTvSeries,
+                  description: t.about.moviesAndTvSeriesDescription,
+                ),
+                const SizedBox(height: 8),
+                _ApiInfo(
+                  title: t.home.books,
+                  description: t.about.booksDescription,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  t.about.thanksMessage,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            _ApiInfo(
-              title: t.home.games,
-              description: t.about.gamesDescription,
-            ),
-            const SizedBox(height: 8),
-            _ApiInfo(
-              title: t.about.moviesAndTvSeries,
-              description: t.about.moviesAndTvSeriesDescription,
-            ),
-            const SizedBox(height: 8),
-            _ApiInfo(
-              title: t.home.books,
-              description: t.about.booksDescription,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              t.about.thanksMessage,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        )
+        .animate()
+        .fadeIn(duration: 400.ms, delay: 200.ms)
+        .slideY(begin: 0.2, end: 0);
   }
 }
 
-// Extracted into a separate, reusable widget.
 class _ApiInfo extends StatelessWidget {
   final String title;
   final String description;

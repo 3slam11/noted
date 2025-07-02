@@ -182,6 +182,11 @@ class TranslationsHomeEn {
 	String get timeWrong => 'Either you\'re a time traveler or you messed with your date settings! 🕰️';
 	String get timeWrongDescription => 'The app detected that your current date may be wrong. This could mess with your lists.';
 	String get continueAnyway => 'Continue';
+	String get itemActions => 'Item Actions';
+	String get moveToTodo => 'Move to todo';
+	String get moveToFinished => 'Move to finished';
+	String get moveToHistory => 'Move to history';
+	String get delete => 'Delete';
 }
 
 // Path: search
@@ -463,6 +468,11 @@ extension on Translations {
 			case 'home.timeWrong': return 'Either you\'re a time traveler or you messed with your date settings! 🕰️';
 			case 'home.timeWrongDescription': return 'The app detected that your current date may be wrong. This could mess with your lists.';
 			case 'home.continueAnyway': return 'Continue';
+			case 'home.itemActions': return 'Item Actions';
+			case 'home.moveToTodo': return 'Move to todo';
+			case 'home.moveToFinished': return 'Move to finished';
+			case 'home.moveToHistory': return 'Move to history';
+			case 'home.delete': return 'Delete';
 			case 'search.search': return 'Search';
 			case 'search.searchPlaceholder': return 'Search...';
 			case 'search.searchForSomething': return 'Search for anything';

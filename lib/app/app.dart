@@ -1,7 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:noted/app/app_prefs.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
@@ -15,7 +14,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final AppPrefs appPrefs = instance<AppPrefs>();
   final ThemeManager themeManager = instance<ThemeManager>();
 
   @override

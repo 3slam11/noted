@@ -11,4 +11,16 @@ class HistoryUsecase implements BaseUsecase<void, List<Item>> {
   Future<Either<Failure, List<Item>>> execute(void input) {
     return repository.getHistory();
   }
+
+  Future<Either<Failure, void>> deleteHistoryItem(Item item) {
+    return repository.deleteHistoryItem(item);
+  }
+
+  Future<Either<Failure, void>> moveToTodo(Item item) {
+    return repository.moveToTodo(item);
+  }
+
+  Future<Either<Failure, void>> moveToFinished(Item item) {
+    return repository.moveToFinished(item);
+  }
 }

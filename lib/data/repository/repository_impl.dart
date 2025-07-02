@@ -20,21 +20,35 @@ class RepositoryImpl implements Repository {
     this._networkInfo,
   );
 
+  Future<Either<Failure, T>> _executeNetworkCall<T>(
+    Future<T> Function() call,
+  ) async {
+    if (!await _networkInfo.isConnected) {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+    try {
+      final result = await call();
+      return Right(result);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
   // Home data methods
   @override
   Future<Either<Failure, MainObject>> getHome() async {
     try {
-      final (todos, finished) = await Future.wait([
+      final results = await Future.wait([
         _localDataSource.getTodo(),
         _localDataSource.getFinished(),
-      ]).then((results) => (results[0], results[1]));
+      ]);
 
-      final taskData = TaskData(
-        todos.map((response) => response.toDomain()).toList(),
-        finished.map((response) => response.toDomain()).toList(),
-      );
+      final todos = results[0].map((response) => response.toDomain()).toList();
+      final finished = results[1]
+          .map((response) => response.toDomain())
+          .toList();
 
-      return Right(MainObject(taskData));
+      return Right(MainObject(TaskData(todos, finished)));
     } catch (error) {
       return Left(_createCacheFailure("Failed to load list data", error));
     }
@@ -45,120 +59,91 @@ class RepositoryImpl implements Repository {
   Future<Either<Failure, SearchResults>> searchItems(
     String query,
     Category category,
-  ) async {
-    if (!await _networkInfo.isConnected) {
-      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
-    }
-
-    try {
-      final items = await _searchByCategory(query, category);
-      return Right(SearchResults(items: items));
-    } catch (error) {
-      return Left(ErrorHandler.handle(error).failure);
-    }
+  ) {
+    return _executeNetworkCall(() async {
+      final response = await _searchByCategory(query, category);
+      return SearchResults(items: response);
+    });
   }
 
   Future<List<SearchItem>> _searchByCategory(
     String query,
     Category category,
   ) async {
-    switch (category) {
-      case Category.movies:
-        return _searchMovies(query);
-      case Category.series:
-        return _searchTVSeries(query);
-      case Category.books:
-        return _searchBooks(query);
-      case Category.games:
-        return _searchGames(query);
-      case Category.all:
-        throw UnimplementedError('Search all categories not supported');
-    }
-  }
+    final response = switch (category) {
+      Category.movies => await _remoteDataSource.searchMovies(query),
+      Category.series => await _remoteDataSource.searchTVSeries(query),
+      Category.books => await _remoteDataSource.searchBooks(query),
+      Category.games => await _remoteDataSource.searchGames(query),
+      Category.all => throw UnsupportedError(
+        'Search for "All" category is not implemented.',
+      ),
+    };
 
-  Future<List<SearchItem>> _searchMovies(String query) async {
-    final response = await _remoteDataSource.searchMovies(query);
-    return response.results
-            ?.map(
-              (movie) => SearchItem(
-                id: movie.id.toString(),
-                title: movie.title ?? '',
-                imageUrl: movie.posterUrl,
-                releaseDate: movie.releaseDate,
-                category: Category.movies,
-              ),
-            )
-            .toList() ??
-        [];
-  }
-
-  Future<List<SearchItem>> _searchTVSeries(String query) async {
-    final response = await _remoteDataSource.searchTVSeries(query);
-    return response.results
-            ?.map(
-              (tv) => SearchItem(
-                id: tv.id.toString(),
-                title: tv.title ?? '',
-                imageUrl: tv.posterUrl,
-                releaseDate: tv.releaseDate,
-                category: Category.series,
-              ),
-            )
-            .toList() ??
-        [];
-  }
-
-  Future<List<SearchItem>> _searchBooks(String query) async {
-    final response = await _remoteDataSource.searchBooks(query);
-    return response.results
-            ?.map(
-              (book) => SearchItem(
-                id: book.id ?? '',
-                title: book.title ?? '',
-                imageUrl: book.posterUrl,
-                releaseDate: book.releaseDate,
-                category: Category.books,
-              ),
-            )
-            .toList() ??
-        [];
-  }
-
-  Future<List<SearchItem>> _searchGames(String query) async {
-    final response = await _remoteDataSource.searchGames(query);
-    return response.results
-            ?.map(
-              (game) => SearchItem(
-                id: game.id.toString(),
-                title: game.title ?? '',
-                imageUrl: game.posterUrl,
-                releaseDate: game.releaseDate,
-                category: Category.games,
-              ),
-            )
-            .toList() ??
-        [];
+    return switch (response) {
+      MoviesSearchResponse r =>
+        r.results
+                ?.map(
+                  (movie) => SearchItem(
+                    id: movie.id.toString(),
+                    title: movie.title ?? '',
+                    imageUrl: movie.posterUrl,
+                    releaseDate: movie.releaseDate,
+                    category: Category.movies,
+                  ),
+                )
+                .toList() ??
+            [],
+      TvSearchResponse r =>
+        r.results
+                ?.map(
+                  (tv) => SearchItem(
+                    id: tv.id.toString(),
+                    title: tv.title ?? '',
+                    imageUrl: tv.posterUrl,
+                    releaseDate: tv.releaseDate,
+                    category: Category.series,
+                  ),
+                )
+                .toList() ??
+            [],
+      BooksSearchResponse r =>
+        r.results
+                ?.map(
+                  (book) => SearchItem(
+                    id: book.id ?? '',
+                    title: book.title ?? '',
+                    imageUrl: book.posterUrl,
+                    releaseDate: book.releaseDate,
+                    category: Category.books,
+                  ),
+                )
+                .toList() ??
+            [],
+      GamesSearchResponse r =>
+        r.results
+                ?.map(
+                  (game) => SearchItem(
+                    id: game.id.toString(),
+                    title: game.title ?? '',
+                    imageUrl: game.posterUrl,
+                    releaseDate: game.releaseDate,
+                    category: Category.games,
+                  ),
+                )
+                .toList() ??
+            [],
+      _ => [],
+    };
   }
 
   // Details methods
   @override
-  Future<Either<Failure, Details>> getDetails(
-    String id,
-    Category category,
-  ) async {
-    if (!await _networkInfo.isConnected) {
-      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
-    }
-
-    try {
-      final details = await _getDetailsByCategory(id, category);
-      return Right(details);
-    } catch (error) {
-      return Left(ErrorHandler.handle(error).failure);
-    }
+  Future<Either<Failure, Details>> getDetails(String id, Category category) {
+    return _executeNetworkCall(() => _getDetailsByCategory(id, category));
   }
 
-  Future<Details> _getDetailsByCategory(String id, Category category) async {
+  Future<Details> _getDetailsByCategory(String id, Category category) {
     switch (category) {
       case Category.movies:
         return _getMovieDetails(id);
@@ -169,8 +154,8 @@ class RepositoryImpl implements Repository {
       case Category.games:
         return _getGameDetails(id);
       case Category.all:
-        throw UnimplementedError(
-          'Get details for all categories not supported',
+        throw UnsupportedError(
+          'Get details for "All" category is not supported',
         );
     }
   }
@@ -232,57 +217,65 @@ class RepositoryImpl implements Repository {
     );
   }
 
-  // Item management methods
   @override
-  Future<Either<Failure, void>> addTodo(ItemResponse todoItem) async {
+  Future<Either<Failure, void>> addTodo(ItemResponse todoItem) {
     return _performLocalOperation(
       () => _localDataSource.addTodo(todoItem),
-      "Failed to save item locally",
+      'Failed to save item locally',
     );
   }
 
   @override
-  Future<Either<Failure, void>> moveToFinished(Item item) async {
+  Future<Either<Failure, void>> moveToFinished(Item item) {
     return _performItemValidationAndOperation(item, () async {
       await _localDataSource.removeTodo(item.id!, item.category!);
+      await _localDataSource.removeHistory(item.id!, item.category!);
       await _localDataSource.addFinished(item.toResponse());
-    }, "Failed to move item to finished");
+    }, 'Failed to move item to finished');
   }
 
   @override
-  Future<Either<Failure, void>> moveToTodo(Item item) async {
+  Future<Either<Failure, void>> moveToTodo(Item item) {
     return _performItemValidationAndOperation(item, () async {
       await _localDataSource.removeFinished(item.id!, item.category!);
+      await _localDataSource.removeHistory(item.id!, item.category!);
       await _localDataSource.addTodo(item.toResponse());
-    }, "Failed to move item to todo");
+    }, 'Failed to move item to todo');
   }
 
   @override
-  Future<Either<Failure, void>> moveToHistory(Item item) async {
+  Future<Either<Failure, void>> moveToHistory(Item item) {
     return _performItemValidationAndOperation(item, () async {
-      await Future.wait([
-        _localDataSource.removeFinished(item.id!, item.category!),
-        _localDataSource.removeTodo(item.id!, item.category!),
-      ]);
+      await _localDataSource.removeFinished(item.id!, item.category!);
+      await _localDataSource.removeTodo(item.id!, item.category!);
       await _localDataSource.addHistory(item.toResponse());
-    }, "Failed to move item to history");
+    }, 'Failed to move item to history');
   }
 
   @override
-  Future<Either<Failure, void>> deleteTodo(Item item) async {
+  Future<Either<Failure, void>> deleteTodo(Item item) {
     return _performItemValidationAndOperation(
       item,
       () => _localDataSource.removeTodo(item.id!, item.category!),
-      "Failed to delete todo item",
+      'Failed to delete todo item',
     );
   }
 
   @override
-  Future<Either<Failure, void>> deleteFinished(Item item) async {
+  Future<Either<Failure, void>> deleteFinished(Item item) {
     return _performItemValidationAndOperation(
       item,
       () => _localDataSource.removeFinished(item.id!, item.category!),
-      "Failed to delete finished item",
+      'Failed to delete finished item',
+    );
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteHistoryItem(Item item) {
+    return _performItemValidationAndOperation(
+      item,
+      () => _localDataSource.removeHistory(item.id!, item.category!),
+      'Failed to delete history item',
     );
   }
 
@@ -295,10 +288,11 @@ class RepositoryImpl implements Repository {
           .toList();
       return Right(historyItems);
     } catch (error) {
-      return Left(_createCacheFailure("Failed to load history items", error));
+      return Left(_createCacheFailure('Failed to load history items', error));
     }
   }
 
+  // Helper methods for local operations
   Future<Either<Failure, void>> _performLocalOperation(
     Future<void> Function() operation,
     String errorMessage,
@@ -320,18 +314,17 @@ class RepositoryImpl implements Repository {
       return Left(
         Failure(
           ApiInternalStatus.FAILURE,
-          "Item ID or Category cannot be null",
+          'Item ID or Category cannot be null',
         ),
       );
     }
-
     return _performLocalOperation(operation, errorMessage);
   }
 
   Failure _createCacheFailure(String message, Object error) {
     return Failure(
       DataSource.CACHE_ERROR.getFailure().code,
-      "$message: ${error.toString()}",
+      '$message: ${error.toString()}',
     );
   }
 }

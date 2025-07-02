@@ -1,5 +1,3 @@
-import 'package:noted/app/app_prefs.dart';
-import 'package:noted/app/constants.dart';
 import 'package:noted/data/network/app_api.dart';
 import 'package:noted/data/responses/responses.dart';
 
@@ -22,90 +20,56 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   final BooksApiClient _booksApiClient;
   final GamesApiClient _gamesApiClient;
   final TmdbApiClient _tmdbApiClient;
-  final AppPrefs _appPrefs;
 
   RemoteDataSourceImpl(
     this._appServiceClient,
     this._booksApiClient,
     this._gamesApiClient,
     this._tmdbApiClient,
-    this._appPrefs,
   );
 
   @override
   Future<MainResponse> getHome() async {
-    return await _appServiceClient.getHome();
+    return _appServiceClient.getHome();
   }
 
   @override
   Future<MoviesSearchResponse> searchMovies(String query) async {
-    String apiKey = await _appPrefs.getCustomTmdbApiKey();
-    if (apiKey.isEmpty) {
-      apiKey = ApiKeys.defaultTmdb;
-    }
-    return await _tmdbApiClient.searchMovies(query);
+    return _tmdbApiClient.searchMovies(query);
   }
 
   @override
   Future<MovieDetailsResponse> getMovieDetails(int id) async {
-    String apiKey = await _appPrefs.getCustomTmdbApiKey();
-    if (apiKey.isEmpty) {
-      apiKey = ApiKeys.defaultTmdb;
-    }
-    return await _tmdbApiClient.getMovieDetails(id);
+    return _tmdbApiClient.getMovieDetails(id);
   }
 
   @override
   Future<TvSearchResponse> searchTVSeries(String query) async {
-    String apiKey = await _appPrefs.getCustomTmdbApiKey();
-    if (apiKey.isEmpty) {
-      apiKey = ApiKeys.defaultTmdb;
-    }
-    return await _tmdbApiClient.searchTVSeries(query);
+    return _tmdbApiClient.searchTVSeries(query);
   }
 
   @override
   Future<TvDetailsResponse> getTVSeriesDetails(int id) async {
-    String apiKey = await _appPrefs.getCustomTmdbApiKey();
-    if (apiKey.isEmpty) {
-      apiKey = ApiKeys.defaultTmdb;
-    }
-    return await _tmdbApiClient.getTVSeriesDetails(id);
+    return _tmdbApiClient.getTVSeriesDetails(id);
   }
 
   @override
   Future<BooksSearchResponse> searchBooks(String query) async {
-    String apiKey = await _appPrefs.getCustomBooksApiKey();
-    if (apiKey.isEmpty) {
-      apiKey = ApiKeys.defaultGoogleBooks;
-    }
-    return await _booksApiClient.searchBooks(query);
+    return _booksApiClient.searchBooks(query);
   }
 
   @override
   Future<BookDetailsResponse> getBookDetails(String id) async {
-    String apiKey = await _appPrefs.getCustomBooksApiKey();
-    if (apiKey.isEmpty) {
-      apiKey = ApiKeys.defaultGoogleBooks;
-    }
-    return await _booksApiClient.getBookDetails(id);
+    return _booksApiClient.getBookDetails(id);
   }
 
   @override
   Future<GamesSearchResponse> searchGames(String query) async {
-    String apiKey = await _appPrefs.getCustomRawgApiKey();
-    if (apiKey.isEmpty) {
-      apiKey = ApiKeys.defaultRawg;
-    }
-    return await _gamesApiClient.searchGames(query);
+    return _gamesApiClient.searchGames(query);
   }
 
   @override
   Future<GameDetailsResponse> getGameDetails(int id) async {
-    String apiKey = await _appPrefs.getCustomRawgApiKey();
-    if (apiKey.isEmpty) {
-      apiKey = ApiKeys.defaultRawg;
-    }
-    return await _gamesApiClient.getGameDetails(id);
+    return _gamesApiClient.getGameDetails(id);
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:noted/app/app_events.dart';
 import 'package:noted/data/responses/responses.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/domain/usecases/search_usecase.dart';
@@ -16,10 +17,14 @@ class SearchViewModel extends BaseViewModel
   final BehaviorSubject<bool> _itemAddedSuccessfullyStreamController =
       BehaviorSubject<bool>();
 
-  final SearchUsecase searchUsecase;
-  SearchViewModel(this.searchUsecase);
+  final SearchUsecase _searchUsecase;
+  final DataGlobalNotifier _dataGlobalNotifier;
+
+  SearchViewModel(this._searchUsecase, this._dataGlobalNotifier);
+
   Category _currentCategory = Category.movies;
-  String lastQuery = "";
+  String _lastQuery = "";
+
   @override
   void start() {
     inputSelectedCategory.add(Category.movies);
@@ -40,13 +45,13 @@ class SearchViewModel extends BaseViewModel
       inputSearchResults.add([]);
       return;
     }
-    lastQuery = trimmedQuery;
+    _lastQuery = trimmedQuery;
 
     inputState.add(
       LoadingState(stateRendererType: StateRendererType.fullScreenLoadingState),
     );
 
-    (await searchUsecase.execute(
+    (await _searchUsecase.execute(
       SearchInput(trimmedQuery, _currentCategory),
     )).fold(
       (failure) {
@@ -68,8 +73,8 @@ class SearchViewModel extends BaseViewModel
   void updateCategory(Category category) {
     _currentCategory = category;
     inputSelectedCategory.add(category);
-    if (lastQuery.isNotEmpty) {
-      search(lastQuery);
+    if (_lastQuery.isNotEmpty) {
+      search(_lastQuery);
     }
   }
 
@@ -83,7 +88,7 @@ class SearchViewModel extends BaseViewModel
       item.releaseDate,
     );
 
-    (await searchUsecase.addToTodo(todoItem)).fold(
+    (await _searchUsecase.addToTodo(todoItem)).fold(
       (failure) {
         _itemAddedSuccessfullyStreamController.add(false);
         inputState.add(
@@ -95,6 +100,7 @@ class SearchViewModel extends BaseViewModel
       },
       (_) {
         _itemAddedSuccessfullyStreamController.add(true);
+        _dataGlobalNotifier.notifyDataImported();
 
         final currentResults = _searchResultsStreamController.valueOrNull ?? [];
         final updatedResults = currentResults.map((searchItem) {

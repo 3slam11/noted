@@ -1,5 +1,5 @@
-// presentation/history/viewModel/history_viewmodel.dart
 import 'dart:async';
+import 'package:noted/app/app_events.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/domain/usecases/history_usecase.dart';
 import 'package:noted/presentation/base/base_view_model.dart';
@@ -9,17 +9,16 @@ import 'package:rxdart/rxdart.dart';
 
 class HistoryViewModel extends BaseViewModel
     implements HistoryViewModelInputs, HistoryViewModelOutputs {
-  final BehaviorSubject<List<Item>> historyController =
+  final BehaviorSubject<List<Item>> _historyController =
       BehaviorSubject<List<Item>>();
 
-  final BehaviorSubject<Category> selectedCategoryController =
+  final BehaviorSubject<Category> _selectedCategoryController =
       BehaviorSubject<Category>.seeded(Category.all);
 
-  final BehaviorSubject<List<Item>> historyFilteredController =
-      BehaviorSubject<List<Item>>();
+  final HistoryUsecase _historyUsecase;
+  final DataGlobalNotifier _dataGlobalNotifier;
 
-  final HistoryUsecase historyUsecase;
-  HistoryViewModel(this.historyUsecase);
+  HistoryViewModel(this._historyUsecase, this._dataGlobalNotifier);
 
   @override
   void start() {
@@ -32,7 +31,7 @@ class HistoryViewModel extends BaseViewModel
       LoadingState(stateRendererType: StateRendererType.fullScreenLoadingState),
     );
 
-    (await historyUsecase.execute(null)).fold(
+    (await _historyUsecase.execute(null)).fold(
       (failure) {
         inputState.add(
           ErrorState(
@@ -40,11 +39,10 @@ class HistoryViewModel extends BaseViewModel
             message: failure.message,
           ),
         );
-        historyController.add([]);
+        _historyController.add([]);
       },
-      (historyObject) {
-        final historyItems = historyObject;
-        historyController.add(historyItems);
+      (historyItems) {
+        _historyController.add(historyItems);
         inputState.add(ContentState());
       },
     );
@@ -52,34 +50,126 @@ class HistoryViewModel extends BaseViewModel
 
   @override
   void setCategory(Category category) {
-    selectedCategoryController.add(category);
+    _selectedCategoryController.add(category);
+  }
+
+  bool _isSameItem(Item a, Item b) => a.id == b.id && a.category == b.category;
+
+  void _removeItemFromUI(Item item) {
+    final currentItems = _historyController.valueOrNull ?? [];
+    currentItems.removeWhere((i) => _isSameItem(i, item));
+    _historyController.add(List.from(currentItems));
+  }
+
+  void _handlePopupError(String message) {
+    inputState.add(
+      ErrorState(
+        stateRendererType: StateRendererType.popupErrorState,
+        message: message,
+      ),
+    );
+  }
+
+  @override
+  int? deleteHistoryItemTemporarily(Item item) {
+    final currentItems = _historyController.valueOrNull;
+    if (currentItems == null) return null;
+
+    final index = currentItems.indexWhere((i) => _isSameItem(i, item));
+    if (index != -1) {
+      currentItems.removeAt(index);
+      _historyController.add(List.from(currentItems));
+      return index;
+    }
+    return null;
+  }
+
+  @override
+  void undoDeleteHistoryItem(Item item, int index) {
+    final currentItems = _historyController.valueOrNull;
+    if (currentItems == null) return;
+
+    if (index >= 0 && index <= currentItems.length) {
+      currentItems.insert(index, item);
+      _historyController.add(List.from(currentItems));
+    }
+  }
+
+  @override
+  Future<void> confirmDeleteHistoryItem(Item item) async {
+    final result = await _historyUsecase.deleteHistoryItem(item);
+    result.fold(
+      (failure) {
+        _handlePopupError(failure.message);
+        loadHistoryItems(); // On failure, restore state by reloading
+      },
+      (_) {
+        // On success, UI is already updated. No action needed.
+      },
+    );
+  }
+
+  @override
+  Future<void> deleteHistoryItem(Item item) async {
+    final result = await _historyUsecase.deleteHistoryItem(item);
+    result.fold(
+      (failure) => _handlePopupError(failure.message),
+      (_) => _removeItemFromUI(item),
+    );
+  }
+
+  @override
+  Future<void> moveToTodo(Item item) async {
+    final result = await _historyUsecase.moveToTodo(item);
+    result.fold((failure) => _handlePopupError(failure.message), (_) {
+      _removeItemFromUI(item);
+      _dataGlobalNotifier.notifyDataImported();
+    });
+  }
+
+  @override
+  Future<void> moveToFinished(Item item) async {
+    final result = await _historyUsecase.moveToFinished(item);
+    result.fold((failure) => _handlePopupError(failure.message), (_) {
+      _removeItemFromUI(item);
+      _dataGlobalNotifier.notifyDataImported();
+    });
   }
 
   @override
   void dispose() {
-    historyController.close();
-    selectedCategoryController.close();
-    historyFilteredController.close();
+    _historyController.close();
+    _selectedCategoryController.close();
     super.dispose();
   }
 
-  // --- Inputs ---
   @override
-  Sink<Category> get inputSelectedCategory => selectedCategoryController.sink;
+  Sink<Category> get inputSelectedCategory => _selectedCategoryController.sink;
 
-  // --- Outputs ---
   @override
-  Stream<List<Item>> get outputHistoryItems => historyController.stream;
+  Stream<List<Item>> get outputHistoryItems => _historyController.stream;
 
   @override
   Stream<Category> get outputSelectedCategory =>
-      selectedCategoryController.stream;
+      _selectedCategoryController.stream;
 }
 
 abstract class HistoryViewModelInputs {
   Sink<Category> get inputSelectedCategory;
   void setCategory(Category category);
   Future<void> loadHistoryItems();
+
+  // Deletion with Undo
+  int? deleteHistoryItemTemporarily(Item item);
+  void undoDeleteHistoryItem(Item item, int index);
+  Future<void> confirmDeleteHistoryItem(Item item);
+
+  // Permanent deletion from dialog
+  Future<void> deleteHistoryItem(Item item);
+
+  // Move actions
+  Future<void> moveToTodo(Item item);
+  Future<void> moveToFinished(Item item);
 }
 
 abstract class HistoryViewModelOutputs {

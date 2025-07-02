@@ -12,6 +12,8 @@ import 'package:noted/presentation/main/viewModel/main_view_model.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
 
+enum ItemListType { todo, finished, history }
+
 class MainView extends StatefulWidget {
   const MainView({super.key});
   @override
@@ -151,29 +153,12 @@ class MainViewState extends State<MainView> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
-          ),
-        ),
-        title: Text(
-          t.appName,
-          style: TextStyle(
-            fontSize: 23,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
+        title: Text(t.appName),
         actions: [
           IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
+            icon: const Icon(Icons.settings),
             onPressed: () {
               Navigator.of(context).pushNamed(RoutesManager.settingsRoute);
-              viewModel.start();
             },
           ),
         ],
@@ -237,7 +222,6 @@ class CategoryFilterWidget extends StatelessWidget {
                               viewModel.setCategory(category);
                             }
                           },
-                          selectedColor: Theme.of(context).colorScheme.primary,
                           backgroundColor: Theme.of(
                             context,
                           ).colorScheme.onPrimary,
@@ -297,10 +281,7 @@ class TodoSectionWidget extends StatelessWidget {
                       children: [
                         Text(
                           t.home.titleSection,
-                          style: TextStyle(
-                            fontSize: 25,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
+                          style: const TextStyle(fontSize: 25),
                         ),
                         const SizedBox(height: 5),
                         Text(
@@ -326,10 +307,7 @@ class TodoSectionWidget extends StatelessWidget {
                       children: [
                         Text(
                           t.home.titleSection,
-                          style: TextStyle(
-                            fontSize: 25,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
+                          style: const TextStyle(fontSize: 25),
                         ),
                         Text(
                           t.months[DateTime.now().month - 1],
@@ -354,11 +332,10 @@ class TodoSectionWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: () async {
-                        await Navigator.of(
+                      onPressed: () {
+                        Navigator.of(
                           context,
                         ).pushNamed(RoutesManager.searchRoute);
-                        viewModel.start();
                       },
                       child: Icon(
                         Icons.add,
@@ -374,12 +351,7 @@ class TodoSectionWidget extends StatelessWidget {
               ],
             ),
           ),
-          Divider(
-                color: Theme.of(context).colorScheme.primary,
-                thickness: 1,
-                indent: 16,
-                endIndent: 16,
-              )
+          const Divider()
               .animate()
               .fadeIn(duration: 400.ms, delay: 600.ms)
               .scaleX(begin: 0, end: 1),
@@ -446,16 +418,11 @@ class FinishedSectionWidget extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(t.home.finishedList, style: theme.textTheme.headlineSmall),
+                Text(t.home.finishedList, style: const TextStyle(fontSize: 25)),
               ],
             ),
           ),
-          Divider(
-                color: theme.colorScheme.primary,
-                thickness: 1,
-                indent: 16,
-                endIndent: 16,
-              )
+          const Divider()
               .animate()
               .fadeIn(duration: 400.ms, delay: 600.ms)
               .scaleX(begin: 0, end: 1),
@@ -513,6 +480,23 @@ class ItemTile extends StatelessWidget {
     required this.isTodo,
     required this.viewModel,
   });
+
+  void _showItemActions(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => ItemActionsDialog(
+        item: item,
+        currentList: isTodo ? ItemListType.todo : ItemListType.finished,
+        onMoveToTodo: () => viewModel.moveToTodo(item),
+        onMoveToFinished: () => viewModel.moveToFinished(item),
+        onMoveToHistory: () => viewModel.moveToHistory(item),
+        onDelete: () => viewModel.deleteItemPermanently(
+          item,
+          isTodo ? ItemListType.todo : ItemListType.finished,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -632,6 +616,7 @@ class ItemTile extends StatelessWidget {
                 ),
               );
             },
+            onLongPress: () => _showItemActions(context),
           ),
         ),
       ),
@@ -785,10 +770,7 @@ class _NewMonthDialogState extends State<NewMonthDialog> {
                     final isSelected = selectedItemKeys.contains(itemKey);
 
                     return Card(
-                      elevation: 0,
-                      color: colorScheme.primaryContainer.withValues(
-                        alpha: 0.6,
-                      ),
+                      color: colorScheme.primaryContainer.withAlpha(150),
                       child: CheckboxListTile(
                         value: isSelected,
                         onChanged: (value) => _toggleItem(itemKey, value),
@@ -863,6 +845,7 @@ class _NewMonthDialogState extends State<NewMonthDialog> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
+                          icon: const Icon(Icons.done_all_rounded),
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -880,6 +863,7 @@ class _NewMonthDialogState extends State<NewMonthDialog> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: OutlinedButton.icon(
+                          icon: const Icon(Icons.check_box_rounded),
                           style: OutlinedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -914,7 +898,7 @@ class _NewMonthDialogState extends State<NewMonthDialog> {
           : [
               SizedBox(
                 width: double.infinity,
-                child: FilledButton.icon(
+                child: FilledButton(
                   style: FilledButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -922,7 +906,7 @@ class _NewMonthDialogState extends State<NewMonthDialog> {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   onPressed: () => Navigator.of(context).pop(<Item>[]),
-                  label: Text(t.home.close),
+                  child: Text(t.home.close),
                 ),
               ),
             ],
@@ -955,6 +939,106 @@ class _NewMonthDialogState extends State<NewMonthDialog> {
         size: 16,
         color: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
+    );
+  }
+}
+
+class ItemActionsDialog extends StatelessWidget {
+  final Item item;
+  final ItemListType currentList;
+  final VoidCallback? onMoveToTodo;
+  final VoidCallback? onMoveToFinished;
+  final VoidCallback? onMoveToHistory;
+  final VoidCallback? onDelete;
+
+  const ItemActionsDialog({
+    super.key,
+    required this.item,
+    required this.currentList,
+    this.onMoveToTodo,
+    this.onMoveToFinished,
+    this.onMoveToHistory,
+    this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    Widget buildAction(
+      String title,
+      IconData icon,
+      VoidCallback? action,
+      bool isEnabled,
+    ) {
+      return ListTile(
+        leading: Icon(
+          icon,
+          color: isEnabled ? colorScheme.primary : colorScheme.outline,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: isEnabled ? colorScheme.onSurface : colorScheme.outline,
+          ),
+        ),
+        onTap: isEnabled
+            ? () {
+                Navigator.of(context).pop();
+                action?.call();
+              }
+            : null,
+        enabled: isEnabled,
+      );
+    }
+
+    return AlertDialog(
+      title: Text(
+        item.title ?? t.home.itemActions,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          buildAction(
+            t.home.moveToTodo,
+            Icons.list_alt_rounded,
+            onMoveToTodo,
+            currentList != ItemListType.todo,
+          ),
+          buildAction(
+            t.home.moveToFinished,
+            Icons.check_circle_outline_rounded,
+            onMoveToFinished,
+            currentList != ItemListType.finished,
+          ),
+          buildAction(
+            t.home.moveToHistory,
+            Icons.history_rounded,
+            onMoveToHistory,
+            currentList != ItemListType.history,
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.delete_forever_rounded,
+              color: colorScheme.primary,
+            ),
+            title: Text(t.home.delete),
+            onTap: () {
+              Navigator.of(context).pop();
+              onDelete?.call();
+            },
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(t.errorHandler.cancel),
+        ),
+      ],
     );
   }
 }

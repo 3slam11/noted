@@ -1,0 +1,2 @@
+- Now you can delete items from history like other lists
+- A new 'Master control' by taping and holding an item that gives you option to move to any list or delete

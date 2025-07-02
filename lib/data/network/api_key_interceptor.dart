@@ -13,19 +13,27 @@ class ApiKeyInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final String baseUrl = options.baseUrl;
+    String? apiKey;
 
-    if (baseUrl == Constants.tmdbBaseUrl) {
-      String apiKey = await _appPrefs.getCustomTmdbApiKey();
-      if (apiKey.isEmpty) apiKey = ApiKeys.defaultTmdb;
-      options.queryParameters['api_key'] = apiKey;
-    } else if (baseUrl == Constants.rawgBaseUrl) {
-      String apiKey = await _appPrefs.getCustomRawgApiKey();
-      if (apiKey.isEmpty) apiKey = ApiKeys.defaultRawg;
-      options.queryParameters['key'] = apiKey;
-    } else if (baseUrl == Constants.googleBooksBaseUrl) {
-      String apiKey = await _appPrefs.getCustomBooksApiKey();
-      if (apiKey.isEmpty) apiKey = ApiKeys.defaultGoogleBooks;
-      options.queryParameters['key'] = apiKey;
+    switch (baseUrl) {
+      case Constants.tmdbBaseUrl:
+        apiKey = await _appPrefs.getCustomTmdbApiKey();
+        options.queryParameters['api_key'] = apiKey.isNotEmpty
+            ? apiKey
+            : ApiKeys.defaultTmdb;
+        break;
+      case Constants.rawgBaseUrl:
+        apiKey = await _appPrefs.getCustomRawgApiKey();
+        options.queryParameters['key'] = apiKey.isNotEmpty
+            ? apiKey
+            : ApiKeys.defaultRawg;
+        break;
+      case Constants.googleBooksBaseUrl:
+        apiKey = await _appPrefs.getCustomBooksApiKey();
+        options.queryParameters['key'] = apiKey.isNotEmpty
+            ? apiKey
+            : ApiKeys.defaultGoogleBooks;
+        break;
     }
 
     super.onRequest(options, handler);

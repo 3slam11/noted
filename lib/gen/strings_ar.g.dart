@@ -179,6 +179,11 @@ class _TranslationsHomeAr implements TranslationsHomeEn {
 	@override String get timeWrong => 'إما انك مسافر بالزمن أو قمت بتغيير التاريخ! 🕰️';
 	@override String get timeWrongDescription => 'التطبيق لاحظ ان تاريخ هاتفك ربما لا يكون صحيحاً. هذا قد يعبث بالقوائم.';
 	@override String get continueAnyway => 'استمر';
+	@override String get itemActions => 'اختيارات العنصر';
+	@override String get moveToTodo => 'نقل لقائمة المهام';
+	@override String get moveToFinished => 'نقل للقائمة المكتملة';
+	@override String get moveToHistory => 'نقل للسجل';
+	@override String get delete => 'حذف';
 }
 
 // Path: search
@@ -460,6 +465,11 @@ extension on TranslationsAr {
 			case 'home.timeWrong': return 'إما انك مسافر بالزمن أو قمت بتغيير التاريخ! 🕰️';
 			case 'home.timeWrongDescription': return 'التطبيق لاحظ ان تاريخ هاتفك ربما لا يكون صحيحاً. هذا قد يعبث بالقوائم.';
 			case 'home.continueAnyway': return 'استمر';
+			case 'home.itemActions': return 'اختيارات العنصر';
+			case 'home.moveToTodo': return 'نقل لقائمة المهام';
+			case 'home.moveToFinished': return 'نقل للقائمة المكتملة';
+			case 'home.moveToHistory': return 'نقل للسجل';
+			case 'home.delete': return 'حذف';
 			case 'search.search': return 'بحث';
 			case 'search.searchPlaceholder': return 'ابحث...';
 			case 'search.searchForSomething': return 'ابحث عن اي شيء';

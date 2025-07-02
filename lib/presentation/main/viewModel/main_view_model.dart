@@ -7,6 +7,7 @@ import 'package:noted/domain/usecases/main_usecase.dart';
 import 'package:noted/presentation/base/base_view_model.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer_impl.dart';
+import 'package:noted/presentation/main/view/main_view.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MainViewModel extends BaseViewModel
@@ -184,20 +185,46 @@ class MainViewModel extends BaseViewModel
   Future<void> moveToHistory(Item item) async {
     await _performItemOperation(
       () => _mainUsecase.moveToHistory(item),
-      onSuccess: () => _removeFromFinishedList(item),
+      onSuccess: () {
+        _removeFromTodoList(item);
+        _removeFromFinishedList(item);
+      },
+    );
+  }
+
+  @override
+  Future<void> deleteItemPermanently(Item item, ItemListType listType) async {
+    final operation = listType == ItemListType.todo
+        ? () => _mainUsecase.deleteTodo(item)
+        : () => _mainUsecase.deleteFinished(item);
+
+    await _performItemOperation(
+      operation,
+      onSuccess: () {
+        if (listType == ItemListType.todo) {
+          _removeFromTodoList(item);
+        } else {
+          _removeFromFinishedList(item);
+        }
+      },
     );
   }
 
   void _moveItemToFinished(Item item) {
     if (!hasData) return;
-    _currentObject!.mainData!.todos.removeWhere((i) => _isSameItem(i, item));
+    _removeFromTodoList(item);
     _currentObject!.mainData!.finished.add(item);
   }
 
   void _moveItemToTodo(Item item) {
     if (!hasData) return;
-    _currentObject!.mainData!.finished.removeWhere((i) => _isSameItem(i, item));
+    _removeFromFinishedList(item);
     _currentObject!.mainData!.todos.add(item);
+  }
+
+  void _removeFromTodoList(Item item) {
+    if (!hasData) return;
+    _currentObject!.mainData!.todos.removeWhere((i) => _isSameItem(i, item));
   }
 
   void _removeFromFinishedList(Item item) {
@@ -242,19 +269,26 @@ abstract class MainViewModelInputs {
   Sink<MainObject?> get inputMainData;
   Sink<Category> get inputSelectedCategory;
   void setCategory(Category category);
+
+  // Item movement actions
   Future<void> moveToFinished(Item item);
   Future<void> moveToTodo(Item item);
   Future<void> moveToHistory(Item item);
+
   MainObject? getCurrentMainData();
 
-  // Deletion with Undo flow
+  // Deletion with Undo flow for To-Do list
   int? deleteTodoTemporarily(Item item);
   void undoDeleteTodo(Item item, int index);
   Future<void> confirmDeleteTodo(Item item);
 
+  // Deletion with Undo flow for Finished list
   int? deleteFinishedTemporarily(Item item);
   void undoDeleteFinished(Item item, int index);
   Future<void> confirmDeleteFinished(Item item);
+
+  // Permanent deletion from dialog
+  Future<void> deleteItemPermanently(Item item, ItemListType listType);
 }
 
 abstract class MainViewModelOutputs {

@@ -87,7 +87,12 @@
     "close": "Close",
     "timeWrong": "Either you're a time traveler or you messed with your date settings! 🕰️",
     "timeWrongDescription": "The app detected that your current date may be wrong. This could mess with your lists.",
-    "continueAnyway": "Continue"
+    "continueAnyway": "Continue",
+    "itemActions": "Item Actions",
+    "moveToTodo": "Move to todo",
+    "moveToFinished": "Move to finished",
+    "moveToHistory": "Move to history",
+    "delete": "Delete"
   },
 
   "search": {

@@ -16,11 +16,11 @@ import 'package:noted/domain/usecases/main_usecase.dart';
 import 'package:noted/domain/usecases/search_usecase.dart';
 import 'package:noted/presentation/backupAndRestore/viewModel/backup_and_restore_viewmodel.dart';
 import 'package:noted/presentation/changeApi/viewModel/change_api_viewmodel.dart';
+import 'package:noted/presentation/details/viewModel/details_viewmodel.dart';
 import 'package:noted/presentation/history/viewModel/history_view_model.dart';
 import 'package:noted/presentation/main/viewModel/main_view_model.dart';
 import 'package:noted/presentation/resources/theme_manager.dart';
 import 'package:noted/presentation/search/viewModel/search_viewmodel.dart';
-import 'package:noted/presentation/details/viewModel/details_viewmodel.dart';
 import 'package:noted/presentation/settings/viewModel/settings_viewmodel.dart';
 import 'package:noted/presentation/statistics/viewModel/statistics_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,13 +60,7 @@ Future<void> initAppModule() async {
     () => LocalDataSourceImpl(instance()),
   ); // remote data source
   instance.registerLazySingleton<RemoteDataSource>(
-    () => RemoteDataSourceImpl(
-      instance(),
-      instance(),
-      instance(),
-      instance(),
-      instance(),
-    ),
+    () => RemoteDataSourceImpl(instance(), instance(), instance(), instance()),
   );
   // repository
   instance.registerLazySingleton<Repository>(
@@ -90,7 +84,7 @@ void initSearchModule() {
   if (!GetIt.I.isRegistered<SearchUsecase>()) {
     instance.registerFactory<SearchUsecase>(() => SearchUsecase(instance()));
     instance.registerFactory<SearchViewModel>(
-      () => SearchViewModel(instance()),
+      () => SearchViewModel(instance(), instance()),
     );
   }
 }
@@ -116,7 +110,7 @@ void initHistoryModule() {
   if (!GetIt.I.isRegistered<HistoryViewModel>()) {
     instance.registerFactory<HistoryUsecase>(() => HistoryUsecase(instance()));
     instance.registerFactory<HistoryViewModel>(
-      () => HistoryViewModel(instance()),
+      () => HistoryViewModel(instance(), instance()),
     );
   }
 }
