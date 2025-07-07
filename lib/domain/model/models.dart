@@ -31,8 +31,38 @@ class Item {
   final Category? category;
   final String? posterUrl;
   final String? releaseDate;
+  final double? personalRating;
+  final String? personalNotes;
 
-  Item(this.id, this.title, this.category, this.posterUrl, this.releaseDate);
+  Item(
+    this.id,
+    this.title,
+    this.category,
+    this.posterUrl,
+    this.releaseDate, {
+    this.personalRating,
+    this.personalNotes,
+  });
+
+  Item copyWith({
+    String? id,
+    String? title,
+    Category? category,
+    String? posterUrl,
+    String? releaseDate,
+    double? personalRating,
+    String? personalNotes,
+  }) {
+    return Item(
+      id ?? this.id,
+      title ?? this.title,
+      category ?? this.category,
+      posterUrl ?? this.posterUrl,
+      releaseDate ?? this.releaseDate,
+      personalRating: personalRating ?? this.personalRating,
+      personalNotes: personalNotes ?? this.personalNotes,
+    );
+  }
 }
 
 class TaskData {

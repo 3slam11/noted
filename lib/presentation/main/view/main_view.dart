@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/app/functions.dart';
 import 'package:noted/domain/model/models.dart';
@@ -494,6 +495,17 @@ class ItemTile extends StatelessWidget {
           item,
           isTodo ? ItemListType.todo : ItemListType.finished,
         ),
+        onEdit: () {
+          showDialog(
+            context: context,
+            builder: (_) => EditItemDialog(
+              item: item,
+              onSave: (updatedItem) {
+                viewModel.updateItem(updatedItem);
+              },
+            ),
+          );
+        },
       ),
     );
   }
@@ -586,9 +598,31 @@ class ItemTile extends StatelessWidget {
                       child: const Icon(Icons.list_alt, size: 30),
                     ),
             ),
-            title: Text(
-              item.title ?? 'Untitled',
-              style: const TextStyle(fontSize: 16),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  item.title ?? 'Untitled',
+                  style: const TextStyle(fontSize: 16),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (item.personalRating != null && item.personalRating! > 0)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: RatingBarIndicator(
+                      rating: item.personalRating!,
+                      itemBuilder: (context, index) => Icon(
+                        Icons.star,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      itemCount: 5,
+                      itemSize: 16.0,
+                      direction: Axis.horizontal,
+                    ),
+                  ),
+              ],
             ),
             subtitle: Text(
               item.category?.localizedCategory() ?? 'Uncategorized',
@@ -950,6 +984,7 @@ class ItemActionsDialog extends StatelessWidget {
   final VoidCallback? onMoveToFinished;
   final VoidCallback? onMoveToHistory;
   final VoidCallback? onDelete;
+  final VoidCallback? onEdit;
 
   const ItemActionsDialog({
     super.key,
@@ -959,6 +994,7 @@ class ItemActionsDialog extends StatelessWidget {
     this.onMoveToFinished,
     this.onMoveToHistory,
     this.onDelete,
+    this.onEdit,
   });
 
   @override
@@ -1002,6 +1038,7 @@ class ItemActionsDialog extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          buildAction(t.home.editNotes, Icons.edit_note_rounded, onEdit, true),
           buildAction(
             t.home.moveToTodo,
             Icons.list_alt_rounded,
@@ -1023,9 +1060,12 @@ class ItemActionsDialog extends StatelessWidget {
           ListTile(
             leading: Icon(
               Icons.delete_forever_rounded,
-              color: colorScheme.primary,
+              color: colorScheme.error,
             ),
-            title: Text(t.home.delete),
+            title: Text(
+              t.home.delete,
+              style: TextStyle(color: colorScheme.error),
+            ),
             onTap: () {
               Navigator.of(context).pop();
               onDelete?.call();
@@ -1038,6 +1078,95 @@ class ItemActionsDialog extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
           child: Text(t.errorHandler.cancel),
         ),
+      ],
+    );
+  }
+}
+
+class EditItemDialog extends StatefulWidget {
+  final Item item;
+  final Function(Item updatedItem) onSave;
+
+  const EditItemDialog({super.key, required this.item, required this.onSave});
+
+  @override
+  State<EditItemDialog> createState() => _EditItemDialogState();
+}
+
+class _EditItemDialogState extends State<EditItemDialog> {
+  late double _currentRating;
+  late TextEditingController _notesController;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentRating = widget.item.personalRating ?? 0.0;
+    _notesController = TextEditingController(text: widget.item.personalNotes);
+  }
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  void _handleSave() {
+    final updatedItem = widget.item.copyWith(
+      personalRating: _currentRating,
+      personalNotes: _notesController.text.trim(),
+    );
+    widget.onSave(updatedItem);
+    Navigator.of(context).pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return AlertDialog(
+      title: Text(t.home.editNotes),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(t.home.yourRating, style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Center(
+              child: RatingBar.builder(
+                initialRating: _currentRating,
+                minRating: 0,
+                glow: false,
+                direction: Axis.horizontal,
+                itemCount: 5,
+                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                itemBuilder: (context, _) => const Icon(Icons.star),
+                onRatingUpdate: (rating) {
+                  setState(() {
+                    _currentRating = rating;
+                  });
+                },
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(t.home.yourNotes, style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _notesController,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: t.home.notesHint,
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(t.errorHandler.cancel),
+        ),
+        ElevatedButton(onPressed: _handleSave, child: Text(t.apiSettings.save)),
       ],
     );
   }

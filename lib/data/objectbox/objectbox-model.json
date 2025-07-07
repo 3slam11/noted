@@ -82,7 +82,7 @@
     },
     {
       "id": "3:6860424063945157781",
-      "lastPropertyId": "7:2046266376013469270",
+      "lastPropertyId": "9:2134538423026359620",
       "name": "ItemEntity",
       "properties": [
         {
@@ -119,6 +119,16 @@
         {
           "id": "7:2046266376013469270",
           "name": "listType",
+          "type": 9
+        },
+        {
+          "id": "8:6398848645211927770",
+          "name": "personalRating",
+          "type": 8
+        },
+        {
+          "id": "9:2134538423026359620",
+          "name": "personalNotes",
           "type": 9
         }
       ],

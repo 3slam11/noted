@@ -36,6 +36,6 @@ class ApiKeyInterceptor extends Interceptor {
         break;
     }
 
-    super.onRequest(options, handler);
+    handler.next(options);
   }
 }

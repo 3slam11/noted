@@ -119,6 +119,19 @@ class HistoryViewModel extends BaseViewModel
   }
 
   @override
+  Future<void> updateItem(Item updatedItem) async {
+    final result = await _historyUsecase.updateItem(updatedItem);
+    result.fold((failure) => _handlePopupError(failure.message), (_) {
+      final currentItems = _historyController.valueOrNull ?? [];
+      final index = currentItems.indexWhere((i) => _isSameItem(i, updatedItem));
+      if (index != -1) {
+        currentItems[index] = updatedItem;
+        _historyController.add(List.from(currentItems));
+      }
+    });
+  }
+
+  @override
   Future<void> moveToTodo(Item item) async {
     final result = await _historyUsecase.moveToTodo(item);
     result.fold((failure) => _handlePopupError(failure.message), (_) {
@@ -166,6 +179,9 @@ abstract class HistoryViewModelInputs {
 
   // Permanent deletion from dialog
   Future<void> deleteHistoryItem(Item item);
+
+  // Update action
+  Future<void> updateItem(Item item);
 
   // Move actions
   Future<void> moveToTodo(Item item);

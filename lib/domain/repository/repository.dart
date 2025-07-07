@@ -13,6 +13,7 @@ abstract class Repository {
   Future<Either<Failure, Details>> getDetails(String id, Category category);
 
   Future<Either<Failure, void>> addTodo(ItemResponse todo);
+  Future<Either<Failure, void>> updateItem(Item item);
   Future<Either<Failure, void>> deleteTodo(Item item);
   Future<Either<Failure, void>> moveToFinished(Item item);
 

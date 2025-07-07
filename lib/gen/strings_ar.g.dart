@@ -53,8 +53,6 @@ class TranslationsAr implements Translations {
 	];
 	@override late final _TranslationsRoutesAr routes = _TranslationsRoutesAr._(_root);
 	@override late final _TranslationsErrorHandlerAr errorHandler = _TranslationsErrorHandlerAr._(_root);
-	@override late final _TranslationsLoginAr login = _TranslationsLoginAr._(_root);
-	@override late final _TranslationsRegisterAr register = _TranslationsRegisterAr._(_root);
 	@override late final _TranslationsStateRendererAr stateRenderer = _TranslationsStateRendererAr._(_root);
 	@override late final _TranslationsHomeAr home = _TranslationsHomeAr._(_root);
 	@override late final _TranslationsSearchAr search = _TranslationsSearchAr._(_root);
@@ -109,28 +107,6 @@ class _TranslationsErrorHandlerAr implements TranslationsErrorHandlerEn {
 	@override String get siteDownError => 'قد يكون الموقع معطلاً في الوقت الحالي، انتظر بضع دقائق وحاول لاحقًا.';
 }
 
-// Path: login
-class _TranslationsLoginAr implements TranslationsLoginEn {
-	_TranslationsLoginAr._(this._root);
-
-	final TranslationsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get signIn => 'تسجيل الدخول';
-	@override String get alreadyHaveAccount => 'ليس لديك حساب؟ سجل الآن';
-}
-
-// Path: register
-class _TranslationsRegisterAr implements TranslationsRegisterEn {
-	_TranslationsRegisterAr._(this._root);
-
-	final TranslationsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get signUp => 'تسجيل';
-	@override String get dontHaveAccount => 'لديك حساب بالفعل؟ تسجيل الدخول';
-}
-
 // Path: stateRenderer
 class _TranslationsStateRendererAr implements TranslationsStateRendererEn {
 	_TranslationsStateRendererAr._(this._root);
@@ -164,7 +140,7 @@ class _TranslationsHomeAr implements TranslationsHomeEn {
 	@override String get undo => 'تراجع';
 	@override String get newMonthStarted => 'بدأ شهر جديد! 🎉';
 	@override String description({required Object month}) => 'مرحبا بـ ${month}!';
-	@override String get description2 => 'تم نقل العناصر المكتملة للسجل. هذه هي العناصر المتبقية من شهر الماضي:';
+	@override String get description2 => 'تم نقل العناصر المكتملة للسجل. هذه هي العناصر المتبقية من الشهر الماضي:';
 	@override String get pending => '📝 في الانتظار: ';
 	@override String get completed => '🎯 المكتمل: ';
 	@override String get selectAll => 'تحديد الكل';
@@ -183,6 +159,13 @@ class _TranslationsHomeAr implements TranslationsHomeEn {
 	@override String get moveToTodo => 'نقل لقائمة المهام';
 	@override String get moveToFinished => 'نقل للقائمة المكتملة';
 	@override String get moveToHistory => 'نقل للسجل';
+	@override String get editNotes => 'تعديل/عرض الملاحظات';
+	@override String get yourRating => 'تقييمك';
+	@override String get yourNotes => 'ملاحظاتك';
+	@override String get notesHint => 'أضف أفكارك هنا...';
+	@override String get noNotes => 'لا توجد ملاحظات بعد.';
+	@override String get notesSaved => 'تم حفظ الملاحظات والتقييم.';
+	@override String get save => 'حفظ';
 	@override String get delete => 'حذف';
 }
 
@@ -429,10 +412,6 @@ extension on TranslationsAr {
 			case 'errorHandler.apiCapacityHit': return 'قد تكون سعة واجهة برمجة التطبيقات الافتراضية قد وصلت إلى الحد الأقصى.';
 			case 'errorHandler.customApiError': return 'قد تكون واجهة برمجة التطبيقات المخصصة الخاصة بك مكتوبة بشكل غير صحيح.';
 			case 'errorHandler.siteDownError': return 'قد يكون الموقع معطلاً في الوقت الحالي، انتظر بضع دقائق وحاول لاحقًا.';
-			case 'login.signIn': return 'تسجيل الدخول';
-			case 'login.alreadyHaveAccount': return 'ليس لديك حساب؟ سجل الآن';
-			case 'register.signUp': return 'تسجيل';
-			case 'register.dontHaveAccount': return 'لديك حساب بالفعل؟ تسجيل الدخول';
 			case 'stateRenderer.content': return 'المحتوى';
 			case 'stateRenderer.error': return 'خطأ';
 			case 'stateRenderer.loading': return 'تحميل';
@@ -450,7 +429,7 @@ extension on TranslationsAr {
 			case 'home.undo': return 'تراجع';
 			case 'home.newMonthStarted': return 'بدأ شهر جديد! 🎉';
 			case 'home.description': return ({required Object month}) => 'مرحبا بـ ${month}!';
-			case 'home.description2': return 'تم نقل العناصر المكتملة للسجل. هذه هي العناصر المتبقية من شهر الماضي:';
+			case 'home.description2': return 'تم نقل العناصر المكتملة للسجل. هذه هي العناصر المتبقية من الشهر الماضي:';
 			case 'home.pending': return '📝 في الانتظار: ';
 			case 'home.completed': return '🎯 المكتمل: ';
 			case 'home.selectAll': return 'تحديد الكل';
@@ -469,6 +448,13 @@ extension on TranslationsAr {
 			case 'home.moveToTodo': return 'نقل لقائمة المهام';
 			case 'home.moveToFinished': return 'نقل للقائمة المكتملة';
 			case 'home.moveToHistory': return 'نقل للسجل';
+			case 'home.editNotes': return 'تعديل/عرض الملاحظات';
+			case 'home.yourRating': return 'تقييمك';
+			case 'home.yourNotes': return 'ملاحظاتك';
+			case 'home.notesHint': return 'أضف أفكارك هنا...';
+			case 'home.noNotes': return 'لا توجد ملاحظات بعد.';
+			case 'home.notesSaved': return 'تم حفظ الملاحظات والتقييم.';
+			case 'home.save': return 'حفظ';
 			case 'home.delete': return 'حذف';
 			case 'search.search': return 'بحث';
 			case 'search.searchPlaceholder': return 'ابحث...';

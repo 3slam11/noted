@@ -29,13 +29,21 @@ class ItemResponse {
   @JsonKey(name: 'releaseDate')
   String? releaseDate;
 
+  @JsonKey(name: 'personalRating')
+  double? personalRating;
+
+  @JsonKey(name: 'personalNotes')
+  String? personalNotes;
+
   ItemResponse(
     this.id,
     this.title,
     this.category,
     this.posterUrl,
-    this.releaseDate,
-  );
+    this.releaseDate, {
+    this.personalRating,
+    this.personalNotes,
+  });
 
   // from json
   factory ItemResponse.fromJson(Map<String, dynamic> json) =>

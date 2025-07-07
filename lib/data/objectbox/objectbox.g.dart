@@ -9,12 +9,11 @@
 import 'dart:typed_data';
 
 import 'package:flat_buffers/flat_buffers.dart' as fb;
+import 'package:noted/data/objectbox/objectbox.dart';
 import 'package:objectbox/internal.dart'
     as obx_int; // generated code can access "internal" functionality
 import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
-
-import 'objectbox.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -110,7 +109,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(3, 6860424063945157781),
     name: 'ItemEntity',
-    lastPropertyId: const obx_int.IdUid(7, 2046266376013469270),
+    lastPropertyId: const obx_int.IdUid(9, 2134538423026359620),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -152,6 +151,18 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(7, 2046266376013469270),
         name: 'listType',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 6398848645211927770),
+        name: 'personalRating',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(9, 2134538423026359620),
+        name: 'personalNotes',
         type: 9,
         flags: 0,
       ),
@@ -359,7 +370,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
             ? null
             : fbb.writeString(object.releaseDate!);
         final listTypeOffset = fbb.writeString(object.listType);
-        fbb.startTable(8);
+        final personalNotesOffset = object.personalNotes == null
+            ? null
+            : fbb.writeString(object.personalNotes!);
+        fbb.startTable(10);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, itemIdOffset);
         fbb.addOffset(2, titleOffset);
@@ -367,6 +381,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(4, posterUrlOffset);
         fbb.addOffset(5, releaseDateOffset);
         fbb.addOffset(6, listTypeOffset);
+        fbb.addFloat64(7, object.personalRating);
+        fbb.addOffset(8, personalNotesOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -397,6 +413,14 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final listTypeParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 16, '');
+        final personalRatingParam = const fb.Float64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          18,
+        );
+        final personalNotesParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 20);
         final object = ItemEntity(
           id: idParam,
           itemId: itemIdParam,
@@ -405,6 +429,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           posterUrl: posterUrlParam,
           releaseDate: releaseDateParam,
           listType: listTypeParam,
+          personalRating: personalRatingParam,
+          personalNotes: personalNotesParam,
         );
 
         return object;
@@ -511,5 +537,15 @@ class ItemEntity_ {
   /// See [ItemEntity.listType].
   static final listType = obx.QueryStringProperty<ItemEntity>(
     _entities[2].properties[6],
+  );
+
+  /// See [ItemEntity.personalRating].
+  static final personalRating = obx.QueryDoubleProperty<ItemEntity>(
+    _entities[2].properties[7],
+  );
+
+  /// See [ItemEntity.personalNotes].
+  static final personalNotes = obx.QueryStringProperty<ItemEntity>(
+    _entities[2].properties[8],
   );
 }

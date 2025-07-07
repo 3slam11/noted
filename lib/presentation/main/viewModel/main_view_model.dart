@@ -92,6 +92,32 @@ class MainViewModel extends BaseViewModel
   }
 
   @override
+  Future<void> updateItem(Item updatedItem) async {
+    final result = await _mainUsecase.updateItem(updatedItem);
+    result.fold(_handlePopupError, (_) {
+      if (!hasData) return;
+
+      // Update item in 'todos' list
+      final todoIndex = _currentObject!.mainData!.todos.indexWhere(
+        (i) => _isSameItem(i, updatedItem),
+      );
+      if (todoIndex != -1) {
+        _currentObject!.mainData!.todos[todoIndex] = updatedItem;
+      }
+
+      // Update item in 'finished' list
+      final finishedIndex = _currentObject!.mainData!.finished.indexWhere(
+        (i) => _isSameItem(i, updatedItem),
+      );
+      if (finishedIndex != -1) {
+        _currentObject!.mainData!.finished[finishedIndex] = updatedItem;
+      }
+
+      inputMainData.add(_currentObject);
+    });
+  }
+
+  @override
   Future<void> moveToFinished(Item item) async {
     await _performItemOperation(
       () => _mainUsecase.moveToFinished(item),
@@ -269,6 +295,9 @@ abstract class MainViewModelInputs {
   Sink<MainObject?> get inputMainData;
   Sink<Category> get inputSelectedCategory;
   void setCategory(Category category);
+
+  // Item update action
+  Future<void> updateItem(Item item);
 
   // Item movement actions
   Future<void> moveToFinished(Item item);

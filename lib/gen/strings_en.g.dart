@@ -56,8 +56,6 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	];
 	late final TranslationsRoutesEn routes = TranslationsRoutesEn._(_root);
 	late final TranslationsErrorHandlerEn errorHandler = TranslationsErrorHandlerEn._(_root);
-	late final TranslationsLoginEn login = TranslationsLoginEn._(_root);
-	late final TranslationsRegisterEn register = TranslationsRegisterEn._(_root);
 	late final TranslationsStateRendererEn stateRenderer = TranslationsStateRendererEn._(_root);
 	late final TranslationsHomeEn home = TranslationsHomeEn._(_root);
 	late final TranslationsSearchEn search = TranslationsSearchEn._(_root);
@@ -112,28 +110,6 @@ class TranslationsErrorHandlerEn {
 	String get siteDownError => 'Site might be down at the moment, wait a few minutes and try later.';
 }
 
-// Path: login
-class TranslationsLoginEn {
-	TranslationsLoginEn._(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-	String get signIn => 'Sign In';
-	String get alreadyHaveAccount => 'Don\'t have an account? Sign Up';
-}
-
-// Path: register
-class TranslationsRegisterEn {
-	TranslationsRegisterEn._(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-	String get signUp => 'Sign Up';
-	String get dontHaveAccount => 'Already have an account? Sign In';
-}
-
 // Path: stateRenderer
 class TranslationsStateRendererEn {
 	TranslationsStateRendererEn._(this._root);
@@ -186,6 +162,13 @@ class TranslationsHomeEn {
 	String get moveToTodo => 'Move to todo';
 	String get moveToFinished => 'Move to finished';
 	String get moveToHistory => 'Move to history';
+	String get editNotes => 'Edit/View Notes';
+	String get yourRating => 'Your Rating';
+	String get yourNotes => 'Your Notes';
+	String get notesHint => 'Add your thoughts here...';
+	String get noNotes => 'No note yet.';
+	String get notesSaved => 'Note saved.';
+	String get save => 'Save';
 	String get delete => 'Delete';
 }
 
@@ -432,10 +415,6 @@ extension on Translations {
 			case 'errorHandler.apiCapacityHit': return 'Default API might have hit the capacity.';
 			case 'errorHandler.customApiError': return 'Your custom API might be written incorrectly.';
 			case 'errorHandler.siteDownError': return 'Site might be down at the moment, wait a few minutes and try later.';
-			case 'login.signIn': return 'Sign In';
-			case 'login.alreadyHaveAccount': return 'Don\'t have an account? Sign Up';
-			case 'register.signUp': return 'Sign Up';
-			case 'register.dontHaveAccount': return 'Already have an account? Sign In';
 			case 'stateRenderer.content': return 'Content';
 			case 'stateRenderer.error': return 'Error';
 			case 'stateRenderer.loading': return 'Loading';
@@ -472,6 +451,13 @@ extension on Translations {
 			case 'home.moveToTodo': return 'Move to todo';
 			case 'home.moveToFinished': return 'Move to finished';
 			case 'home.moveToHistory': return 'Move to history';
+			case 'home.editNotes': return 'Edit/View Notes';
+			case 'home.yourRating': return 'Your Rating';
+			case 'home.yourNotes': return 'Your Notes';
+			case 'home.notesHint': return 'Add your thoughts here...';
+			case 'home.noNotes': return 'No note yet.';
+			case 'home.notesSaved': return 'Note saved.';
+			case 'home.save': return 'Save';
 			case 'home.delete': return 'Delete';
 			case 'search.search': return 'Search';
 			case 'search.searchPlaceholder': return 'Search...';

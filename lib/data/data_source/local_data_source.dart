@@ -20,6 +20,9 @@ abstract class LocalDataSource {
   void clearCache();
   void removeFromCache(String key);
 
+  // Item update
+  Future<void> updateItem(ItemResponse itemResponse);
+
   // Todo operations
   Future<List<ItemResponse>> getTodo();
   Future<void> addTodo(ItemResponse todoResponse);
@@ -83,6 +86,12 @@ class LocalDataSourceImpl implements LocalDataSource {
   @override
   void removeFromCache(String key) {
     _objectBoxManager.removeCache(key);
+  }
+
+  // Item update
+  @override
+  Future<void> updateItem(ItemResponse itemResponse) async {
+    await _updateItemInList(itemResponse);
   }
 
   // Todo operations
@@ -150,6 +159,8 @@ class LocalDataSourceImpl implements LocalDataSource {
         entity.category,
         entity.posterUrl,
         entity.releaseDate,
+        personalRating: entity.personalRating,
+        personalNotes: entity.personalNotes,
       );
     } catch (error) {
       return null;
@@ -170,9 +181,19 @@ class LocalDataSourceImpl implements LocalDataSource {
         item.posterUrl,
         item.releaseDate,
         listType,
+        personalRating: item.personalRating,
+        personalNotes: item.personalNotes,
       );
 
       _objectBoxManager.addItem(entity);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> _updateItemInList(ItemResponse item) async {
+    try {
+      _objectBoxManager.updateItem(item);
     } catch (error) {
       rethrow;
     }

@@ -5,7 +5,15 @@ import 'package:noted/domain/model/models.dart';
 
 extension ItemToResponseMapper on Item {
   ItemResponse toResponse() {
-    return ItemResponse(id, title, category, posterUrl, releaseDate);
+    return ItemResponse(
+      id,
+      title,
+      category,
+      posterUrl,
+      releaseDate,
+      personalRating: personalRating,
+      personalNotes: personalNotes,
+    );
   }
 }
 
@@ -17,6 +25,8 @@ extension ItemResponseMapper on ItemResponse? {
       this?.category.orDefault() ?? Category.all,
       this?.posterUrl.orEmpty() ?? Constants.empty,
       this?.releaseDate.orEmpty() ?? Constants.empty,
+      personalRating: this?.personalRating,
+      personalNotes: this?.personalNotes,
     );
   }
 }

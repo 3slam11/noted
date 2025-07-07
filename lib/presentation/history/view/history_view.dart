@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
@@ -229,6 +230,19 @@ class HistoryViewState extends State<HistoryView> {
         onMoveToTodo: () => _viewModel.moveToTodo(item),
         onMoveToFinished: () => _viewModel.moveToFinished(item),
         onDelete: () => _viewModel.deleteHistoryItem(item),
+        onEdit: () => _showEditNotesDialog(context, item),
+      ),
+    );
+  }
+
+  void _showEditNotesDialog(BuildContext context, Item item) {
+    showDialog(
+      context: context,
+      builder: (_) => EditItemDialog(
+        item: item,
+        onSave: (updatedItem) {
+          _viewModel.updateItem(updatedItem);
+        },
       ),
     );
   }
@@ -328,12 +342,31 @@ class HistoryViewState extends State<HistoryView> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          subtitle: Text(
-            item.category?.localizedCategory() ?? '',
-            style: TextStyle(
-              fontSize: AppSize.s12,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                item.category?.localizedCategory() ?? '',
+                style: TextStyle(
+                  fontSize: AppSize.s12,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              if (item.personalRating != null && item.personalRating! > 0)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: RatingBarIndicator(
+                    rating: item.personalRating!,
+                    itemBuilder: (context, index) => Icon(
+                      Icons.star,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    itemCount: 5,
+                    itemSize: 16.0,
+                    direction: Axis.horizontal,
+                  ),
+                ),
+            ],
           ),
           onTap: () {
             if (item.id != null && item.category != null) {

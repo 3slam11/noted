@@ -12,6 +12,8 @@ ItemResponse _$ItemResponseFromJson(Map<String, dynamic> json) => ItemResponse(
   $enumDecodeNullable(_$CategoryEnumMap, json['category']),
   json['posterUrl'] as String?,
   json['releaseDate'] as String?,
+  personalRating: (json['personalRating'] as num?)?.toDouble(),
+  personalNotes: json['personalNotes'] as String?,
 );
 
 Map<String, dynamic> _$ItemResponseToJson(ItemResponse instance) =>
@@ -21,6 +23,8 @@ Map<String, dynamic> _$ItemResponseToJson(ItemResponse instance) =>
       'category': _$CategoryEnumMap[instance.category],
       'posterUrl': instance.posterUrl,
       'releaseDate': instance.releaseDate,
+      'personalRating': instance.personalRating,
+      'personalNotes': instance.personalNotes,
     };
 
 const _$CategoryEnumMap = {

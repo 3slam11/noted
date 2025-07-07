@@ -17,6 +17,10 @@ class MainUsecase implements BaseUsecase<void, MainObject> {
     return repository.addTodo(todo);
   }
 
+  Future<Either<Failure, void>> updateItem(Item item) {
+    return repository.updateItem(item);
+  }
+
   Future<Either<Failure, void>> moveToFinished(Item item) {
     return repository.moveToFinished(item);
   }

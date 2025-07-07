@@ -1,4 +1,5 @@
 import 'package:noted/data/objectbox/objectbox.dart';
+import 'package:noted/data/responses/responses.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:noted/data/objectbox/objectbox.g.dart';
@@ -43,6 +44,24 @@ class ObjectBoxManager {
 
   void addItem(ItemEntity item) {
     _itemBox.put(item);
+  }
+
+  void updateItem(ItemResponse item) {
+    final query = _itemBox
+        .query(
+          ItemEntity_.itemId
+              .equals(item.id!)
+              .and(ItemEntity_.categoryName.equals(item.category!.name)),
+        )
+        .build();
+    final existingItem = query.findFirst();
+    query.close();
+
+    if (existingItem != null) {
+      existingItem.personalRating = item.personalRating;
+      existingItem.personalNotes = item.personalNotes;
+      _itemBox.put(existingItem);
+    }
   }
 
   bool removeItem(String itemId, String categoryName, String listType) {
@@ -265,6 +284,8 @@ class ObjectBoxManager {
                   'categoryName': e.categoryName,
                   'posterUrl': e.posterUrl,
                   'releaseDate': e.releaseDate,
+                  'personalRating': e.personalRating,
+                  'personalNotes': e.personalNotes,
                 },
               )
               .toList(),
@@ -313,6 +334,8 @@ class ObjectBoxManager {
               posterUrl: data['posterUrl'],
               releaseDate: data['releaseDate'],
               listType: listType,
+              personalRating: data['personalRating'],
+              personalNotes: data['personalNotes'],
             );
           }).toList();
           addItemsBatch(items);

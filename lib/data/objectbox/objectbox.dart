@@ -13,6 +13,9 @@ class ItemEntity {
   String? releaseDate;
   String listType; // 'todo', 'finished', 'history'
 
+  double? personalRating;
+  String? personalNotes;
+
   ItemEntity({
     this.id = 0,
     required this.itemId,
@@ -21,6 +24,8 @@ class ItemEntity {
     this.posterUrl,
     this.releaseDate,
     required this.listType,
+    this.personalRating,
+    this.personalNotes,
   });
 
   // Convert from domain model
@@ -30,8 +35,10 @@ class ItemEntity {
     Category? category,
     String? posterUrl,
     String? releaseDate,
-    String listType,
-  ) {
+    String listType, {
+    double? personalRating,
+    String? personalNotes,
+  }) {
     return ItemEntity(
       itemId: itemId,
       title: title,
@@ -39,6 +46,8 @@ class ItemEntity {
       posterUrl: posterUrl,
       releaseDate: releaseDate,
       listType: listType,
+      personalRating: personalRating,
+      personalNotes: personalNotes,
     );
   }
 

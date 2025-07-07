@@ -226,6 +226,15 @@ class RepositoryImpl implements Repository {
   }
 
   @override
+  Future<Either<Failure, void>> updateItem(Item item) {
+    return _performItemValidationAndOperation(
+      item,
+      () => _localDataSource.updateItem(item.toResponse()),
+      'Failed to update item',
+    );
+  }
+
+  @override
   Future<Either<Failure, void>> moveToFinished(Item item) {
     return _performItemValidationAndOperation(item, () async {
       await _localDataSource.removeTodo(item.id!, item.category!);

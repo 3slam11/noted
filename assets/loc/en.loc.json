@@ -42,16 +42,6 @@
     "siteDownError": "Site might be down at the moment, wait a few minutes and try later."
   },
 
-  "login": {
-    "signIn": "Sign In",
-    "alreadyHaveAccount": "Don't have an account? Sign Up"
-  },
-
-  "register": {
-    "signUp": "Sign Up",
-    "dontHaveAccount": "Already have an account? Sign In"
-  },
-
   "stateRenderer": {
     "content": "Content",
     "error": "Error",
@@ -92,6 +82,13 @@
     "moveToTodo": "Move to todo",
     "moveToFinished": "Move to finished",
     "moveToHistory": "Move to history",
+    "editNotes": "Edit/View Notes",
+    "yourRating": "Your Rating",
+    "yourNotes": "Your Notes",
+    "notesHint": "Add your thoughts here...",
+    "noNotes": "No note yet.",
+    "notesSaved": "Note saved.",
+    "save": "Save",
     "delete": "Delete"
   },
 
