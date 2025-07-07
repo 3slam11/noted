@@ -93,6 +93,18 @@
 
 
   },
+  "sort": {
+    "sort": "رتب",
+    "sortBy": "ترتيب حسب",
+    "titleAsc": "العنوان (أ-ي)",
+    "titleDesc": "العنوان (ي-أ)",
+    "releaseDateNewest": "تاريخ الإصدار (الأحدث)",
+    "releaseDateOldest": "تاريخ الإصدار (الأقدم)",
+    "ratingHighest": "التقييم (الأعلى)",
+    "ratingLowest": "التقييم (الأدنى)",
+    "dateAddedNewest": "تاريخ الإضافة (الأحدث)",
+    "dateAddedOldest": "تاريخ الإضافة (الأقدم)"
+  },
 
   "search": {
     "search": "بحث",

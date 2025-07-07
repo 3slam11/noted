@@ -92,6 +92,19 @@
     "delete": "Delete"
   },
 
+  "sort": {
+    "sort": "Sort",
+    "sortBy": "Sort by",
+    "titleAsc": "Title (A-Z)",
+    "titleDesc": "Title (Z-A)",
+    "releaseDateNewest": "Release Date (Newest)",
+    "releaseDateOldest": "Release Date (Oldest)",
+    "ratingHighest": "Rating (Highest)",
+    "ratingLowest": "Rating (Lowest)",
+    "dateAddedNewest": "Date Added (Newest)",
+    "dateAddedOldest": "Date Added (Oldest)"
+  },
+
   "search": {
     "search": "Search",
     "searchPlaceholder": "Search...",

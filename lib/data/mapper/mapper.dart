@@ -13,6 +13,7 @@ extension ItemToResponseMapper on Item {
       releaseDate,
       personalRating: personalRating,
       personalNotes: personalNotes,
+      dateAdded: dateAdded,
     );
   }
 }
@@ -27,6 +28,7 @@ extension ItemResponseMapper on ItemResponse? {
       this?.releaseDate.orEmpty() ?? Constants.empty,
       personalRating: this?.personalRating,
       personalNotes: this?.personalNotes,
+      dateAdded: this?.dateAdded,
     );
   }
 }

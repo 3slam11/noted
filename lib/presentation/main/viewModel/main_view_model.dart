@@ -19,6 +19,8 @@ class MainViewModel extends BaseViewModel
       BehaviorSubject<MainObject?>();
   final BehaviorSubject<Category> _selectedCategoryController =
       BehaviorSubject<Category>.seeded(Category.all);
+  final BehaviorSubject<SortOption> _sortOptionController =
+      BehaviorSubject<SortOption>.seeded(SortOption.dateAddedNewest);
 
   MainObject? _currentObject;
 
@@ -50,10 +52,88 @@ class MainViewModel extends BaseViewModel
       },
       (mainObject) {
         _currentObject = mainObject;
-        _mainDataController.add(_currentObject);
+        _applySortersAndFilters();
         inputState.add(ContentState());
       },
     );
+  }
+
+  void _applySortersAndFilters() {
+    if (_currentObject?.mainData == null) {
+      _mainDataController.add(_currentObject);
+      return;
+    }
+
+    final currentSortOption = _sortOptionController.value;
+
+    final sortedTodos = _sortItems(
+      _currentObject!.mainData!.todos,
+      currentSortOption,
+    );
+    final sortedFinished = _sortItems(
+      _currentObject!.mainData!.finished,
+      currentSortOption,
+    );
+
+    final newMainData = TaskData(sortedTodos, sortedFinished);
+    _mainDataController.add(MainObject(newMainData));
+  }
+
+  List<Item> _sortItems(List<Item> items, SortOption sortOption) {
+    List<Item> sortedList = List.from(items);
+
+    int compareStrings(String? a, String? b) {
+      return (a ?? '').toLowerCase().compareTo((b ?? '').toLowerCase());
+    }
+
+    int compareDates(DateTime? a, DateTime? b) {
+      if (a == null && b == null) return 0;
+      if (a == null) return 1; // Nulls last
+      if (b == null) return -1; // Nulls last
+      return a.compareTo(b);
+    }
+
+    DateTime? parseDate(String? dateStr) {
+      if (dateStr == null || dateStr.isEmpty) return null;
+      try {
+        return DateTime.parse(dateStr);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    int compareRatings(double? a, double? b) {
+      return (b ?? 0.0).compareTo(a ?? 0.0); // Descending (b vs a)
+    }
+
+    sortedList.sort((a, b) {
+      switch (sortOption) {
+        case SortOption.titleAsc:
+          return compareStrings(a.title, b.title);
+        case SortOption.titleDesc:
+          return compareStrings(b.title, a.title);
+        case SortOption.releaseDateNewest:
+          return compareDates(
+            parseDate(b.releaseDate),
+            parseDate(a.releaseDate),
+          );
+        case SortOption.releaseDateOldest:
+          return compareDates(
+            parseDate(a.releaseDate),
+            parseDate(b.releaseDate),
+          );
+        case SortOption.ratingHighest:
+          return compareRatings(a.personalRating, b.personalRating);
+        case SortOption.ratingLowest:
+          return compareRatings(b.personalRating, a.personalRating);
+        case SortOption.dateAddedNewest:
+          return compareDates(b.dateAdded, a.dateAdded);
+        case SortOption.dateAddedOldest:
+          return compareDates(a.dateAdded, b.dateAdded);
+      }
+    });
+
+    return sortedList;
   }
 
   void _setLoadingState() {
@@ -73,22 +153,24 @@ class MainViewModel extends BaseViewModel
 
   Future<void> _performItemOperation(
     Future<Either<Failure, void>> Function() operation, {
-    void Function()? onSuccess,
+    required void Function() onSuccess,
   }) async {
     final result = await operation();
     result.fold(_handlePopupError, (_) {
-      if (onSuccess != null) {
-        onSuccess();
-        inputMainData.add(_currentObject);
-      } else {
-        loadMainData();
-      }
+      onSuccess();
+      _applySortersAndFilters();
     });
   }
 
   @override
   void setCategory(Category category) {
     _selectedCategoryController.add(category);
+  }
+
+  @override
+  void setSortOption(SortOption sortOption) {
+    _sortOptionController.add(sortOption);
+    _applySortersAndFilters();
   }
 
   @override
@@ -113,7 +195,7 @@ class MainViewModel extends BaseViewModel
         _currentObject!.mainData!.finished[finishedIndex] = updatedItem;
       }
 
-      inputMainData.add(_currentObject);
+      _applySortersAndFilters();
     });
   }
 
@@ -141,7 +223,7 @@ class MainViewModel extends BaseViewModel
     );
     if (index != -1) {
       _currentObject!.mainData!.todos.removeAt(index);
-      inputMainData.add(_currentObject);
+      _applySortersAndFilters();
       return index;
     }
     return null;
@@ -152,7 +234,7 @@ class MainViewModel extends BaseViewModel
     if (!hasData) return;
     if (index >= 0 && index <= _currentObject!.mainData!.todos.length) {
       _currentObject!.mainData!.todos.insert(index, item);
-      inputMainData.add(_currentObject);
+      _applySortersAndFilters();
     }
   }
 
@@ -178,7 +260,7 @@ class MainViewModel extends BaseViewModel
     );
     if (index != -1) {
       _currentObject!.mainData!.finished.removeAt(index);
-      inputMainData.add(_currentObject);
+      _applySortersAndFilters();
       return index;
     }
     return null;
@@ -189,7 +271,7 @@ class MainViewModel extends BaseViewModel
     if (!hasData) return;
     if (index >= 0 && index <= _currentObject!.mainData!.finished.length) {
       _currentObject!.mainData!.finished.insert(index, item);
-      inputMainData.add(_currentObject);
+      _applySortersAndFilters();
     }
   }
 
@@ -269,6 +351,7 @@ class MainViewModel extends BaseViewModel
   void dispose() {
     _mainDataController.close();
     _selectedCategoryController.close();
+    _sortOptionController.close();
     _dataGlobalNotifier.removeListener(loadMainData);
     super.dispose();
   }
@@ -280,21 +363,26 @@ class MainViewModel extends BaseViewModel
   Sink<Category> get inputSelectedCategory => _selectedCategoryController.sink;
 
   @override
-  Stream<MainObject?> get outputMainData =>
-      _mainDataController.stream.map((data) {
-        _currentObject = data;
-        return data;
-      });
+  Sink<SortOption> get inputSortOption => _sortOptionController.sink;
+
+  @override
+  Stream<MainObject?> get outputMainData => _mainDataController.stream;
 
   @override
   Stream<Category> get outputSelectedCategory =>
       _selectedCategoryController.stream;
+
+  @override
+  Stream<SortOption> get outputSortOption => _sortOptionController.stream;
 }
 
 abstract class MainViewModelInputs {
   Sink<MainObject?> get inputMainData;
   Sink<Category> get inputSelectedCategory;
+  Sink<SortOption> get inputSortOption;
+
   void setCategory(Category category);
+  void setSortOption(SortOption sortOption);
 
   // Item update action
   Future<void> updateItem(Item item);
@@ -323,4 +411,5 @@ abstract class MainViewModelInputs {
 abstract class MainViewModelOutputs {
   Stream<MainObject?> get outputMainData;
   Stream<Category> get outputSelectedCategory;
+  Stream<SortOption> get outputSortOption;
 }

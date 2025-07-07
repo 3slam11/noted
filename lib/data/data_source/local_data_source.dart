@@ -161,6 +161,7 @@ class LocalDataSourceImpl implements LocalDataSource {
         entity.releaseDate,
         personalRating: entity.personalRating,
         personalNotes: entity.personalNotes,
+        dateAdded: entity.dateAdded,
       );
     } catch (error) {
       return null;
@@ -183,6 +184,7 @@ class LocalDataSourceImpl implements LocalDataSource {
         listType,
         personalRating: item.personalRating,
         personalNotes: item.personalNotes,
+        dateAdded: item.dateAdded ?? DateTime.now(),
       );
 
       _objectBoxManager.addItem(entity);

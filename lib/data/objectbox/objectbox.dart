@@ -16,6 +16,9 @@ class ItemEntity {
   double? personalRating;
   String? personalNotes;
 
+  @Property(type: PropertyType.date)
+  DateTime? dateAdded;
+
   ItemEntity({
     this.id = 0,
     required this.itemId,
@@ -26,6 +29,7 @@ class ItemEntity {
     required this.listType,
     this.personalRating,
     this.personalNotes,
+    this.dateAdded,
   });
 
   // Convert from domain model
@@ -38,6 +42,7 @@ class ItemEntity {
     String listType, {
     double? personalRating,
     String? personalNotes,
+    DateTime? dateAdded,
   }) {
     return ItemEntity(
       itemId: itemId,
@@ -48,6 +53,7 @@ class ItemEntity {
       listType: listType,
       personalRating: personalRating,
       personalNotes: personalNotes,
+      dateAdded: dateAdded,
     );
   }
 

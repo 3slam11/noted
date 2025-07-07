@@ -35,6 +35,9 @@ class ItemResponse {
   @JsonKey(name: 'personalNotes')
   String? personalNotes;
 
+  @JsonKey(name: 'dateAdded')
+  DateTime? dateAdded;
+
   ItemResponse(
     this.id,
     this.title,
@@ -43,6 +46,7 @@ class ItemResponse {
     this.releaseDate, {
     this.personalRating,
     this.personalNotes,
+    this.dateAdded,
   });
 
   // from json

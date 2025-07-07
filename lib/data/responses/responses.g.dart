@@ -14,6 +14,9 @@ ItemResponse _$ItemResponseFromJson(Map<String, dynamic> json) => ItemResponse(
   json['releaseDate'] as String?,
   personalRating: (json['personalRating'] as num?)?.toDouble(),
   personalNotes: json['personalNotes'] as String?,
+  dateAdded: json['dateAdded'] == null
+      ? null
+      : DateTime.parse(json['dateAdded'] as String),
 );
 
 Map<String, dynamic> _$ItemResponseToJson(ItemResponse instance) =>
@@ -25,6 +28,7 @@ Map<String, dynamic> _$ItemResponseToJson(ItemResponse instance) =>
       'releaseDate': instance.releaseDate,
       'personalRating': instance.personalRating,
       'personalNotes': instance.personalNotes,
+      'dateAdded': instance.dateAdded?.toIso8601String(),
     };
 
 const _$CategoryEnumMap = {

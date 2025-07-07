@@ -58,6 +58,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	late final TranslationsErrorHandlerEn errorHandler = TranslationsErrorHandlerEn._(_root);
 	late final TranslationsStateRendererEn stateRenderer = TranslationsStateRendererEn._(_root);
 	late final TranslationsHomeEn home = TranslationsHomeEn._(_root);
+	late final TranslationsSortEn sort = TranslationsSortEn._(_root);
 	late final TranslationsSearchEn search = TranslationsSearchEn._(_root);
 	late final TranslationsDetailsEn details = TranslationsDetailsEn._(_root);
 	late final TranslationsSettingsEn settings = TranslationsSettingsEn._(_root);
@@ -170,6 +171,25 @@ class TranslationsHomeEn {
 	String get notesSaved => 'Note saved.';
 	String get save => 'Save';
 	String get delete => 'Delete';
+}
+
+// Path: sort
+class TranslationsSortEn {
+	TranslationsSortEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	String get sort => 'Sort';
+	String get sortBy => 'Sort by';
+	String get titleAsc => 'Title (A-Z)';
+	String get titleDesc => 'Title (Z-A)';
+	String get releaseDateNewest => 'Release Date (Newest)';
+	String get releaseDateOldest => 'Release Date (Oldest)';
+	String get ratingHighest => 'Rating (Highest)';
+	String get ratingLowest => 'Rating (Lowest)';
+	String get dateAddedNewest => 'Date Added (Newest)';
+	String get dateAddedOldest => 'Date Added (Oldest)';
 }
 
 // Path: search
@@ -459,6 +479,16 @@ extension on Translations {
 			case 'home.notesSaved': return 'Note saved.';
 			case 'home.save': return 'Save';
 			case 'home.delete': return 'Delete';
+			case 'sort.sort': return 'Sort';
+			case 'sort.sortBy': return 'Sort by';
+			case 'sort.titleAsc': return 'Title (A-Z)';
+			case 'sort.titleDesc': return 'Title (Z-A)';
+			case 'sort.releaseDateNewest': return 'Release Date (Newest)';
+			case 'sort.releaseDateOldest': return 'Release Date (Oldest)';
+			case 'sort.ratingHighest': return 'Rating (Highest)';
+			case 'sort.ratingLowest': return 'Rating (Lowest)';
+			case 'sort.dateAddedNewest': return 'Date Added (Newest)';
+			case 'sort.dateAddedOldest': return 'Date Added (Oldest)';
 			case 'search.search': return 'Search';
 			case 'search.searchPlaceholder': return 'Search...';
 			case 'search.searchForSomething': return 'Search for anything';

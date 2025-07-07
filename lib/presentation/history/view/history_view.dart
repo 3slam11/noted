@@ -71,6 +71,8 @@ class HistoryViewState extends State<HistoryView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildCategoryFilter(),
+          const SizedBox(height: AppSize.s12),
+          _buildSortControl(),
           const SizedBox(height: AppSize.s20),
           Expanded(child: _buildHistoryListSection()),
         ],
@@ -86,48 +88,107 @@ class HistoryViewState extends State<HistoryView> {
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: Category.values.map((category) {
-              return Padding(
+            children: [
+              // Sort Dropdown Chip
+              Padding(
                 padding: const EdgeInsets.only(right: AppPadding.p8),
-                child:
-                    ChoiceChip(
-                          label: Text(category.localizedCategory()),
-                          selected: selectedCategory == category,
-                          onSelected: (selected) {
-                            if (selected) {
-                              _viewModel.setCategory(category);
-                            }
-                          },
-                          selectedColor: Theme.of(context).colorScheme.primary,
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.onPrimary,
-                          labelStyle: TextStyle(
-                            color: selectedCategory == category
-                                ? Theme.of(context).colorScheme.surface
-                                : Theme.of(context).colorScheme.onSurface,
-                            fontWeight: selectedCategory == category
-                                ? FontWeight.bold
-                                : FontWeight.normal,
+                child: StreamBuilder<SortOption>(
+                  stream: _viewModel.outputSortOption,
+                  builder: (context, sortSnapshot) {
+                    final selectedOption =
+                        sortSnapshot.data ?? SortOption.dateAddedNewest;
+                    return ChoiceChip(
+                      label: Row(
+                        children: [
+                          Icon(
+                            Icons.sort_rounded,
+                            size: 16,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
-                          checkmarkColor: Theme.of(context).colorScheme.surface,
-                        )
-                        .animate()
-                        .fadeIn(duration: 400.ms)
-                        .slideX(begin: -0.2, end: 0)
-                        .then()
-                        .animate(target: selectedCategory == category ? 1 : 0)
-                        .scale(
-                          begin: const Offset(1.0, 1.0),
-                          end: const Offset(1.05, 1.05),
-                          duration: 200.ms,
-                        ),
-              );
-            }).toList(),
+                          const SizedBox(width: 4),
+                          Text(selectedOption.localizedName()),
+                        ],
+                      ),
+                      selected: false,
+                      onSelected: (selected) {
+                        showMenu(
+                          context: context,
+                          position: RelativeRect.fromLTRB(0, 0, 0, 0),
+                          items: SortOption.values.map((option) {
+                            return PopupMenuItem<SortOption>(
+                              value: option,
+                              child: Text(option.localizedName()),
+                              onTap: () {
+                                _viewModel.setSortOption(option);
+                              },
+                            );
+                          }).toList(),
+                        );
+                      },
+                      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                      labelStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    );
+                  },
+                ),
+              ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.2, end: 0),
+              // Category Chips
+              ...Category.values.map((category) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: AppPadding.p8),
+                  child:
+                      ChoiceChip(
+                            label: Text(category.localizedCategory()),
+                            selected: selectedCategory == category,
+                            onSelected: (selected) {
+                              if (selected) {
+                                _viewModel.setCategory(category);
+                              }
+                            },
+                            selectedColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary,
+                            labelStyle: TextStyle(
+                              color: selectedCategory == category
+                                  ? Theme.of(context).colorScheme.surface
+                                  : Theme.of(context).colorScheme.onSurface,
+                              fontWeight: selectedCategory == category
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                            checkmarkColor: Theme.of(
+                              context,
+                            ).colorScheme.surface,
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms)
+                          .slideX(begin: -0.2, end: 0)
+                          .then()
+                          .animate(target: selectedCategory == category ? 1 : 0)
+                          .scale(
+                            begin: const Offset(1.0, 1.0),
+                            end: const Offset(1.05, 1.05),
+                            duration: 200.ms,
+                          ),
+                );
+              }),
+            ],
           ),
         );
       },
     );
+  }
+
+  Widget _buildSortControl() {
+    return const SizedBox.shrink();
   }
 
   Widget _buildHistoryListSection() {

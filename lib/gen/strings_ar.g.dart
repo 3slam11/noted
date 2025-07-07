@@ -55,6 +55,7 @@ class TranslationsAr implements Translations {
 	@override late final _TranslationsErrorHandlerAr errorHandler = _TranslationsErrorHandlerAr._(_root);
 	@override late final _TranslationsStateRendererAr stateRenderer = _TranslationsStateRendererAr._(_root);
 	@override late final _TranslationsHomeAr home = _TranslationsHomeAr._(_root);
+	@override late final _TranslationsSortAr sort = _TranslationsSortAr._(_root);
 	@override late final _TranslationsSearchAr search = _TranslationsSearchAr._(_root);
 	@override late final _TranslationsDetailsAr details = _TranslationsDetailsAr._(_root);
 	@override late final _TranslationsSettingsAr settings = _TranslationsSettingsAr._(_root);
@@ -167,6 +168,25 @@ class _TranslationsHomeAr implements TranslationsHomeEn {
 	@override String get notesSaved => 'تم حفظ الملاحظات والتقييم.';
 	@override String get save => 'حفظ';
 	@override String get delete => 'حذف';
+}
+
+// Path: sort
+class _TranslationsSortAr implements TranslationsSortEn {
+	_TranslationsSortAr._(this._root);
+
+	final TranslationsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get sort => 'رتب';
+	@override String get sortBy => 'ترتيب حسب';
+	@override String get titleAsc => 'العنوان (أ-ي)';
+	@override String get titleDesc => 'العنوان (ي-أ)';
+	@override String get releaseDateNewest => 'تاريخ الإصدار (الأحدث)';
+	@override String get releaseDateOldest => 'تاريخ الإصدار (الأقدم)';
+	@override String get ratingHighest => 'التقييم (الأعلى)';
+	@override String get ratingLowest => 'التقييم (الأدنى)';
+	@override String get dateAddedNewest => 'تاريخ الإضافة (الأحدث)';
+	@override String get dateAddedOldest => 'تاريخ الإضافة (الأقدم)';
 }
 
 // Path: search
@@ -456,6 +476,16 @@ extension on TranslationsAr {
 			case 'home.notesSaved': return 'تم حفظ الملاحظات والتقييم.';
 			case 'home.save': return 'حفظ';
 			case 'home.delete': return 'حذف';
+			case 'sort.sort': return 'رتب';
+			case 'sort.sortBy': return 'ترتيب حسب';
+			case 'sort.titleAsc': return 'العنوان (أ-ي)';
+			case 'sort.titleDesc': return 'العنوان (ي-أ)';
+			case 'sort.releaseDateNewest': return 'تاريخ الإصدار (الأحدث)';
+			case 'sort.releaseDateOldest': return 'تاريخ الإصدار (الأقدم)';
+			case 'sort.ratingHighest': return 'التقييم (الأعلى)';
+			case 'sort.ratingLowest': return 'التقييم (الأدنى)';
+			case 'sort.dateAddedNewest': return 'تاريخ الإضافة (الأحدث)';
+			case 'sort.dateAddedOldest': return 'تاريخ الإضافة (الأقدم)';
 			case 'search.search': return 'بحث';
 			case 'search.searchPlaceholder': return 'ابحث...';
 			case 'search.searchForSomething': return 'ابحث عن اي شيء';

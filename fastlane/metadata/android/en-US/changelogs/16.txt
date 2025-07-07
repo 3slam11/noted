@@ -1,0 +1,2 @@
+- Adding notes & reviews function
+- Adding a better filter system

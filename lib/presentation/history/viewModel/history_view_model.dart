@@ -15,8 +15,13 @@ class HistoryViewModel extends BaseViewModel
   final BehaviorSubject<Category> _selectedCategoryController =
       BehaviorSubject<Category>.seeded(Category.all);
 
+  final BehaviorSubject<SortOption> _sortOptionController =
+      BehaviorSubject<SortOption>.seeded(SortOption.dateAddedNewest);
+
   final HistoryUsecase _historyUsecase;
   final DataGlobalNotifier _dataGlobalNotifier;
+
+  List<Item> _rawHistoryItems = [];
 
   HistoryViewModel(this._historyUsecase, this._dataGlobalNotifier);
 
@@ -42,10 +47,72 @@ class HistoryViewModel extends BaseViewModel
         _historyController.add([]);
       },
       (historyItems) {
-        _historyController.add(historyItems);
+        _rawHistoryItems = historyItems;
+        _applySort();
         inputState.add(ContentState());
       },
     );
+  }
+
+  void _applySort() {
+    final sortedItems = _sortItems(
+      _rawHistoryItems,
+      _sortOptionController.value,
+    );
+    _historyController.add(sortedItems);
+  }
+
+  List<Item> _sortItems(List<Item> items, SortOption sortOption) {
+    List<Item> sortedList = List.from(items);
+
+    int compareStrings(String? a, String? b) =>
+        (a ?? '').toLowerCase().compareTo((b ?? '').toLowerCase());
+    int compareDates(DateTime? a, DateTime? b) {
+      if (a == null && b == null) return 0;
+      if (a == null) return 1;
+      if (b == null) return -1;
+      return a.compareTo(b);
+    }
+
+    DateTime? parseDate(String? dateStr) {
+      if (dateStr == null || dateStr.isEmpty) return null;
+      try {
+        return DateTime.parse(dateStr);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    int compareRatings(double? a, double? b) => (b ?? 0.0).compareTo(a ?? 0.0);
+
+    sortedList.sort((a, b) {
+      switch (sortOption) {
+        case SortOption.titleAsc:
+          return compareStrings(a.title, b.title);
+        case SortOption.titleDesc:
+          return compareStrings(b.title, a.title);
+        case SortOption.releaseDateNewest:
+          return compareDates(
+            parseDate(b.releaseDate),
+            parseDate(a.releaseDate),
+          );
+        case SortOption.releaseDateOldest:
+          return compareDates(
+            parseDate(a.releaseDate),
+            parseDate(b.releaseDate),
+          );
+        case SortOption.ratingHighest:
+          return compareRatings(a.personalRating, b.personalRating);
+        case SortOption.ratingLowest:
+          return compareRatings(b.personalRating, a.personalRating);
+        case SortOption.dateAddedNewest:
+          return compareDates(b.dateAdded, a.dateAdded);
+        case SortOption.dateAddedOldest:
+          return compareDates(a.dateAdded, b.dateAdded);
+      }
+    });
+
+    return sortedList;
   }
 
   @override
@@ -53,12 +120,17 @@ class HistoryViewModel extends BaseViewModel
     _selectedCategoryController.add(category);
   }
 
+  @override
+  void setSortOption(SortOption sortOption) {
+    _sortOptionController.add(sortOption);
+    _applySort();
+  }
+
   bool _isSameItem(Item a, Item b) => a.id == b.id && a.category == b.category;
 
   void _removeItemFromUI(Item item) {
-    final currentItems = _historyController.valueOrNull ?? [];
-    currentItems.removeWhere((i) => _isSameItem(i, item));
-    _historyController.add(List.from(currentItems));
+    _rawHistoryItems.removeWhere((i) => _isSameItem(i, item));
+    _applySort();
   }
 
   void _handlePopupError(String message) {
@@ -77,8 +149,8 @@ class HistoryViewModel extends BaseViewModel
 
     final index = currentItems.indexWhere((i) => _isSameItem(i, item));
     if (index != -1) {
-      currentItems.removeAt(index);
-      _historyController.add(List.from(currentItems));
+      _rawHistoryItems.removeWhere((i) => _isSameItem(i, item));
+      _applySort();
       return index;
     }
     return null;
@@ -89,9 +161,9 @@ class HistoryViewModel extends BaseViewModel
     final currentItems = _historyController.valueOrNull;
     if (currentItems == null) return;
 
-    if (index >= 0 && index <= currentItems.length) {
-      currentItems.insert(index, item);
-      _historyController.add(List.from(currentItems));
+    if (index >= 0 && index <= _rawHistoryItems.length) {
+      _rawHistoryItems.insert(index, item);
+      _applySort();
     }
   }
 
@@ -122,11 +194,12 @@ class HistoryViewModel extends BaseViewModel
   Future<void> updateItem(Item updatedItem) async {
     final result = await _historyUsecase.updateItem(updatedItem);
     result.fold((failure) => _handlePopupError(failure.message), (_) {
-      final currentItems = _historyController.valueOrNull ?? [];
-      final index = currentItems.indexWhere((i) => _isSameItem(i, updatedItem));
+      final index = _rawHistoryItems.indexWhere(
+        (i) => _isSameItem(i, updatedItem),
+      );
       if (index != -1) {
-        currentItems[index] = updatedItem;
-        _historyController.add(List.from(currentItems));
+        _rawHistoryItems[index] = updatedItem;
+        _applySort();
       }
     });
   }
@@ -153,6 +226,7 @@ class HistoryViewModel extends BaseViewModel
   void dispose() {
     _historyController.close();
     _selectedCategoryController.close();
+    _sortOptionController.close();
     super.dispose();
   }
 
@@ -160,16 +234,24 @@ class HistoryViewModel extends BaseViewModel
   Sink<Category> get inputSelectedCategory => _selectedCategoryController.sink;
 
   @override
+  Sink<SortOption> get inputSortOption => _sortOptionController.sink;
+
+  @override
   Stream<List<Item>> get outputHistoryItems => _historyController.stream;
 
   @override
   Stream<Category> get outputSelectedCategory =>
       _selectedCategoryController.stream;
+
+  @override
+  Stream<SortOption> get outputSortOption => _sortOptionController.stream;
 }
 
 abstract class HistoryViewModelInputs {
   Sink<Category> get inputSelectedCategory;
+  Sink<SortOption> get inputSortOption;
   void setCategory(Category category);
+  void setSortOption(SortOption sortOption);
   Future<void> loadHistoryItems();
 
   // Deletion with Undo
@@ -191,4 +273,5 @@ abstract class HistoryViewModelInputs {
 abstract class HistoryViewModelOutputs {
   Stream<List<Item>> get outputHistoryItems;
   Stream<Category> get outputSelectedCategory;
+  Stream<SortOption> get outputSortOption;
 }

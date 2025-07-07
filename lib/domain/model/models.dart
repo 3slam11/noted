@@ -25,6 +25,38 @@ enum Category {
   }
 }
 
+enum SortOption {
+  dateAddedNewest,
+  dateAddedOldest,
+  titleAsc,
+  titleDesc,
+  releaseDateNewest,
+  releaseDateOldest,
+  ratingHighest,
+  ratingLowest;
+
+  String localizedName() {
+    switch (this) {
+      case SortOption.dateAddedNewest:
+        return t.sort.dateAddedNewest;
+      case SortOption.dateAddedOldest:
+        return t.sort.dateAddedOldest;
+      case SortOption.titleAsc:
+        return t.sort.titleAsc;
+      case SortOption.titleDesc:
+        return t.sort.titleDesc;
+      case SortOption.releaseDateNewest:
+        return t.sort.releaseDateNewest;
+      case SortOption.releaseDateOldest:
+        return t.sort.releaseDateOldest;
+      case SortOption.ratingHighest:
+        return t.sort.ratingHighest;
+      case SortOption.ratingLowest:
+        return t.sort.ratingLowest;
+    }
+  }
+}
+
 class Item {
   final String? id;
   final String? title;
@@ -33,6 +65,7 @@ class Item {
   final String? releaseDate;
   final double? personalRating;
   final String? personalNotes;
+  final DateTime? dateAdded;
 
   Item(
     this.id,
@@ -42,6 +75,7 @@ class Item {
     this.releaseDate, {
     this.personalRating,
     this.personalNotes,
+    this.dateAdded,
   });
 
   Item copyWith({
@@ -52,6 +86,7 @@ class Item {
     String? releaseDate,
     double? personalRating,
     String? personalNotes,
+    DateTime? dateAdded,
   }) {
     return Item(
       id ?? this.id,
@@ -61,6 +96,7 @@ class Item {
       releaseDate ?? this.releaseDate,
       personalRating: personalRating ?? this.personalRating,
       personalNotes: personalNotes ?? this.personalNotes,
+      dateAdded: dateAdded ?? this.dateAdded,
     );
   }
 }
