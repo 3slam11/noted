@@ -134,7 +134,12 @@ void initChangeApiModule() {
 void initBackupAndRestoreModule() {
   if (!GetIt.I.isRegistered<BackupAndRestoreViewModel>()) {
     instance.registerFactory<BackupAndRestoreViewModel>(
-      () => BackupAndRestoreViewModel(instance(), instance()),
+      () => BackupAndRestoreViewModel(
+        instance(),
+        instance(),
+        instance(),
+        instance(),
+      ),
     );
   }
 }

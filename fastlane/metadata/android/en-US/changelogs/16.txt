@@ -1,2 +1,3 @@
 - Adding notes & reviews function
 - Adding a better filter system
+- Better backup: Now backup backs lists, settings, api keys, and font!
