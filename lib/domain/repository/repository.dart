@@ -11,6 +11,10 @@ abstract class Repository {
     Category category,
   );
   Future<Either<Failure, Details>> getDetails(String id, Category category);
+  Future<Either<Failure, List<SearchItem>>> getRecommendations(
+    String id,
+    Category category,
+  );
 
   Future<Either<Failure, void>> addTodo(ItemResponse todo);
   Future<Either<Failure, void>> updateItem(Item item);

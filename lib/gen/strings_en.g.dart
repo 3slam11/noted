@@ -225,6 +225,8 @@ class TranslationsDetailsEn {
 	String get publisher => 'Publisher';
 	String get studio => 'Studio';
 	String get network => 'Network';
+	String get moreLikeThis => 'More like this';
+	String get noRecommendations => 'No Recommendations';
 }
 
 // Path: settings
@@ -506,6 +508,8 @@ extension on Translations {
 			case 'details.publisher': return 'Publisher';
 			case 'details.studio': return 'Studio';
 			case 'details.network': return 'Network';
+			case 'details.moreLikeThis': return 'More like this';
+			case 'details.noRecommendations': return 'No Recommendations';
 			case 'settings.backupAndRestore': return 'Backup & Restore';
 			case 'settings.settings': return 'Settings';
 			case 'settings.language': return 'Language';

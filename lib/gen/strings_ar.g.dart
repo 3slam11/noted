@@ -222,6 +222,8 @@ class _TranslationsDetailsAr implements TranslationsDetailsEn {
 	@override String get publisher => 'الناشر';
 	@override String get studio => 'الشركة';
 	@override String get network => 'الشبكة';
+	@override String get moreLikeThis => 'مثل هذا';
+	@override String get noRecommendations => 'لا توجد اقتراحات';
 }
 
 // Path: settings
@@ -503,6 +505,8 @@ extension on TranslationsAr {
 			case 'details.publisher': return 'الناشر';
 			case 'details.studio': return 'الشركة';
 			case 'details.network': return 'الشبكة';
+			case 'details.moreLikeThis': return 'مثل هذا';
+			case 'details.noRecommendations': return 'لا توجد اقتراحات';
 			case 'settings.backupAndRestore': return 'النسخ والاستعادة';
 			case 'settings.settings': return 'الإعدادات';
 			case 'settings.language': return 'اللغة';

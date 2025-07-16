@@ -105,6 +105,9 @@ Map<String, dynamic> _$BookDetailsResponseToJson(
 BookVolumeInfo _$BookVolumeInfoFromJson(Map<String, dynamic> json) =>
     BookVolumeInfo(
       title: json['title'] as String?,
+      authors: (json['authors'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       publishedDate: json['publishedDate'] as String?,
       description: json['description'] as String?,
       averageRating: (json['averageRating'] as num?)?.toDouble(),
@@ -117,6 +120,7 @@ BookVolumeInfo _$BookVolumeInfoFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$BookVolumeInfoToJson(BookVolumeInfo instance) =>
     <String, dynamic>{
       'title': instance.title,
+      'authors': instance.authors,
       'publishedDate': instance.publishedDate,
       'description': instance.description,
       'averageRating': instance.averageRating,
@@ -203,10 +207,13 @@ Map<String, dynamic> _$GameDetailsResponseToJson(
 };
 
 GamePublisherInfo _$GamePublisherInfoFromJson(Map<String, dynamic> json) =>
-    GamePublisherInfo(name: json['name'] as String?);
+    GamePublisherInfo(
+      id: (json['id'] as num?)?.toInt(),
+      name: json['name'] as String?,
+    );
 
 Map<String, dynamic> _$GamePublisherInfoToJson(GamePublisherInfo instance) =>
-    <String, dynamic>{'name': instance.name};
+    <String, dynamic>{'id': instance.id, 'name': instance.name};
 
 GamePlatformInfoWrapper _$GamePlatformInfoWrapperFromJson(
   Map<String, dynamic> json,

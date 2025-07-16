@@ -185,13 +185,16 @@ class _GamesApiClient implements GamesApiClient {
     String query, {
     int page = 1,
     int pageSize = 20,
+    int? publishers,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'search': query,
       r'page': page,
       r'page_size': pageSize,
+      r'publishers': publishers,
     };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<GamesSearchResponse>(
@@ -346,6 +349,36 @@ class _TmdbApiClient implements TmdbApiClient {
   }
 
   @override
+  Future<MoviesSearchResponse> getMovieRecommendations(
+    int id, {
+    int page = 1,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': page};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<MoviesSearchResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/movie/${id}/recommendations',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late MoviesSearchResponse _value;
+    try {
+      _value = MoviesSearchResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<TvSearchResponse> searchTVSeries(String query, {int page = 1}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'query': query, r'page': page};
@@ -397,6 +430,36 @@ class _TmdbApiClient implements TmdbApiClient {
     late TvDetailsResponse _value;
     try {
       _value = TvDetailsResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<TvSearchResponse> getTVSeriesRecommendations(
+    int id, {
+    int page = 1,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': page};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<TvSearchResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/tv/${id}/recommendations',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late TvSearchResponse _value;
+    try {
+      _value = TvSearchResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

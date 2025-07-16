@@ -125,7 +125,9 @@
     "rating": "Rating",
     "publisher": "Publisher",
     "studio": "Studio",
-    "network": "Network"
+    "network": "Network",
+    "moreLikeThis": "More like this",
+    "noRecommendations": "No Recommendations"
   },
 
   "settings": {

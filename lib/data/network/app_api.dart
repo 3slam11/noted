@@ -34,6 +34,7 @@ abstract class GamesApiClient {
     @Query('search') String query, {
     @Query('page') int page = 1,
     @Query('page_size') int pageSize = 20,
+    @Query('publishers') int? publishers,
   });
 
   @GET('/games/{id}')
@@ -58,6 +59,12 @@ abstract class TmdbApiClient {
     @Query('append_to_response') String appendToResponse = 'images',
   });
 
+  @GET('/movie/{id}/recommendations')
+  Future<MoviesSearchResponse> getMovieRecommendations(
+    @Path('id') int id, {
+    @Query('page') int page = 1,
+  });
+
   // TV Series
   @GET('/search/tv')
   Future<TvSearchResponse> searchTVSeries(
@@ -69,5 +76,11 @@ abstract class TmdbApiClient {
   Future<TvDetailsResponse> getTVSeriesDetails(
     @Path('id') int id, {
     @Query('append_to_response') String appendToResponse = 'images',
+  });
+
+  @GET('/tv/{id}/recommendations')
+  Future<TvSearchResponse> getTVSeriesRecommendations(
+    @Path('id') int id, {
+    @Query('page') int page = 1,
   });
 }

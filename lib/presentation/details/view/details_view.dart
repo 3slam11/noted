@@ -3,9 +3,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
+import 'package:noted/presentation/common/state_renderer/state_renderer_impl.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
 import 'package:noted/presentation/details/viewModel/details_viewmodel.dart';
 import 'package:noted/presentation/common/state_renderer/state_flow_handler.dart';
+import 'package:noted/presentation/resources/routes_manager.dart';
 
 class DetailsView extends StatefulWidget {
   final String id;
@@ -141,10 +143,141 @@ class DetailsViewState extends State<DetailsView> {
                     content: details.publisher!,
                   ).animate(delay: 800.ms).fadeIn(duration: 400.ms),
                 ],
+                const SizedBox(height: AppSize.s24),
+                _buildRecommendationsSection(),
               ],
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildRecommendationsSection() {
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppPadding.p16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppSize.s12),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.shadow.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            t.details.moreLikeThis,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
+            ),
+          ).animate().fadeIn(duration: 400.ms, delay: 900.ms),
+          const SizedBox(height: AppSize.s12),
+          StreamBuilder<FlowState>(
+            stream: _viewModel.outputRecommendationsState,
+            builder: (context, snapshot) {
+              final state = snapshot.data;
+              if (state is LoadingState) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (state is ErrorState) {
+                return Center(child: Text(state.message));
+              }
+              return _buildRecommendationsList();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecommendationsList() {
+    return StreamBuilder<List<SearchItem>>(
+      stream: _viewModel.outputRecommendations,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppPadding.p20),
+              child: Text(t.details.noRecommendations),
+            ),
+          );
+        }
+        final recommendations = snapshot.data!;
+        return SizedBox(
+          height: 220,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: recommendations.length,
+            itemBuilder: (context, index) {
+              return _buildRecommendationCard(recommendations[index])
+                  .animate()
+                  .fadeIn(duration: 300.ms, delay: (index * 100).ms)
+                  .slideX(begin: 0.5, end: 0);
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRecommendationCard(SearchItem item) {
+    return SizedBox(
+      width: 140,
+      child: Card(
+        margin: const EdgeInsets.only(right: AppPadding.p12),
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSize.s12),
+        ),
+        child: InkWell(
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              RoutesManager.detailsRoute,
+              arguments: DetailsView(id: item.id, category: item.category),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 160,
+                width: double.infinity,
+                child: (item.imageUrl != null && item.imageUrl!.isNotEmpty)
+                    ? Image.network(
+                        item.imageUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.broken_image, size: 40),
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2.0),
+                          );
+                        },
+                      )
+                    : const Icon(Icons.image_not_supported, size: 40),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(AppPadding.p8),
+                child: Text(
+                  item.title,
+                  style: Theme.of(context).textTheme.bodySmall,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

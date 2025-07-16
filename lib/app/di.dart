@@ -13,6 +13,7 @@ import 'package:noted/domain/repository/repository.dart';
 import 'package:noted/domain/usecases/details_usecase.dart';
 import 'package:noted/domain/usecases/history_usecase.dart';
 import 'package:noted/domain/usecases/main_usecase.dart';
+import 'package:noted/domain/usecases/recommendations_usecase.dart';
 import 'package:noted/domain/usecases/search_usecase.dart';
 import 'package:noted/presentation/backupAndRestore/viewModel/backup_and_restore_viewmodel.dart';
 import 'package:noted/presentation/changeApi/viewModel/change_api_viewmodel.dart';
@@ -92,8 +93,11 @@ void initSearchModule() {
 void initDetailsModule() {
   if (!GetIt.I.isRegistered<DetailsUsecase>()) {
     instance.registerFactory<DetailsUsecase>(() => DetailsUsecase(instance()));
+    instance.registerFactory<RecommendationsUsecase>(
+      () => RecommendationsUsecase(instance()),
+    );
     instance.registerFactory<DetailsViewModel>(
-      () => DetailsViewModel(instance()),
+      () => DetailsViewModel(instance(), instance()),
     );
   }
 }

@@ -156,6 +156,9 @@ class BookVolumeInfo {
   @JsonKey(name: 'title')
   String? title;
 
+  @JsonKey(name: 'authors')
+  List<String>? authors;
+
   @JsonKey(name: 'publishedDate')
   String? publishedDate;
 
@@ -173,6 +176,7 @@ class BookVolumeInfo {
 
   BookVolumeInfo({
     this.title,
+    this.authors,
     this.publishedDate,
     this.description,
     this.averageRating,
@@ -319,10 +323,13 @@ class GameDetailsResponse {
 
 @JsonSerializable()
 class GamePublisherInfo {
+  @JsonKey(name: 'id')
+  int? id;
+
   @JsonKey(name: 'name')
   String? name;
 
-  GamePublisherInfo({this.name});
+  GamePublisherInfo({this.id, this.name});
   factory GamePublisherInfo.fromJson(Map<String, dynamic> json) =>
       _$GamePublisherInfoFromJson(json);
   Map<String, dynamic> toJson() => _$GamePublisherInfoToJson(this);

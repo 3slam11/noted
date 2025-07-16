@@ -126,7 +126,9 @@
     "rating": "التقييم",
     "publisher": "الناشر",
     "studio": "الشركة",
-    "network": "الشبكة"
+    "network": "الشبكة",
+    "moreLikeThis": "مثل هذا",
+    "noRecommendations": "لا توجد اقتراحات"
   },
 
   "settings": {

@@ -9,12 +9,11 @@
 import 'dart:typed_data';
 
 import 'package:flat_buffers/flat_buffers.dart' as fb;
+import 'package:noted/data/objectbox/objectbox.dart';
 import 'package:objectbox/internal.dart'
     as obx_int; // generated code can access "internal" functionality
 import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
-
-import 'objectbox.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 

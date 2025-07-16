@@ -1,3 +1,6 @@
-- Adding notes & reviews function
-- Adding a better filter system
-- Better backup: Now backup backs lists, settings, api keys, and font!
+IMPORTANT: please create a new backup as previous backups prior to this version are no longer working due to changes in the backup system
+
+- Added personal notes & reviews feature
+- Added a better filter system
+- Improved Backup System: You can now back up lists, settings, API keys, and fonts!
+- Added a Recommendations section on the details page.

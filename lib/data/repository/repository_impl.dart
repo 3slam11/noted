@@ -218,6 +218,104 @@ class RepositoryImpl implements Repository {
   }
 
   @override
+  Future<Either<Failure, List<SearchItem>>> getRecommendations(
+    String id,
+    Category category,
+  ) {
+    return _executeNetworkCall(() async {
+      final response = await _getRecommendationsByCategory(id, category);
+      return response.where((item) => item.id != id).toList();
+    });
+  }
+
+  Future<List<SearchItem>> _getRecommendationsByCategory(
+    String id,
+    Category category,
+  ) async {
+    switch (category) {
+      case Category.movies:
+        final response = await _remoteDataSource.getMovieRecommendations(
+          int.parse(id),
+        );
+        return response.results
+                ?.map(
+                  (movie) => SearchItem(
+                    id: movie.id.toString(),
+                    title: movie.title ?? '',
+                    imageUrl: movie.posterUrl,
+                    releaseDate: movie.releaseDate,
+                    category: Category.movies,
+                  ),
+                )
+                .toList() ??
+            [];
+      case Category.series:
+        final response = await _remoteDataSource.getTVSeriesRecommendations(
+          int.parse(id),
+        );
+        return response.results
+                ?.map(
+                  (tv) => SearchItem(
+                    id: tv.id.toString(),
+                    title: tv.title ?? '',
+                    imageUrl: tv.posterUrl,
+                    releaseDate: tv.releaseDate,
+                    category: Category.series,
+                  ),
+                )
+                .toList() ??
+            [];
+      case Category.games:
+        final detailsResponse = await _remoteDataSource.getGameDetails(
+          int.parse(id),
+        );
+        final publisherId = detailsResponse.publishers?.first.id;
+        if (publisherId == null) {
+          return [];
+        }
+        final response = await _remoteDataSource.searchGames(
+          '',
+          publishers: publisherId,
+        );
+        return response.results
+                ?.map(
+                  (game) => SearchItem(
+                    id: game.id.toString(),
+                    title: game.title ?? '',
+                    imageUrl: game.posterUrl,
+                    releaseDate: game.releaseDate,
+                    category: Category.games,
+                  ),
+                )
+                .toList() ??
+            [];
+      case Category.books:
+        final detailsResponse = await _remoteDataSource.getBookDetails(id);
+        final author = detailsResponse.volumeInfo?.authors?.first;
+        if (author == null || author.isEmpty) {
+          return [];
+        }
+        final response = await _remoteDataSource.searchBooks(
+          'inauthor:"$author"',
+        );
+        return response.results
+                ?.map(
+                  (book) => SearchItem(
+                    id: book.id ?? '',
+                    title: book.title ?? '',
+                    imageUrl: book.posterUrl,
+                    releaseDate: book.releaseDate,
+                    category: Category.books,
+                  ),
+                )
+                .toList() ??
+            [];
+      case Category.all:
+        return [];
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> addTodo(ItemResponse todoItem) {
     return _performLocalOperation(
       () => _localDataSource.addTodo(todoItem),
