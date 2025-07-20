@@ -35,32 +35,12 @@ class HistoryViewState extends State<HistoryView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        toolbarHeight: 50,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
-          ),
-        ),
-        title: Text(
-          t.history.history,
-          style: TextStyle(
-            fontSize: 23,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
-      ),
-      body: StateFlowHandler(
-        stream: _viewModel.outputState,
-        retryAction: () {
-          _viewModel.loadHistoryItems();
-        },
-        contentBuilder: (context) => _getContentWidget(),
-      ),
+    return StateFlowHandler(
+      stream: _viewModel.outputState,
+      retryAction: () {
+        _viewModel.loadHistoryItems();
+      },
+      contentBuilder: (context) => _getContentWidget(),
     );
   }
 
@@ -260,6 +240,7 @@ class HistoryViewState extends State<HistoryView> {
                   ),
                   Expanded(
                     child: ListView.builder(
+                      primary: true,
                       padding: const EdgeInsets.symmetric(
                         vertical: AppPadding.p8,
                       ),

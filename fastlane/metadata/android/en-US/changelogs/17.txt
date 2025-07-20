@@ -1,0 +1,3 @@
+- Added a bottom navigation bar
+- Fixed state management issues
+- Unified some of the style theming

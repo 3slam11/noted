@@ -72,6 +72,13 @@ Future<void> initAppModule() async {
   instance.registerLazySingleton<ThemeManager>(() => ThemeManager(instance()));
 }
 
+void initHomeModule() {
+  initMainModule();
+  initSearchModule();
+  initHistoryModule();
+  initSettingsModule();
+}
+
 void initMainModule() {
   if (!GetIt.I.isRegistered<MainUsecase>()) {
     instance.registerFactory<MainUsecase>(() => MainUsecase(instance()));

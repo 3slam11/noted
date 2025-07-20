@@ -28,7 +28,7 @@ class MainViewState extends State<MainView> {
   void initState() {
     super.initState();
     viewModel.start();
-    monthChecker();
+    WidgetsBinding.instance.addPostFrameCallback((_) => monthChecker());
   }
 
   Future<void> timeBackwards(BuildContext context) async {
@@ -151,24 +151,10 @@ class MainViewState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      appBar: AppBar(
-        title: Text(t.appName),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.of(context).pushNamed(RoutesManager.settingsRoute);
-            },
-          ),
-        ],
-      ),
-      body: StateFlowHandler(
-        stream: viewModel.outputState,
-        retryAction: viewModel.start,
-        contentBuilder: (context) => _getContentWidget(),
-      ),
+    return StateFlowHandler(
+      stream: viewModel.outputState,
+      retryAction: viewModel.start,
+      contentBuilder: (context) => _getContentWidget(),
     );
   }
 
@@ -176,6 +162,7 @@ class MainViewState extends State<MainView> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
+        primary: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -385,28 +372,6 @@ class TodoSectionWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-                ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.of(
-                          context,
-                        ).pushNamed(RoutesManager.searchRoute);
-                      },
-                      child: Icon(
-                        Icons.add,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                    )
-                    .animate()
-                    .scale(begin: const Offset(0.8, 0.8))
-                    .then()
-                    .shake(duration: 500.ms, delay: 2000.ms)
-                    .then(delay: 3000.ms)
-                    .shake(duration: 500.ms),
               ],
             ),
           ),

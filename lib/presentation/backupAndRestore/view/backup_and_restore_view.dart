@@ -35,24 +35,10 @@ class _BackupAndRestoreViewState extends State<BackupAndRestoreView> {
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        toolbarHeight: 50,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
-          ),
-        ),
-        title: Text(
-          t.backupAndRestore.title,
-          style: TextStyle(
-            fontSize: 23,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
+        title: Text(t.backupAndRestore.title),
       ),
       body: StateFlowHandler(
         stream: _viewModel.outputState,
-        // No retryAction needed here as actions are user-initiated
         contentBuilder: (context) => _buildContent(context),
       ),
     );

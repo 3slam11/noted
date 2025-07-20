@@ -70,20 +70,8 @@ class _ChangeApiViewState extends State<ChangeApiView> {
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        toolbarHeight: 50,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
-          ),
-        ),
-        title: Text(
-          t.settings.apiChange,
-          style: TextStyle(
-            fontSize: 23,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
+
+        title: Text(t.settings.apiChange),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

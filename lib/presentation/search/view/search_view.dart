@@ -38,33 +38,12 @@ class SearchViewState extends State<SearchView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      appBar: AppBar(
-        centerTitle: false,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        toolbarHeight: 50,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
-          ),
-        ),
-        title: Text(
-          t.search.search,
-          style: TextStyle(
-            fontSize: 23,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
-      ),
-      body: StateFlowHandler(
-        stream: viewModel.outputState,
-        retryAction: () {
-          viewModel.search(searchController.text);
-        },
-        contentBuilder: (context) => _getContentWidget(),
-      ),
+    return StateFlowHandler(
+      stream: viewModel.outputState,
+      retryAction: () {
+        viewModel.search(searchController.text);
+      },
+      contentBuilder: (context) => _getContentWidget(),
     );
   }
 
@@ -147,6 +126,7 @@ class SearchViewState extends State<SearchView> {
                   );
                 } else {
                   return ListView.builder(
+                    primary: true,
                     itemCount: results.length,
                     itemBuilder: (context, index) {
                       return Padding(
@@ -310,7 +290,7 @@ class SearchViewState extends State<SearchView> {
                             width: AppSize.s80,
                             height: AppSize.s120,
                             color: Colors.grey[300],
-                            child: Icon(Icons.image_not_supported),
+                            child: const Icon(Icons.image_not_supported),
                           );
                         },
                       )
@@ -318,7 +298,7 @@ class SearchViewState extends State<SearchView> {
                         width: AppSize.s80,
                         height: AppSize.s120,
                         color: Colors.grey[300],
-                        child: Icon(Icons.image_not_supported),
+                        child: const Icon(Icons.image_not_supported),
                       ),
               ),
               const SizedBox(width: AppSize.s16),

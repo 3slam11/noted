@@ -38,7 +38,6 @@ class StatisticsViewState extends State<StatisticsView> {
 
   Widget _buildSummaryCard(String title, String value) {
     return Card(
-      elevation: 0,
       color: Theme.of(context).colorScheme.onPrimary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
@@ -286,7 +285,6 @@ class StatisticsViewState extends State<StatisticsView> {
 
               // Category distribution
               Card(
-                elevation: 0,
                 color: Theme.of(context).colorScheme.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
@@ -359,20 +357,8 @@ class StatisticsViewState extends State<StatisticsView> {
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        toolbarHeight: 50,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
-          ),
-        ),
-        title: Text(
-          t.settings.statistics,
-          style: TextStyle(
-            fontSize: 23,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
+
+        title: Text(t.settings.statistics),
       ),
       body: StateFlowHandler(
         stream: _viewModel.outputState,

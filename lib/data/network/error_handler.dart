@@ -14,8 +14,6 @@ class ErrorHandler implements Exception {
       failure = DataSource.DEFAULT.getFailure();
     }
   }
-
-  ErrorHandler(this.failure);
 }
 
 Failure _handleError(DioException error) {
@@ -41,7 +39,8 @@ Failure _handleError(DioException error) {
       return DataSource.CANCEL.getFailure();
     case DioExceptionType.connectionError:
       return DataSource.NO_INTERNET_CONNECTION.getFailure();
-    default:
+    case DioExceptionType.badCertificate:
+    case DioExceptionType.unknown:
       return DataSource.DEFAULT.getFailure();
   }
 }
@@ -141,13 +140,14 @@ class ResponseMessage {
   static String get INTERNAL_SERVER_ERROR => t.errorHandler.internalServerError;
 
   // local status Message
-  static String CONNECT_TIMEOUT = t.errorHandler.timeOut;
-  static String CANCEL = t.errorHandler.cancel;
-  static String RECIEVE_TIMEOUT = t.errorHandler.timeOut;
-  static String SEND_TIMEOUT = t.errorHandler.timeOut;
-  static String CACHE_ERROR = t.errorHandler.cacheError;
-  static String NO_INTERNET_CONNECTION = t.errorHandler.noInternetConnection;
-  static String DEFAULT = t.errorHandler.defaultError;
+  static String get CONNECT_TIMEOUT => t.errorHandler.timeOut;
+  static String get CANCEL => t.errorHandler.cancel;
+  static String get RECIEVE_TIMEOUT => t.errorHandler.timeOut;
+  static String get SEND_TIMEOUT => t.errorHandler.timeOut;
+  static String get CACHE_ERROR => t.errorHandler.cacheError;
+  static String get NO_INTERNET_CONNECTION =>
+      t.errorHandler.noInternetConnection;
+  static String get DEFAULT => t.errorHandler.defaultError;
 }
 
 class ApiInternalStatus {

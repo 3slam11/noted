@@ -23,11 +23,17 @@ class HistoryViewModel extends BaseViewModel
 
   List<Item> _rawHistoryItems = [];
 
-  HistoryViewModel(this._historyUsecase, this._dataGlobalNotifier);
+  HistoryViewModel(this._historyUsecase, this._dataGlobalNotifier) {
+    _dataGlobalNotifier.addListener(_silentRefresh);
+  }
 
   @override
   void start() {
     loadHistoryItems();
+  }
+
+  void _silentRefresh() {
+    _fetchAndProcessData(isInitialLoad: false);
   }
 
   @override
@@ -35,21 +41,35 @@ class HistoryViewModel extends BaseViewModel
     inputState.add(
       LoadingState(stateRendererType: StateRendererType.fullScreenLoadingState),
     );
+    await _fetchAndProcessData(isInitialLoad: true);
+  }
 
+  Future<void> _fetchAndProcessData({required bool isInitialLoad}) async {
     (await _historyUsecase.execute(null)).fold(
       (failure) {
-        inputState.add(
-          ErrorState(
-            stateRendererType: StateRendererType.fullScreenErrorState,
-            message: failure.message,
-          ),
-        );
+        if (isInitialLoad) {
+          inputState.add(
+            ErrorState(
+              stateRendererType: StateRendererType.fullScreenErrorState,
+              message: failure.message,
+            ),
+          );
+        } else {
+          inputState.add(
+            ErrorState(
+              stateRendererType: StateRendererType.popupErrorState,
+              message: failure.message,
+            ),
+          );
+        }
         _historyController.add([]);
       },
       (historyItems) {
         _rawHistoryItems = historyItems;
         _applySort();
-        inputState.add(ContentState());
+        if (isInitialLoad) {
+          inputState.add(ContentState());
+        }
       },
     );
   }
@@ -227,6 +247,7 @@ class HistoryViewModel extends BaseViewModel
     _historyController.close();
     _selectedCategoryController.close();
     _sortOptionController.close();
+    _dataGlobalNotifier.removeListener(_silentRefresh);
     super.dispose();
   }
 

@@ -1,7 +1,7 @@
 name: noted
 description: "A note app where you can save, sync your movies, tv series, and games."
 publish_to: 'none'
-version: 2.0.0+16
+version: 2.5.0+17
 
 environment:
   sdk: ^3.8.1
@@ -43,6 +43,7 @@ dependencies:
   objectbox_generator: ^4.3.0
   flutter_animate: ^4.5.2
   flutter_rating_bar: ^4.0.1
+  animated_bottom_navigation_bar: ^1.4.0
   
 dev_dependencies:
   flutter_test:

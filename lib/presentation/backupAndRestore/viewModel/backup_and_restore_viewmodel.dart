@@ -121,7 +121,12 @@ class BackupAndRestoreViewModel extends BaseViewModel
         withData: true,
       );
 
-      final fileBytes = result!.files.single.bytes!;
+      if (result == null || result.files.single.bytes == null) {
+        // User canceled the picker or file has no data
+        return;
+      }
+
+      final fileBytes = result.files.single.bytes!;
       final String jsonData = utf8.decode(fileBytes);
       final Map<String, dynamic> backupData = jsonDecode(jsonData);
 

@@ -14,17 +14,8 @@ class AboutView extends StatelessWidget {
       backgroundColor: colorScheme.primaryContainer,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
-        toolbarHeight: 50,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
-          ),
-        ),
-        title: Text(
-          t.settings.about,
-          style: theme.appBarTheme.titleTextStyle?.copyWith(fontSize: 23),
-        ),
+
+        title: Text(t.settings.about),
       ),
       body: const Padding(
         padding: EdgeInsets.all(16.0),

@@ -25,7 +25,7 @@ class MainViewModel extends BaseViewModel
   MainObject? _currentObject;
 
   MainViewModel(this._mainUsecase, this._dataGlobalNotifier) {
-    _dataGlobalNotifier.addListener(loadMainData);
+    _dataGlobalNotifier.addListener(_silentRefresh);
   }
 
   bool get hasData => _currentObject?.mainData != null;
@@ -35,25 +35,52 @@ class MainViewModel extends BaseViewModel
     loadMainData();
   }
 
-  Future<void> loadMainData() async {
-    _setLoadingState();
+  /// Fetches data and updates the list silently without showing a full-screen loader.
+  /// Intended for background updates from notifiers.
+  void _silentRefresh() {
+    _fetchAndProcessData(isInitialLoad: false);
+  }
 
+  /// Fetches data and updates the list, showing a full-screen loader.
+  /// Intended for initial load or manual retries from the UI.
+  Future<void> loadMainData() async {
+    inputState.add(
+      LoadingState(stateRendererType: StateRendererType.fullScreenLoadingState),
+    );
+    await _fetchAndProcessData(isInitialLoad: true);
+  }
+
+  /// Private method to handle the actual data fetching and processing.
+  Future<void> _fetchAndProcessData({required bool isInitialLoad}) async {
     final result = await _mainUsecase.execute(null);
     result.fold(
       (failure) {
-        inputState.add(
-          ErrorState(
-            stateRendererType: StateRendererType.fullScreenErrorState,
-            message: failure.message,
-          ),
-        );
+        if (isInitialLoad) {
+          inputState.add(
+            ErrorState(
+              stateRendererType: StateRendererType.fullScreenErrorState,
+              message: failure.message,
+            ),
+          );
+        } else {
+          // For silent refresh, show a non-blocking popup error
+          inputState.add(
+            ErrorState(
+              stateRendererType: StateRendererType.popupErrorState,
+              message: failure.message,
+            ),
+          );
+        }
         _currentObject = null;
         _mainDataController.add(null);
       },
       (mainObject) {
         _currentObject = mainObject;
         _applySortersAndFilters();
-        inputState.add(ContentState());
+        if (isInitialLoad) {
+          inputState.add(ContentState());
+        }
+        // For silent refresh, no state change is needed, the StreamBuilder will update the UI.
       },
     );
   }
@@ -134,12 +161,6 @@ class MainViewModel extends BaseViewModel
     });
 
     return sortedList;
-  }
-
-  void _setLoadingState() {
-    inputState.add(
-      LoadingState(stateRendererType: StateRendererType.fullScreenLoadingState),
-    );
   }
 
   void _handlePopupError(Failure failure) {
@@ -296,6 +317,7 @@ class MainViewModel extends BaseViewModel
       onSuccess: () {
         _removeFromTodoList(item);
         _removeFromFinishedList(item);
+        _dataGlobalNotifier.notifyDataImported();
       },
     );
   }
@@ -352,7 +374,7 @@ class MainViewModel extends BaseViewModel
     _mainDataController.close();
     _selectedCategoryController.close();
     _sortOptionController.close();
-    _dataGlobalNotifier.removeListener(loadMainData);
+    _dataGlobalNotifier.removeListener(_silentRefresh);
     super.dispose();
   }
 
