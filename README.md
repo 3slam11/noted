@@ -13,14 +13,18 @@
 Noted is a tracker that helps you organize movies, TV series, books, and games across **To-Do** and **Finished** lists. Discover new titles, and analyze your habits—all in one app.  
 
 <p float="left">
-  <img src="https://github.com/user-attachments/assets/d31e6a87-9f18-4e14-ae26-013d9ffbd3cb" width="30%"/>
-  <img src="https://github.com/user-attachments/assets/11cf5d74-6c8c-411f-ad25-2730960891f1" width="30%"/>
-  <img src="https://github.com/user-attachments/assets/35fc8aef-c70c-47c5-a661-f424d5d77b96" width="30%"/>
+  <img src="https://github.com/user-attachments/assets/cd388d71-d29e-4b07-b4b9-eb8064d77369" width="30%"/>
+  <img src="https://github.com/user-attachments/assets/9832dc64-22ec-4c72-addf-b218d62bd46f" width="30%"/>
+  <img src="https://github.com/user-attachments/assets/4ca0f2ad-c414-45e1-8491-287e74749189" width="30%"/>
 </p>
 
  <p float="left">
-<img src="https://github.com/user-attachments/assets/b5a85f26-9cae-433e-8724-d883de2cf3c0" width="30%"/>
-<img src="https://github.com/user-attachments/assets/42e3a096-0544-4aa0-a658-aa5857a27362" width="30%"/
+<img src="https://github.com/user-attachments/assets/0e083c3b-a1d4-425f-9d80-bf65c3a1ef4c" width="30%"/>
+<img src="https://github.com/user-attachments/assets/5fd4ac3f-7e4e-4b23-911e-c21efa5da8b6" width="30%"/>
+<img src="https://github.com/user-attachments/assets/8616fd7b-6d2d-4755-af14-0b09b573331d" width="30%"/>
+   </p>
+ <p float="left">
+<img src="https://github.com/user-attachments/assets/75e5e40a-e646-445e-837a-4183dea4bedf" width="30%"/>
    </p>
 
 ## Features  
