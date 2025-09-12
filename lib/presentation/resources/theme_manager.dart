@@ -129,7 +129,7 @@ ThemeData getApplicationTheme(
 
     // app bar theme
     appBarTheme: baseTheme.appBarTheme.copyWith(
-      color: baseTheme.colorScheme.primary,
+      backgroundColor: baseTheme.colorScheme.primary,
       elevation: AppSize.s0,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(

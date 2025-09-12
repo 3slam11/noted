@@ -347,19 +347,21 @@ class _SettingsViewState extends State<SettingsView> {
                             final availableThemes =
                                 availableThemesSnapshot.data!;
 
-                            return Column(
-                              children: availableThemes.map((scheme) {
-                                return RadioListTile<FlexScheme>(
-                                  title: Text(scheme.name),
-                                  value: scheme,
-                                  groupValue: currentManualScheme,
-                                  onChanged: (value) {
-                                    if (value != null) {
-                                      viewModel.setManualTheme(value);
-                                    }
-                                  },
-                                );
-                              }).toList(),
+                            return RadioGroup<FlexScheme>(
+                              groupValue: currentManualScheme,
+                              onChanged: (FlexScheme? value) {
+                                if (value != null) {
+                                  viewModel.setManualTheme(value);
+                                }
+                              },
+                              child: Column(
+                                children: availableThemes.map((scheme) {
+                                  return RadioListTile<FlexScheme>(
+                                    title: Text(scheme.name),
+                                    value: scheme,
+                                  );
+                                }).toList(),
+                              ),
                             );
                           },
                         );
@@ -520,30 +522,32 @@ class _FontSelectionDialogState extends State<FontSelectionDialog> {
     final colorScheme = theme.colorScheme;
     final isSelected = currentType == fontType;
 
-    return InkWell(
-      onTap: () => onChanged(fontType),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                title,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: isSelected
-                      ? colorScheme.primary
-                      : colorScheme.onSurface,
+    return RadioGroup<FontType>(
+      groupValue: currentType,
+      onChanged: onChanged,
+      child: InkWell(
+        onTap: () => onChanged(fontType),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: isSelected
+                        ? colorScheme.primary
+                        : colorScheme.onSurface,
+                  ),
                 ),
               ),
-            ),
-            Radio<FontType>(
-              value: fontType,
-              groupValue: currentType,
-              onChanged: onChanged,
-              activeColor: colorScheme.primary,
-            ),
-          ],
+              Radio<FontType>(
+                value: fontType,
+                activeColor: colorScheme.primary,
+              ),
+            ],
+          ),
         ),
       ),
     );
