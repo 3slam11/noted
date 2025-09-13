@@ -8,6 +8,7 @@ import 'package:noted/presentation/resources/values_manager.dart';
 import 'package:noted/presentation/details/viewModel/details_viewmodel.dart';
 import 'package:noted/presentation/common/state_renderer/state_flow_handler.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class DetailsView extends StatefulWidget {
   final String id;
@@ -21,8 +22,7 @@ class DetailsView extends StatefulWidget {
 
 class DetailsViewState extends State<DetailsView> {
   final DetailsViewModel _viewModel = instance<DetailsViewModel>();
-  late PageController _pageController;
-  late final ValueNotifier<int> _currentPageNotifier;
+  late final PageController _pageController;
   bool _isHovering = false;
 
   @override
@@ -30,21 +30,12 @@ class DetailsViewState extends State<DetailsView> {
     super.initState();
     _viewModel.start();
     _viewModel.loadItemDetails(widget.id, widget.category);
-
     _pageController = PageController();
-    _currentPageNotifier = ValueNotifier<int>(0);
-
-    _pageController.addListener(() {
-      if (_pageController.hasClients && _pageController.page != null) {
-        _currentPageNotifier.value = _pageController.page!.round();
-      }
-    });
   }
 
   @override
   void dispose() {
     _pageController.dispose();
-    _currentPageNotifier.dispose();
     _viewModel.dispose();
     super.dispose();
   }
@@ -81,7 +72,8 @@ class DetailsViewState extends State<DetailsView> {
         stream: _viewModel.outputItemDetails,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: Text('No details available'));
+            // This can be replaced with a shimmer/loading skeleton for better UX
+            return const Center(child: CircularProgressIndicator());
           }
           final details = snapshot.data!;
 
@@ -161,20 +153,13 @@ class DetailsViewState extends State<DetailsView> {
       decoration: BoxDecoration(
         color: theme.colorScheme.secondary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSize.s12),
-        boxShadow: [
-          BoxShadow(
-            color: theme.colorScheme.shadow.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             t.details.moreLikeThis,
-            style: theme.textTheme.titleMedium?.copyWith(
+            style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: theme.colorScheme.primary,
             ),
@@ -368,14 +353,18 @@ class DetailsViewState extends State<DetailsView> {
             if (imageUrls.length > 1)
               Positioned(
                 bottom: AppPadding.p8,
-                child: ImageGalleryIndicator(
-                  pageController: _pageController,
-                  pageNotifier: _currentPageNotifier,
-                  imageCount: imageUrls.length,
+                child: SmoothPageIndicator(
+                  controller: _pageController,
+                  count: imageUrls.length > 5 ? 5 : imageUrls.length,
+                  effect: WormEffect(
+                    dotHeight: 8,
+                    dotWidth: 8,
+                    activeDotColor: theme.colorScheme.primary,
+                    dotColor: Colors.white.withValues(alpha: 0.5),
+                  ),
                 ),
               ),
             if (_isHovering && imageUrls.length > 1) ...[
-              // Previous Button
               Align(
                 alignment: Alignment.centerLeft,
                 child: _NavigationArrow(
@@ -388,7 +377,6 @@ class DetailsViewState extends State<DetailsView> {
                   },
                 ),
               ),
-              // Next Button
               Align(
                 alignment: Alignment.centerRight,
                 child: _NavigationArrow(
@@ -447,13 +435,6 @@ class InfoCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.secondary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSize.s12),
-        boxShadow: [
-          BoxShadow(
-            color: theme.colorScheme.shadow.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -468,106 +449,6 @@ class InfoCard extends StatelessWidget {
           const SizedBox(height: AppSize.s8),
           Text(content, style: theme.textTheme.bodyLarge),
         ],
-      ),
-    );
-  }
-}
-
-class ImageGalleryIndicator extends StatelessWidget {
-  final PageController pageController;
-  final ValueNotifier<int> pageNotifier;
-  final int imageCount;
-
-  const ImageGalleryIndicator({
-    super.key,
-    required this.pageController,
-    required this.pageNotifier,
-    required this.imageCount,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (imageCount <= 1) return const SizedBox.shrink();
-
-    return ValueListenableBuilder<int>(
-      valueListenable: pageNotifier,
-      builder: (context, currentPage, child) {
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: _buildSlidingDots(context, currentPage),
-        );
-      },
-    );
-  }
-
-  List<Widget> _buildSlidingDots(BuildContext context, int currentPage) {
-    List<Widget> dots = [];
-
-    int dotsToShow = imageCount >= 3 ? 3 : imageCount;
-
-    for (int i = 0; i < dotsToShow; i++) {
-      int dotIndex;
-      bool isActive = false;
-
-      if (imageCount <= 3) {
-        dotIndex = i;
-        isActive = (i == currentPage);
-      } else {
-        if (currentPage == 0) {
-          dotIndex = i;
-          isActive = (i == 0);
-        } else if (currentPage == imageCount - 1) {
-          dotIndex = imageCount - 3 + i;
-          isActive = (i == 2);
-        } else {
-          dotIndex = currentPage - 1 + i;
-          isActive = (i == 1);
-        }
-      }
-
-      dots.add(
-        Animate(
-          key: ValueKey(dotIndex),
-          effects: [
-            FadeEffect(
-              duration: const Duration(milliseconds: 500),
-              begin: dotIndex == currentPage ? 0.3 : 1.0,
-              end: dotIndex == currentPage ? 1.0 : 0.3,
-              curve: Curves.easeInOut,
-            ),
-            SlideEffect(
-              duration: const Duration(milliseconds: 500),
-              begin: dotIndex < currentPage
-                  ? const Offset(-0.3, 0)
-                  : const Offset(0.3, 0),
-              end: const Offset(0, 0),
-              curve: Curves.easeInOut,
-            ),
-          ],
-          child: _buildDot(context, isActive),
-        ),
-      );
-
-      // Add spacing between dots
-      if (i < dotsToShow - 1) {
-        dots.add(const SizedBox(width: 8));
-      }
-    }
-
-    return dots;
-  }
-
-  Widget _buildDot(BuildContext context, bool isActive) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      width: isActive ? 20.0 : 8.0,
-      height: 8.0,
-      decoration: BoxDecoration(
-        color: isActive
-            ? Theme.of(context).colorScheme.primary
-            : Colors.white.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(10),
       ),
     );
   }

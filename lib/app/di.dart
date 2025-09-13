@@ -150,6 +150,7 @@ void initBackupAndRestoreModule() {
         instance(),
         instance(),
         instance(),
+        instance(),
       ),
     );
   }

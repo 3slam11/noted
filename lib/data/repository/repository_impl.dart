@@ -70,69 +70,65 @@ class RepositoryImpl implements Repository {
     String query,
     Category category,
   ) async {
-    final response = switch (category) {
-      Category.movies => await _remoteDataSource.searchMovies(query),
-      Category.series => await _remoteDataSource.searchTVSeries(query),
-      Category.books => await _remoteDataSource.searchBooks(query),
-      Category.games => await _remoteDataSource.searchGames(query),
+    final response = await switch (category) {
+      Category.movies => _remoteDataSource.searchMovies(query),
+      Category.series => _remoteDataSource.searchTVSeries(query),
+      Category.books => _remoteDataSource.searchBooks(query),
+      Category.games => _remoteDataSource.searchGames(query),
       Category.all => throw UnsupportedError(
         'Search for "All" category is not implemented.',
       ),
     };
 
     return switch (response) {
-      MoviesSearchResponse r =>
-        r.results
-                ?.map(
-                  (movie) => SearchItem(
-                    id: movie.id.toString(),
-                    title: movie.title ?? '',
-                    imageUrl: movie.posterUrl,
-                    releaseDate: movie.releaseDate,
-                    category: Category.movies,
-                  ),
-                )
-                .toList() ??
-            [],
-      TvSearchResponse r =>
-        r.results
-                ?.map(
-                  (tv) => SearchItem(
-                    id: tv.id.toString(),
-                    title: tv.title ?? '',
-                    imageUrl: tv.posterUrl,
-                    releaseDate: tv.releaseDate,
-                    category: Category.series,
-                  ),
-                )
-                .toList() ??
-            [],
-      BooksSearchResponse r =>
-        r.results
-                ?.map(
-                  (book) => SearchItem(
-                    id: book.id ?? '',
-                    title: book.title ?? '',
-                    imageUrl: book.posterUrl,
-                    releaseDate: book.releaseDate,
-                    category: Category.books,
-                  ),
-                )
-                .toList() ??
-            [],
-      GamesSearchResponse r =>
-        r.results
-                ?.map(
-                  (game) => SearchItem(
-                    id: game.id.toString(),
-                    title: game.title ?? '',
-                    imageUrl: game.posterUrl,
-                    releaseDate: game.releaseDate,
-                    category: Category.games,
-                  ),
-                )
-                .toList() ??
-            [],
+      MoviesSearchResponse(results: final r?) =>
+        r
+            .map(
+              (movie) => SearchItem(
+                id: movie.id.toString(),
+                title: movie.title ?? '',
+                imageUrl: movie.posterUrl,
+                releaseDate: movie.releaseDate,
+                category: Category.movies,
+              ),
+            )
+            .toList(),
+      TvSearchResponse(results: final r?) =>
+        r
+            .map(
+              (tv) => SearchItem(
+                id: tv.id.toString(),
+                title: tv.title ?? '',
+                imageUrl: tv.posterUrl,
+                releaseDate: tv.releaseDate,
+                category: Category.series,
+              ),
+            )
+            .toList(),
+      BooksSearchResponse(results: final r?) =>
+        r
+            .map(
+              (book) => SearchItem(
+                id: book.id ?? '',
+                title: book.title ?? '',
+                imageUrl: book.posterUrl,
+                releaseDate: book.releaseDate,
+                category: Category.books,
+              ),
+            )
+            .toList(),
+      GamesSearchResponse(results: final r?) =>
+        r
+            .map(
+              (game) => SearchItem(
+                id: game.id.toString(),
+                title: game.title ?? '',
+                imageUrl: game.posterUrl,
+                releaseDate: game.releaseDate,
+                category: Category.games,
+              ),
+            )
+            .toList(),
       _ => [],
     };
   }
@@ -143,22 +139,16 @@ class RepositoryImpl implements Repository {
     return _executeNetworkCall(() => _getDetailsByCategory(id, category));
   }
 
-  Future<Details> _getDetailsByCategory(String id, Category category) {
-    switch (category) {
-      case Category.movies:
-        return _getMovieDetails(id);
-      case Category.series:
-        return _getTVSeriesDetails(id);
-      case Category.books:
-        return _getBookDetails(id);
-      case Category.games:
-        return _getGameDetails(id);
-      case Category.all:
-        throw UnsupportedError(
+  Future<Details> _getDetailsByCategory(String id, Category category) =>
+      switch (category) {
+        Category.movies => _getMovieDetails(id),
+        Category.series => _getTVSeriesDetails(id),
+        Category.books => _getBookDetails(id),
+        Category.games => _getGameDetails(id),
+        Category.all => throw UnsupportedError(
           'Get details for "All" category is not supported',
-        );
-    }
-  }
+        ),
+      };
 
   Future<Details> _getMovieDetails(String id) async {
     final response = await _remoteDataSource.getMovieDetails(int.parse(id));
@@ -270,9 +260,8 @@ class RepositoryImpl implements Repository {
           int.parse(id),
         );
         final publisherId = detailsResponse.publishers?.first.id;
-        if (publisherId == null) {
-          return [];
-        }
+        if (publisherId == null) return [];
+
         final response = await _remoteDataSource.searchGames(
           '',
           publishers: publisherId,
@@ -292,9 +281,8 @@ class RepositoryImpl implements Repository {
       case Category.books:
         final detailsResponse = await _remoteDataSource.getBookDetails(id);
         final author = detailsResponse.volumeInfo?.authors?.first;
-        if (author == null || author.isEmpty) {
-          return [];
-        }
+        if (author == null || author.isEmpty) return [];
+
         final response = await _remoteDataSource.searchBooks(
           'inauthor:"$author"',
         );

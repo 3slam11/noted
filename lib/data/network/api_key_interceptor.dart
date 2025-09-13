@@ -13,26 +13,35 @@ class ApiKeyInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final String baseUrl = options.baseUrl;
-    String? apiKey;
+
+    // A helper function to get the key and simplify the switch statement.
+    Future<String> getApiKey(
+      Future<String> customKeyFuture,
+      String defaultKey,
+    ) async {
+      final customKey = await customKeyFuture;
+      // IMPROVEMENT: Simplified logic. If customKey is empty, use defaultKey.
+      return customKey.isNotEmpty ? customKey : defaultKey;
+    }
 
     switch (baseUrl) {
       case Constants.tmdbBaseUrl:
-        apiKey = await _appPrefs.getCustomTmdbApiKey();
-        options.queryParameters['api_key'] = apiKey.isNotEmpty
-            ? apiKey
-            : ApiKeys.defaultTmdb;
+        options.queryParameters['api_key'] = await getApiKey(
+          _appPrefs.getCustomTmdbApiKey(),
+          ApiKeys.defaultTmdb,
+        );
         break;
       case Constants.rawgBaseUrl:
-        apiKey = await _appPrefs.getCustomRawgApiKey();
-        options.queryParameters['key'] = apiKey.isNotEmpty
-            ? apiKey
-            : ApiKeys.defaultRawg;
+        options.queryParameters['key'] = await getApiKey(
+          _appPrefs.getCustomRawgApiKey(),
+          ApiKeys.defaultRawg,
+        );
         break;
       case Constants.googleBooksBaseUrl:
-        apiKey = await _appPrefs.getCustomBooksApiKey();
-        options.queryParameters['key'] = apiKey.isNotEmpty
-            ? apiKey
-            : ApiKeys.defaultGoogleBooks;
+        options.queryParameters['key'] = await getApiKey(
+          _appPrefs.getCustomBooksApiKey(),
+          ApiKeys.defaultGoogleBooks,
+        );
         break;
     }
 

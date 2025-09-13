@@ -12,6 +12,9 @@ class ObjectBoxManager {
   late final Box<AppPreferenceEntity> _preferenceBox;
   late final Box<CacheEntity> _cacheBox;
 
+  // FIX: Expose the store instance for transaction support.
+  Store get store => _store;
+
   ObjectBoxManager._create(this._store) {
     _itemBox = Box<ItemEntity>(_store);
     _preferenceBox = Box<AppPreferenceEntity>(_store);

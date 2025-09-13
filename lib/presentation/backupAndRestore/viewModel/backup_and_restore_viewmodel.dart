@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:noted/app/app_events.dart';
 import 'package:noted/app/app_prefs.dart';
 import 'package:noted/data/data_source/local_data_source.dart';
+import 'package:noted/data/objectbox/objectbox_manager.dart';
 import 'package:noted/data/responses/responses.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/base/base_view_model.dart';
@@ -14,6 +16,7 @@ import 'package:noted/presentation/common/state_renderer/state_renderer_impl.dar
 import 'package:noted/presentation/resources/theme_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:objectbox/objectbox.dart';
 
 class BackupAndRestoreViewModel extends BaseViewModel
     implements BackupAndRestoreViewModelInputs {
@@ -21,12 +24,14 @@ class BackupAndRestoreViewModel extends BaseViewModel
   final AppPrefs _appPrefs;
   final ThemeManager _themeManager;
   final DataGlobalNotifier _dataGlobalNotifier;
+  final ObjectBoxManager _objectBoxManager;
 
   BackupAndRestoreViewModel(
     this._localDataSource,
     this._appPrefs,
     this._themeManager,
     this._dataGlobalNotifier,
+    this._objectBoxManager,
   );
 
   @override
@@ -35,32 +40,42 @@ class BackupAndRestoreViewModel extends BaseViewModel
   @override
   Future<void> backupData() async {
     try {
-      // 1. Get Lists
-      final todos = await _localDataSource.getTodo();
-      final finished = await _localDataSource.getFinished();
-      final history = await _localDataSource.getHistory();
+      final results = await Future.wait([
+        _localDataSource.getTodo(),
+        _localDataSource.getFinished(),
+        _localDataSource.getHistory(),
+        _appPrefs.getLanguage(),
+        _appPrefs.getThemeMode(),
+        _appPrefs.getManualTheme(),
+        _appPrefs.getCustomRawgApiKey(),
+        _appPrefs.getCustomTmdbApiKey(),
+        _appPrefs.getCustomBooksApiKey(),
+        _appPrefs.getFontType(),
+        _appPrefs.getCustomFontPath(),
+        _appPrefs.getCustomFontFamilyName(),
+      ]);
 
-      // 2. Get Settings
-      final language = await _appPrefs.getLanguage();
-      final themeMode = await _appPrefs.getThemeMode();
-      final manualTheme = await _appPrefs.getManualTheme();
-      final rawgKey = await _appPrefs.getCustomRawgApiKey();
-      final tmdbKey = await _appPrefs.getCustomTmdbApiKey();
-      final booksKey = await _appPrefs.getCustomBooksApiKey();
-      final fontType = await _appPrefs.getFontType();
+      final todos = results[0] as List<ItemResponse>;
+      final finished = results[1] as List<ItemResponse>;
+      final history = results[2] as List<ItemResponse>;
+      final language = results[3] as String;
+      final themeMode = results[4] as int;
+      final manualTheme = results[5] as int;
+      final rawgKey = results[6] as String;
+      final tmdbKey = results[7] as String;
+      final booksKey = results[8] as String;
+      final fontType = results[9] as int;
+      final fontPath = results[10] as String;
+      final fontFamilyName = results[11] as String?;
 
       String? customFontBase64;
-      String? fontFamilyName;
-      if (fontType == FontType.custom.index) {
-        final fontPath = await _appPrefs.getCustomFontPath();
-        fontFamilyName = await _appPrefs.getCustomFontFamilyName();
-        if (fontPath.isNotEmpty && File(fontPath).existsSync()) {
-          final fontBytes = await File(fontPath).readAsBytes();
-          customFontBase64 = base64Encode(fontBytes);
-        }
+      if (fontType == FontType.custom.index &&
+          fontPath.isNotEmpty &&
+          File(fontPath).existsSync()) {
+        final fontBytes = await File(fontPath).readAsBytes();
+        customFontBase64 = base64Encode(fontBytes);
       }
 
-      // 3. Assemble backup data with versioning
       final backupData = {
         'version': '1.0.0',
         'timestamp': DateTime.now().toIso8601String(),
@@ -84,16 +99,15 @@ class BackupAndRestoreViewModel extends BaseViewModel
 
       final String jsonData = jsonEncode(backupData);
 
-      // 4. Save file
-      String? outputFile = await FilePicker.platform.saveFile(
+      final String? outputDir = await FilePicker.platform.getDirectoryPath(
         dialogTitle: t.backupAndRestore.saveBackupFile,
-        fileName: t.backupAndRestore.defaultBackupFileName,
-        bytes: utf8.encode(jsonData),
-        type: FileType.custom,
-        allowedExtensions: ['json'],
       );
 
-      if (outputFile != null) {
+      if (outputDir != null) {
+        final file = File(
+          p.join(outputDir, t.backupAndRestore.defaultBackupFileName),
+        );
+        await file.writeAsString(jsonData);
         inputState.add(
           SuccessState(
             stateRendererType: StateRendererType.popupSuccessState,
@@ -101,7 +115,8 @@ class BackupAndRestoreViewModel extends BaseViewModel
           ),
         );
       }
-    } catch (e) {
+    } catch (e, s) {
+      debugPrint('Backup failed: $e\n$s');
       inputState.add(
         ErrorState(
           stateRendererType: StateRendererType.popupErrorState,
@@ -121,21 +136,29 @@ class BackupAndRestoreViewModel extends BaseViewModel
         withData: true,
       );
 
-      if (result == null || result.files.single.bytes == null) {
-        // User canceled the picker or file has no data
+      if (result?.files.single.bytes == null) {
         return;
       }
 
-      final fileBytes = result.files.single.bytes!;
+      final fileBytes = result!.files.single.bytes!;
       final String jsonData = utf8.decode(fileBytes);
       final Map<String, dynamic> backupData = jsonDecode(jsonData);
 
-      await _restore(backupData);
+      await _objectBoxManager.store.runInTransaction(TxMode.write, () async {
+        await _restore(backupData);
+      });
 
-      // Notify app of changes
       _themeManager.notifyThemeChange();
       _dataGlobalNotifier.notifyDataImported();
-    } catch (e) {
+
+      inputState.add(
+        SuccessState(
+          stateRendererType: StateRendererType.popupSuccessState,
+          message: t.backupAndRestore.restoreSuccessful,
+        ),
+      );
+    } catch (e, s) {
+      debugPrint('Restore failed: $e\n$s');
       inputState.add(
         ErrorState(
           stateRendererType: StateRendererType.popupErrorState,
@@ -146,53 +169,38 @@ class BackupAndRestoreViewModel extends BaseViewModel
   }
 
   Future<void> _restore(Map<String, dynamic> backupData) async {
-    // 1. Restore Lists
     await _localDataSource.clearTodo();
     await _localDataSource.clearFinished();
     await _localDataSource.clearHistory();
 
     final Map<String, dynamic>? listsData =
         backupData['lists'] as Map<String, dynamic>?;
-
     if (listsData != null) {
-      // Restore todos
-      final List<dynamic> todosData = listsData['todos'] ?? [];
+      final todosData = listsData['todos'] as List<dynamic>? ?? [];
       for (var itemData in todosData) {
-        await _localDataSource.addTodo(
-          ItemResponse.fromJson(itemData as Map<String, dynamic>),
-        );
+        await _localDataSource.addTodo(ItemResponse.fromJson(itemData));
       }
 
-      // Restore finished
-      final List<dynamic> finishedData = listsData['finished'] ?? [];
+      final finishedData = listsData['finished'] as List<dynamic>? ?? [];
       for (var itemData in finishedData) {
-        await _localDataSource.addFinished(
-          ItemResponse.fromJson(itemData as Map<String, dynamic>),
-        );
+        await _localDataSource.addFinished(ItemResponse.fromJson(itemData));
       }
 
-      // Restore history
-      final List<dynamic> historyData = listsData['history'] ?? [];
+      final historyData = listsData['history'] as List<dynamic>? ?? [];
       for (var itemData in historyData) {
-        await _localDataSource.addHistory(
-          ItemResponse.fromJson(itemData as Map<String, dynamic>),
-        );
+        await _localDataSource.addHistory(ItemResponse.fromJson(itemData));
       }
     }
 
-    // 2. Restore Settings
     final Map<String, dynamic>? settingsData =
         backupData['settings'] as Map<String, dynamic>?;
-
     if (settingsData != null) {
-      // Language
       final lang = settingsData['language'] as String?;
       if (lang != null) {
         await _appPrefs.setLanguage(lang);
         LocaleSettings.setLocaleRaw(lang);
       }
 
-      // API Keys
       await _appPrefs.setCustomRawgApiKey(
         settingsData['rawgKey'] as String? ?? '',
       );
@@ -203,7 +211,6 @@ class BackupAndRestoreViewModel extends BaseViewModel
         settingsData['booksKey'] as String? ?? '',
       );
 
-      // Font
       final fontTypeIndex = settingsData['fontType'] as int?;
       if (fontTypeIndex != null) {
         final fontType = FontType.values[fontTypeIndex];
@@ -222,13 +229,11 @@ class BackupAndRestoreViewModel extends BaseViewModel
             if (!await fontDir.exists()) {
               await fontDir.create(recursive: true);
             }
-            // Use a unique name to avoid conflicts
             final newPath = p.join(
               fontDir.path,
               '${fontFamilyName}_${DateTime.now().millisecondsSinceEpoch}.ttf',
             );
-            final newFile = File(newPath);
-            await newFile.writeAsBytes(fontBytes);
+            await File(newPath).writeAsBytes(fontBytes);
 
             await _appPrefs.setCustomFontPath(newPath);
             await _appPrefs.setCustomFontFamilyName(fontFamilyName);
@@ -241,15 +246,11 @@ class BackupAndRestoreViewModel extends BaseViewModel
         await _appPrefs.setFontType(fontType.index);
       }
 
-      // Theme
       final themeMode = settingsData['themeMode'] as int?;
+      if (themeMode != null) await _appPrefs.setThemeMode(themeMode);
+
       final manualTheme = settingsData['manualTheme'] as int?;
-      if (themeMode != null) {
-        await _appPrefs.setThemeMode(themeMode);
-      }
-      if (manualTheme != null) {
-        await _appPrefs.setManualTheme(manualTheme);
-      }
+      if (manualTheme != null) await _appPrefs.setManualTheme(manualTheme);
     }
   }
 }

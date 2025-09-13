@@ -14,37 +14,43 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final ThemeManager themeManager = instance<ThemeManager>();
+  final ThemeManager _themeManager = instance<ThemeManager>();
+  late Future<({FlexScheme scheme, String? fontFamily})> _themeFuture;
 
   @override
   void initState() {
     super.initState();
-    themeManager.addListener(onThemeChanged);
+    _themeManager.addListener(_onThemeChanged);
+    _themeFuture = _loadThemeAndFont();
   }
 
-  void onThemeChanged() {
+  Future<({FlexScheme scheme, String? fontFamily})> _loadThemeAndFont() async {
+    final scheme = await _themeManager.getCurrentTheme();
+    final fontFamily = await _themeManager.getCurrentFontFamily();
+    return (scheme: scheme, fontFamily: fontFamily);
+  }
+
+  void _onThemeChanged() {
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _themeFuture = _loadThemeAndFont();
+      });
     }
   }
 
   @override
   void dispose() {
-    themeManager.removeListener(onThemeChanged);
+    _themeManager.removeListener(_onThemeChanged);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<({FlexScheme scheme, String? fontFamily})>(
-      future: () async {
-        final scheme = await themeManager.getCurrentTheme();
-        final fontFamily = await themeManager.getCurrentFontFamily();
-        return (scheme: scheme, fontFamily: fontFamily);
-      }(),
+      future: _themeFuture,
       builder: (context, snapshot) {
         final FlexScheme currentScheme =
-            snapshot.data?.scheme ?? themeManager.getMonthlyTheme();
+            snapshot.data?.scheme ?? _themeManager.getMonthlyTheme();
         final String? currentFontFamily = snapshot.data?.fontFamily;
 
         return MaterialApp(
