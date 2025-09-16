@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:noted/app/app_prefs.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/app/functions.dart';
 import 'package:noted/domain/model/models.dart';
@@ -11,7 +12,7 @@ import 'package:noted/presentation/common/state_renderer/state_renderer_impl.dar
 import 'package:noted/presentation/details/view/details_view.dart';
 import 'package:noted/presentation/main/viewModel/main_view_model.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
-import 'package:noted/presentation/resources/values_manager.dart';
+import 'package:noted/presentation/settings/view/settings_view.dart';
 
 enum ItemListType { todo, finished, history }
 
@@ -23,6 +24,7 @@ class MainView extends StatefulWidget {
 
 class MainViewState extends State<MainView> {
   final MainViewModel viewModel = instance<MainViewModel>();
+  final AppPrefs appPrefs = instance<AppPrefs>();
 
   @override
   void initState() {
@@ -87,6 +89,7 @@ class MainViewState extends State<MainView> {
   }
 
   Future<void> handleNewMonth() async {
+    // Ensure data is loaded before proceeding
     if (viewModel.getCurrentMainData() == null) {
       final completer = Completer<void>();
       final subscription = viewModel.outputState.listen((state) {
@@ -108,37 +111,46 @@ class MainViewState extends State<MainView> {
       return;
     }
 
-    final List<Item> allUnfinishedItemsFromLastMonth = List<Item>.from(
-      currentMainData.mainData?.todos ?? [],
-    );
+    final behaviorIndex = await appPrefs.getMonthRolloverBehavior();
+    final behavior = MonthRolloverBehavior.values[behaviorIndex];
+
     final List<Item> finishedItemsFromLastMonth = List<Item>.from(
       currentMainData.mainData?.finished ?? [],
     );
 
+    // Move finished items to history for both full and partial rollover
     for (final item in finishedItemsFromLastMonth) {
       await viewModel.moveToHistory(item);
     }
 
-    if (!mounted) return;
-    final List<Item>? itemsToKeepForNewMonth = await showDialog<List<Item>>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) =>
-          NewMonthDialog(unfinishedItems: allUnfinishedItemsFromLastMonth),
-    );
+    // Handle to-do items based on the selected behavior
+    if (behavior == MonthRolloverBehavior.full) {
+      final List<Item> allUnfinishedItemsFromLastMonth = List<Item>.from(
+        currentMainData.mainData?.todos ?? [],
+      );
 
-    if (itemsToKeepForNewMonth != null) {
-      final Set<String> idsToKeep = itemsToKeepForNewMonth
-          .map((item) => '${item.id}-${item.category?.name}')
-          .toSet();
+      if (!mounted) return;
+      final List<Item>? itemsToKeepForNewMonth = await showDialog<List<Item>>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) =>
+            NewMonthDialog(unfinishedItems: allUnfinishedItemsFromLastMonth),
+      );
 
-      for (final oldItem in allUnfinishedItemsFromLastMonth) {
-        final oldItemKey = '${oldItem.id}-${oldItem.category?.name}';
-        if (!idsToKeep.contains(oldItemKey)) {
-          await viewModel.confirmDeleteTodo(oldItem);
+      if (itemsToKeepForNewMonth != null) {
+        final Set<String> idsToKeep = itemsToKeepForNewMonth
+            .map((item) => '${item.id}-${item.category?.name}')
+            .toSet();
+
+        for (final oldItem in allUnfinishedItemsFromLastMonth) {
+          final oldItemKey = '${oldItem.id}-${oldItem.category?.name}';
+          if (!idsToKeep.contains(oldItemKey)) {
+            await viewModel.confirmDeleteTodo(oldItem);
+          }
         }
       }
     }
+    // For partial rollover, we do nothing with the to-do list.
 
     viewModel.start();
   }
@@ -162,22 +174,24 @@ class MainViewState extends State<MainView> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
-        primary: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildFilterAndSortControls(
-              context,
-            ).animate().fadeIn(duration: 400.ms),
-            const SizedBox(height: 20),
-            TodoSectionWidget(
-              viewModel: viewModel,
-            ).animate().fadeIn(duration: 500.ms),
-            const SizedBox(height: 8),
-            FinishedSectionWidget(
-              viewModel: viewModel,
-            ).animate().fadeIn(duration: 500.ms),
-          ],
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: IntrinsicHeight(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildFilterAndSortControls(
+                context,
+              ).animate().fadeIn(duration: 400.ms),
+              const SizedBox(height: 20),
+              TodoSectionWidget(
+                viewModel: viewModel,
+              ).animate().fadeIn(duration: 500.ms),
+              const SizedBox(height: 8),
+              FinishedSectionWidget(
+                viewModel: viewModel,
+              ).animate().fadeIn(duration: 500.ms),
+            ],
+          ),
         ),
       ),
     );
@@ -593,8 +607,6 @@ class ItemTile extends StatelessWidget {
           child: const Icon(Icons.delete, color: Colors.white, size: 24),
         ),
         child: Card(
-          elevation: AppSize.s0,
-          margin: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -628,7 +640,7 @@ class ItemTile extends StatelessWidget {
                 Text(
                   item.title ?? 'Untitled',
                   style: const TextStyle(fontSize: 16),
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 if (item.personalRating != null && item.personalRating! > 0)

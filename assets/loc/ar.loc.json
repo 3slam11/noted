@@ -1,25 +1,22 @@
 {
   "appName": "نوتد",
-
- "months": [
-   "يناير",
-   "فبراير",
-   "مارس",
-   "أبريل",
-   "مايو",
-   "يونيو",
-   "يوليو",
-   "اغسطس",
-   "سبتمبر",
-   "أكتوبر",
-   "نوفمبر",
-   "ديسمبر"
+  "months": [
+    "يناير",
+    "فبراير",
+    "مارس",
+    "أبريل",
+    "مايو",
+    "يونيو",
+    "يوليو",
+    "اغسطس",
+    "سبتمبر",
+    "أكتوبر",
+    "نوفمبر",
+    "ديسمبر"
   ],
-
   "routes": {
     "noRouteFound": "المسار غير موجود"
   },
-
   "errorHandler": {
     "defaultError": "حدث خطأ ما، حاول مرة أخرى لاحقاً",
     "success": "نجاح",
@@ -41,7 +38,6 @@
     "customApiError": "قد تكون واجهة برمجة التطبيقات المخصصة الخاصة بك مكتوبة بشكل غير صحيح.",
     "siteDownError": "قد يكون الموقع معطلاً في الوقت الحالي، انتظر بضع دقائق وحاول لاحقًا."
   },
-
   "stateRenderer": {
     "content": "المحتوى",
     "error": "خطأ",
@@ -49,7 +45,6 @@
     "retry": "إعادة المحاولة",
     "ok": "موافق"
   },
-
   "home": {
     "titleSection": "قائمة الترفيه لشهر ",
     "emptySection": "القائمة فارغة",
@@ -90,8 +85,6 @@
     "notesSaved": "تم حفظ الملاحظات والتقييم.",
     "save": "حفظ",
     "delete": "حذف"
-
-
   },
   "sort": {
     "sort": "رتب",
@@ -105,7 +98,6 @@
     "dateAddedNewest": "تاريخ الإضافة (الأحدث)",
     "dateAddedOldest": "تاريخ الإضافة (الأقدم)"
   },
-
   "search": {
     "search": "بحث",
     "searchPlaceholder": "ابحث...",
@@ -113,7 +105,6 @@
     "noResultsFound": "لم يتم العثور على نتائج",
     "cantSearch": "لا يمكن البحث الآن"
   },
-
   "details": {
     "title": "تفاصيل",
     "movies": "الأفلام",
@@ -130,7 +121,6 @@
     "moreLikeThis": "مثل هذا",
     "noRecommendations": "لا توجد اقتراحات"
   },
-
   "settings": {
     "backupAndRestore": "النسخ والاستعادة",
     "settings": "الإعدادات",
@@ -140,13 +130,20 @@
     "appDefaultFont": "الخط الافتراضي",
     "systemFont": "خط النظام",
     "customFont": "خط مخصص",
-    "customFontDetails":"تفاصيل الخط المخصص",
+    "customFontDetails": "تفاصيل الخط المخصص",
     "history": "السجل",
     "apiChange": "تغيير الـAPI",
     "statistics": "الإحصائيات",
-    "about": "حول التطبيق"
+    "about": "حول التطبيق",
+    "monthRolloverBehavior": " 'سلوك ترحيل الشهر",
+    "monthRolloverBehaviorDescription": "اختر ما يحدث في بداية شهر جديد.",
+    "rolloverFull": "ترحيل كامل (افتراضي)",
+    "rolloverFullDescription": "نقل العناصر المكتملة إلى السجل والسؤال عن العناصر التي يجب الاحتفاظ بها في قائمة المهام.",
+    "rolloverPartial": "ترحيل جزئي",
+    "rolloverPartialDescription": "نقل العناصر المكتملة فقط إلى السجل. الاحتفاظ بجميع عناصر قائمة المهام.",
+    "rolloverManual": "يدوي",
+    "rolloverManualDescription": "لا تفعل شيئًا. سأدير قوائمي بنفسي."
   },
-
   "qrSettings": {
     "title": "مزامنة بالـQR",
     "desktop": "الخاصية غير متوفرة على الكمبيوتر",
@@ -159,13 +156,11 @@
     "generating": "جاري انشاء الـQR...",
     "generated": "تم انشاء الـQR"
   },
-
   "languageSettings": {
     "selectLanguage": "اختر اللغة",
     "en": "English",
     "ar": "العربية"
   },
-
   "themeSettings": {
     "themeSettings": "إعدادات السمة",
     "autoTheme": "السمة التلقائية",
@@ -173,7 +168,6 @@
     "autoThemeDescription": "تتغير السمة تلقائياً بناءً على الشهر الحالي",
     "selectTheme": "اختر السمة:"
   },
-
   "fontSettings": {
     "title": "إعدادات الخط",
     "change": "تغيير",
@@ -181,7 +175,6 @@
     "noCustomFont": "لم يتم تحديد خط مخصص",
     "selectFontFile": "اختر ملف الخط (.ttf, .otf)'"
   },
-
   "backupAndRestore": {
     "title": "النسخ الإحتياطي والاستعادة",
     "backupData": "النسخ الإحتياطي للبيانات",
@@ -200,15 +193,13 @@
     "yes": "نعم",
     "no": "لا",
     "dataRestoredMessage": "تم استعادة البيانات بنجاح."
-},
-
+  },
   "history": {
     "history": "السجل",
     "item": "عنصر",
     "items": "عناصر",
     "noHistory": "لا يوجد سجل حتى الان"
   },
-
   "apiSettings": {
     "gamesApiTitle": "الـAPI الخاص بالإلعاب",
     "gamesApiDescription": "احصل على الـAPI الخاص بك من RAWG.io",
@@ -221,7 +212,6 @@
     "save": "حفظ",
     "delete": "حذف"
   },
-
   "statistics": {
     "thisMonth": "هذا الشهر",
     "allTime": "كل الأوقات",
@@ -229,7 +219,6 @@
     "category": "الفئات",
     "noData": "لا يوجد بيانات حتى الان"
   },
-
   "about": {
     "aboutThisApp": "حول هذا التطبيق",
     "appDescription": "هذا التطبيق اٌنشئ بغرض التدريب فإذا واجهت مشكلة، ابلغ المطور على Github.",

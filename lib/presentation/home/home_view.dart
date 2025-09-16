@@ -1,4 +1,3 @@
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:noted/gen/strings.g.dart';
@@ -11,15 +10,31 @@ class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
   @override
-  State<HomeView> createState() => HomeViewState();
+  State<HomeView> createState() => _HomeViewState();
 }
 
-class HomeViewState extends State<HomeView> with TickerProviderStateMixin {
+class _HomeViewState extends State<HomeView>
+    with SingleTickerProviderStateMixin {
   int _bottomNavIndex = 0;
   late final AnimationController _hideBottomBarAnimationController;
 
-  late final List<Widget> _pages;
-  late final List<IconData> _pageIcons;
+  // Track scroll state to prevent redundant animations
+  bool _isBottomBarVisible = true;
+  bool _isAnimating = false;
+
+  static const List<Widget> _pages = [
+    MainView(),
+    SearchView(),
+    HistoryView(),
+    SettingsView(),
+  ];
+
+  static const List<IconData> _pageIcons = [
+    Icons.home_filled,
+    Icons.search_rounded,
+    Icons.history_rounded,
+    Icons.settings_rounded,
+  ];
 
   @override
   void initState() {
@@ -30,26 +45,58 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin {
       reverseDuration: const Duration(milliseconds: 200),
     );
 
-    _pages = const [MainView(), SearchView(), HistoryView(), SettingsView()];
+    // Listen to animation status to track when animations complete
+    _hideBottomBarAnimationController.addStatusListener(_handleAnimationStatus);
+  }
 
-    _pageIcons = [
-      Icons.home_filled,
-      Icons.search_rounded,
-      Icons.history_rounded,
-      Icons.settings_rounded,
-    ];
+  void _handleAnimationStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed ||
+        status == AnimationStatus.dismissed) {
+      setState(() {
+        _isAnimating = false;
+      });
+    }
+  }
+
+  void _handleScrollNotification(ScrollNotification notification) {
+    if (_isAnimating) return;
+
+    if (notification is UserScrollNotification) {
+      final direction = notification.direction;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+
+        if (direction == ScrollDirection.reverse && _isBottomBarVisible) {
+          setState(() {
+            _isBottomBarVisible = false;
+            _isAnimating = true;
+          });
+          _hideBottomBarAnimationController.forward();
+        } else if (direction == ScrollDirection.forward &&
+            !_isBottomBarVisible) {
+          setState(() {
+            _isBottomBarVisible = true;
+            _isAnimating = true;
+          });
+          _hideBottomBarAnimationController.reverse();
+        }
+      });
+    }
   }
 
   @override
   void dispose() {
+    _hideBottomBarAnimationController.removeStatusListener(
+      _handleAnimationStatus,
+    );
     _hideBottomBarAnimationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final t = Translations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     final pageTitles = [
       t.appName,
@@ -59,61 +106,147 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin {
     ];
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.primaryContainer,
-      appBar: AppBar(
-        title: Text(pageTitles[_bottomNavIndex]),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
+      backgroundColor: colorScheme.primaryContainer,
+      extendBody:
+          true, // This allows the body to extend behind the bottom navigation
+      appBar: AppBar(title: Text(pageTitles[_bottomNavIndex])),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          _handleScrollNotification(notification);
+          return false; // Allow notification to continue bubbling
+        },
+        child: Stack(
+          children: [
+            // Main content with padding that animates
+            AnimatedBuilder(
+              animation: _hideBottomBarAnimationController,
+              builder: (context, child) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: (1 - _hideBottomBarAnimationController.value) * 65,
+                  ),
+                  child: child,
+                );
+              },
+              child: IndexedStack(index: _bottomNavIndex, children: _pages),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: AnimatedBuilder(
+        animation: _hideBottomBarAnimationController,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(0, _hideBottomBarAnimationController.value * 100),
+            child: child,
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(32),
+              topRight: Radius.circular(32),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            top: false,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(
+                  _pages.length,
+                  (index) => Expanded(
+                    child: _NavigationBarItem(
+                      icon: _pageIcons[index],
+                      label: pageTitles[index],
+                      isActive: _bottomNavIndex == index,
+                      onTap: () => setState(() => _bottomNavIndex = index),
+                      activeColor: colorScheme.primary,
+                      inactiveColor: colorScheme.onSurface.withValues(
+                        alpha: 0.6,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
-      body: NotificationListener<UserScrollNotification>(
-        onNotification: (notification) {
-          if (notification.direction == ScrollDirection.reverse &&
-              _hideBottomBarAnimationController.isDismissed) {
-            _hideBottomBarAnimationController.forward();
-          } else if (notification.direction == ScrollDirection.forward &&
-              _hideBottomBarAnimationController.isCompleted) {
-            _hideBottomBarAnimationController.reverse();
-          }
-          return true;
-        },
-        child: IndexedStack(index: _bottomNavIndex, children: _pages),
-      ),
-      bottomNavigationBar: AnimatedBottomNavigationBar.builder(
-        leftCornerRadius: 32,
-        rightCornerRadius: 32,
+    );
+  }
+}
 
-        itemCount: _pages.length,
-        tabBuilder: (int index, bool isActive) {
-          final color = isActive
-              ? theme.colorScheme.primary
-              : theme.colorScheme.onSurface.withValues(alpha: 0.6);
-          return Column(
+class _NavigationBarItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+  final Color activeColor;
+  final Color inactiveColor;
+
+  const _NavigationBarItem({
+    required this.icon,
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+    required this.activeColor,
+    required this.inactiveColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isActive ? activeColor : inactiveColor;
+    final theme = Theme.of(context);
+
+    return Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(_pageIcons[index], color: color),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Text(
-                  pageTitles[index],
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall?.copyWith(color: color),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                child: Icon(icon, color: color, size: 24),
+              ),
+              const SizedBox(height: 4),
+              Flexible(
+                child: AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 200),
+                  style:
+                      theme.textTheme.bodySmall?.copyWith(
+                        color: color,
+                        fontWeight: isActive
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                      ) ??
+                      TextStyle(color: color, fontSize: 12),
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ],
-          );
-        },
-        activeIndex: _bottomNavIndex,
-        onTap: (index) => setState(() => _bottomNavIndex = index),
-        hideAnimationController: _hideBottomBarAnimationController,
-        backgroundColor: theme.colorScheme.surface,
-        gapLocation: GapLocation.none,
-        notchSmoothness: NotchSmoothness.smoothEdge,
+          ),
+        ),
       ),
     );
   }

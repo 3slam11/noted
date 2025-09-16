@@ -246,6 +246,14 @@ class _TranslationsSettingsAr implements TranslationsSettingsEn {
 	@override String get apiChange => 'تغيير الـAPI';
 	@override String get statistics => 'الإحصائيات';
 	@override String get about => 'حول التطبيق';
+	@override String get monthRolloverBehavior => ' \'سلوك ترحيل الشهر';
+	@override String get monthRolloverBehaviorDescription => 'اختر ما يحدث في بداية شهر جديد.';
+	@override String get rolloverFull => 'ترحيل كامل (افتراضي)';
+	@override String get rolloverFullDescription => 'نقل العناصر المكتملة إلى السجل والسؤال عن العناصر التي يجب الاحتفاظ بها في قائمة المهام.';
+	@override String get rolloverPartial => 'ترحيل جزئي';
+	@override String get rolloverPartialDescription => 'نقل العناصر المكتملة فقط إلى السجل. الاحتفاظ بجميع عناصر قائمة المهام.';
+	@override String get rolloverManual => 'يدوي';
+	@override String get rolloverManualDescription => 'لا تفعل شيئًا. سأدير قوائمي بنفسي.';
 }
 
 // Path: qrSettings
@@ -520,6 +528,14 @@ extension on TranslationsAr {
 			case 'settings.apiChange': return 'تغيير الـAPI';
 			case 'settings.statistics': return 'الإحصائيات';
 			case 'settings.about': return 'حول التطبيق';
+			case 'settings.monthRolloverBehavior': return ' \'سلوك ترحيل الشهر';
+			case 'settings.monthRolloverBehaviorDescription': return 'اختر ما يحدث في بداية شهر جديد.';
+			case 'settings.rolloverFull': return 'ترحيل كامل (افتراضي)';
+			case 'settings.rolloverFullDescription': return 'نقل العناصر المكتملة إلى السجل والسؤال عن العناصر التي يجب الاحتفاظ بها في قائمة المهام.';
+			case 'settings.rolloverPartial': return 'ترحيل جزئي';
+			case 'settings.rolloverPartialDescription': return 'نقل العناصر المكتملة فقط إلى السجل. الاحتفاظ بجميع عناصر قائمة المهام.';
+			case 'settings.rolloverManual': return 'يدوي';
+			case 'settings.rolloverManualDescription': return 'لا تفعل شيئًا. سأدير قوائمي بنفسي.';
 			case 'qrSettings.title': return 'مزامنة بالـQR';
 			case 'qrSettings.desktop': return 'الخاصية غير متوفرة على الكمبيوتر';
 			case 'qrSettings.desktopDescription': return 'قارئ الـQR متوفرة فقط على الهواتف.';

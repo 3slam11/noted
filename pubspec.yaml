@@ -31,16 +31,16 @@ dependencies:
   flutter_riverpod: ^3.0.0
   path: ^1.9.1
   path_provider: ^2.1.5
-  fl_chart: ^1.1.0
+  fl_chart: ^1.1.1
   flutter_launcher_icons: ^0.14.4
   url_launcher: ^6.3.2
   file_picker: ^10.3.3
   flutter_dotenv: ^6.0.0
+  objectbox: ^4.3.1
   objectbox_flutter_libs: ^4.3.1
   objectbox_generator: ^4.3.1
   flutter_animate: ^4.5.2
   flutter_rating_bar: ^4.0.1
-  animated_bottom_navigation_bar: ^1.4.0
   smooth_page_indicator: ^1.2.1
   
 dev_dependencies:

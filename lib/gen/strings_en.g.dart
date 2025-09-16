@@ -39,7 +39,10 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
+
+	/// en: 'Noted'
 	String get appName => 'Noted';
+
 	List<String> get months => [
 		'January',
 		'February',
@@ -80,6 +83,8 @@ class TranslationsRoutesEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'No Route Found'
 	String get noRouteFound => 'No Route Found';
 }
 
@@ -90,24 +95,62 @@ class TranslationsErrorHandlerEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Something went wrong, try again later'
 	String get defaultError => 'Something went wrong, try again later';
+
+	/// en: 'Success'
 	String get success => 'Success';
+
+	/// en: 'No Content'
 	String get noContent => 'No Content';
+
+	/// en: 'Bad Request'
 	String get badRequest => 'Bad Request';
+
+	/// en: 'Unauthorized'
 	String get unauthorized => 'Unauthorized';
+
+	/// en: 'Forbidden'
 	String get forbidden => 'Forbidden';
+
+	/// en: 'Internal Server Error'
 	String get internalServerError => 'Internal Server Error';
+
+	/// en: 'Not Found'
 	String get notFound => 'Not Found';
+
+	/// en: 'Time Out'
 	String get timeOut => 'Time Out';
+
+	/// en: 'Cancel'
 	String get cancel => 'Cancel';
+
+	/// en: 'Cache Error'
 	String get cacheError => 'Cache Error';
+
+	/// en: 'No Internet Connection'
 	String get noInternetConnection => 'No Internet Connection';
+
+	/// en: 'An error occurred'
 	String get errorOccurred => 'An error occurred';
+
+	/// en: 'Connection Issues'
 	String get connectionIssuesTitle => 'Connection Issues';
+
+	/// en: 'There might be several reasons for this issue:'
 	String get connectionIssuesSubtitle => 'There might be several reasons for this issue:';
+
+	/// en: 'Internet might be not working.'
 	String get internetNotWorking => 'Internet might be not working.';
+
+	/// en: 'Default API might have hit the capacity.'
 	String get apiCapacityHit => 'Default API might have hit the capacity.';
+
+	/// en: 'Your custom API might be written incorrectly.'
 	String get customApiError => 'Your custom API might be written incorrectly.';
+
+	/// en: 'Site might be down at the moment, wait a few minutes and try later.'
 	String get siteDownError => 'Site might be down at the moment, wait a few minutes and try later.';
 }
 
@@ -118,10 +161,20 @@ class TranslationsStateRendererEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Content'
 	String get content => 'Content';
+
+	/// en: 'Error'
 	String get error => 'Error';
+
+	/// en: 'Loading'
 	String get loading => 'Loading';
+
+	/// en: 'Retry'
 	String get retry => 'Retry';
+
+	/// en: 'Ok'
 	String get ok => 'Ok';
 }
 
@@ -132,44 +185,122 @@ class TranslationsHomeEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Entertainment list for '
 	String get titleSection => 'Entertainment list for ';
+
+	/// en: 'This list is empty'
 	String get emptySection => 'This list is empty';
+
+	/// en: 'Finished List'
 	String get finishedList => 'Finished List';
+
+	/// en: 'Movies'
 	String get movies => 'Movies';
+
+	/// en: 'Series'
 	String get series => 'Series';
+
+	/// en: 'Games'
 	String get games => 'Games';
+
+	/// en: 'Books'
 	String get books => 'Books';
+
+	/// en: 'All'
 	String get all => 'All';
+
+	/// en: 'Deleted'
 	String get deleted => 'Deleted';
+
+	/// en: 'Undo'
 	String get undo => 'Undo';
+
+	/// en: 'New Month Started! 🎉'
 	String get newMonthStarted => 'New Month Started! 🎉';
+
+	/// en: 'Welcome to ${month}!'
 	String description({required Object month}) => 'Welcome to ${month}!';
+
+	/// en: 'Your finished items have been moved to history. Here are your unfinished items from last month:'
 	String get description2 => 'Your finished items have been moved to history. Here are your unfinished items from last month:';
+
+	/// en: '📝 Pending: '
 	String get pending => '📝 Pending: ';
+
+	/// en: '🎯 Completed: '
 	String get completed => '🎯 Completed: ';
+
+	/// en: 'Select All'
 	String get selectAll => 'Select All';
+
+	/// en: 'Deselect All'
 	String get deselectAll => 'Deselect All';
+
+	/// en: 'Delete All'
 	String get deleteAll => 'Delete All';
+
+	/// en: 'Add All'
 	String get addAll => 'Add All';
+
+	/// en: 'Keep Selected'
 	String get keepSelected => 'Keep Selected';
+
+	/// en: 'No completed items yet'
 	String get noCompleted => 'No completed items yet';
+
+	/// en: 'Congratulations!'
 	String get congratulations => 'Congratulations!';
+
+	/// en: 'You have completed everything last month!'
 	String get todosDone => 'You have completed everything last month!';
+
+	/// en: 'Close'
 	String get close => 'Close';
+
+	/// en: 'Either you're a time traveler or you messed with your date settings! 🕰️'
 	String get timeWrong => 'Either you\'re a time traveler or you messed with your date settings! 🕰️';
+
+	/// en: 'The app detected that your current date may be wrong. This could mess with your lists.'
 	String get timeWrongDescription => 'The app detected that your current date may be wrong. This could mess with your lists.';
+
+	/// en: 'Continue'
 	String get continueAnyway => 'Continue';
+
+	/// en: 'Item Actions'
 	String get itemActions => 'Item Actions';
+
+	/// en: 'Move to todo'
 	String get moveToTodo => 'Move to todo';
+
+	/// en: 'Move to finished'
 	String get moveToFinished => 'Move to finished';
+
+	/// en: 'Move to history'
 	String get moveToHistory => 'Move to history';
+
+	/// en: 'Edit/View Notes'
 	String get editNotes => 'Edit/View Notes';
+
+	/// en: 'Your Rating'
 	String get yourRating => 'Your Rating';
+
+	/// en: 'Your Notes'
 	String get yourNotes => 'Your Notes';
+
+	/// en: 'Add your thoughts here...'
 	String get notesHint => 'Add your thoughts here...';
+
+	/// en: 'No note yet.'
 	String get noNotes => 'No note yet.';
+
+	/// en: 'Note saved.'
 	String get notesSaved => 'Note saved.';
+
+	/// en: 'Save'
 	String get save => 'Save';
+
+	/// en: 'Delete'
 	String get delete => 'Delete';
 }
 
@@ -180,15 +311,35 @@ class TranslationsSortEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Sort'
 	String get sort => 'Sort';
+
+	/// en: 'Sort by'
 	String get sortBy => 'Sort by';
+
+	/// en: 'Title (A-Z)'
 	String get titleAsc => 'Title (A-Z)';
+
+	/// en: 'Title (Z-A)'
 	String get titleDesc => 'Title (Z-A)';
+
+	/// en: 'Release Date (Newest)'
 	String get releaseDateNewest => 'Release Date (Newest)';
+
+	/// en: 'Release Date (Oldest)'
 	String get releaseDateOldest => 'Release Date (Oldest)';
+
+	/// en: 'Rating (Highest)'
 	String get ratingHighest => 'Rating (Highest)';
+
+	/// en: 'Rating (Lowest)'
 	String get ratingLowest => 'Rating (Lowest)';
+
+	/// en: 'Date Added (Newest)'
 	String get dateAddedNewest => 'Date Added (Newest)';
+
+	/// en: 'Date Added (Oldest)'
 	String get dateAddedOldest => 'Date Added (Oldest)';
 }
 
@@ -199,10 +350,20 @@ class TranslationsSearchEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Search'
 	String get search => 'Search';
+
+	/// en: 'Search...'
 	String get searchPlaceholder => 'Search...';
+
+	/// en: 'Search for anything'
 	String get searchForSomething => 'Search for anything';
+
+	/// en: 'No results found'
 	String get noResultsFound => 'No results found';
+
+	/// en: 'Can't search now'
 	String get cantSearch => 'Can\'t search now';
 }
 
@@ -213,19 +374,47 @@ class TranslationsDetailsEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Details'
 	String get title => 'Details';
+
+	/// en: 'Movies'
 	String get movies => 'Movies';
+
+	/// en: 'Series'
 	String get series => 'Series';
+
+	/// en: 'Games'
 	String get games => 'Games';
+
+	/// en: 'Books'
 	String get books => 'Books';
+
+	/// en: 'Description'
 	String get description => 'Description';
+
+	/// en: 'Release Date'
 	String get releaseDate => 'Release Date';
+
+	/// en: 'Platforms'
 	String get platforms => 'Platforms';
+
+	/// en: 'Rating'
 	String get rating => 'Rating';
+
+	/// en: 'Publisher'
 	String get publisher => 'Publisher';
+
+	/// en: 'Studio'
 	String get studio => 'Studio';
+
+	/// en: 'Network'
 	String get network => 'Network';
+
+	/// en: 'More like this'
 	String get moreLikeThis => 'More like this';
+
+	/// en: 'No Recommendations'
 	String get noRecommendations => 'No Recommendations';
 }
 
@@ -236,19 +425,69 @@ class TranslationsSettingsEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Backup & Restore'
 	String get backupAndRestore => 'Backup & Restore';
+
+	/// en: 'Settings'
 	String get settings => 'Settings';
+
+	/// en: 'Language'
 	String get language => 'Language';
+
+	/// en: 'Theme'
 	String get theme => 'Theme';
+
+	/// en: 'Font'
 	String get font => 'Font';
+
+	/// en: 'App Default'
 	String get appDefaultFont => 'App Default';
+
+	/// en: 'System Default'
 	String get systemFont => 'System Default';
+
+	/// en: 'Custom Font'
 	String get customFont => 'Custom Font';
+
+	/// en: 'Custom Font Details'
 	String get customFontDetails => 'Custom Font Details';
+
+	/// en: 'History'
 	String get history => 'History';
+
+	/// en: 'Change API'
 	String get apiChange => 'Change API';
+
+	/// en: 'Statistics'
 	String get statistics => 'Statistics';
+
+	/// en: 'About'
 	String get about => 'About';
+
+	/// en: 'Month Rollover Behavior'
+	String get monthRolloverBehavior => 'Month Rollover Behavior';
+
+	/// en: 'Choose what happens at the start of a new month.'
+	String get monthRolloverBehaviorDescription => 'Choose what happens at the start of a new month.';
+
+	/// en: 'Full Rollover (Default)'
+	String get rolloverFull => 'Full Rollover (Default)';
+
+	/// en: 'Move finished items to history and ask which to-do items to keep.'
+	String get rolloverFullDescription => 'Move finished items to history and ask which to-do items to keep.';
+
+	/// en: 'Partial Rollover'
+	String get rolloverPartial => 'Partial Rollover';
+
+	/// en: 'Only move finished items to history. Keep all to-do items.'
+	String get rolloverPartialDescription => 'Only move finished items to history. Keep all to-do items.';
+
+	/// en: 'Manual'
+	String get rolloverManual => 'Manual';
+
+	/// en: 'Do nothing. I will manage my lists myself.'
+	String get rolloverManualDescription => 'Do nothing. I will manage my lists myself.';
 }
 
 // Path: qrSettings
@@ -258,15 +497,35 @@ class TranslationsQrSettingsEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'QR Code Sync'
 	String get title => 'QR Code Sync';
+
+	/// en: 'Feature Not Available on Desktop'
 	String get desktop => 'Feature Not Available on Desktop';
+
+	/// en: 'QR code scanning is only available on the mobile version of the app.'
 	String get desktopDescription => 'QR code scanning is only available on the mobile version of the app.';
+
+	/// en: 'Sync between devices with a QR code'
 	String get subtitle => 'Sync between devices with a QR code';
+
+	/// en: 'You can export and import your data and settings with QR code to another device.'
 	String get description => 'You can export and import your data and settings with QR code to another device.';
+
+	/// en: 'Importing will overwrite all current settings and lists.'
 	String get alert => 'Importing will overwrite all current settings and lists.';
+
+	/// en: 'Scan'
 	String get scan => 'Scan';
+
+	/// en: 'Generate'
 	String get generate => 'Generate';
+
+	/// en: 'Generating QR Code...'
 	String get generating => 'Generating QR Code...';
+
+	/// en: 'QR Code Generated'
 	String get generated => 'QR Code Generated';
 }
 
@@ -277,8 +536,14 @@ class TranslationsLanguageSettingsEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Select Language'
 	String get selectLanguage => 'Select Language';
+
+	/// en: 'English'
 	String get en => 'English';
+
+	/// en: 'العربية'
 	String get ar => 'العربية';
 }
 
@@ -289,10 +554,20 @@ class TranslationsThemeSettingsEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Theme Settings'
 	String get themeSettings => 'Theme Settings';
+
+	/// en: 'Auto Theme'
 	String get autoTheme => 'Auto Theme';
+
+	/// en: 'Manual Theme'
 	String get manualTheme => 'Manual Theme';
+
+	/// en: 'Automatically changes theme based on current month'
 	String get autoThemeDescription => 'Automatically changes theme based on current month';
+
+	/// en: 'Select Theme:'
 	String get selectTheme => 'Select Theme:';
 }
 
@@ -303,10 +578,20 @@ class TranslationsFontSettingsEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Font Settings'
 	String get title => 'Font Settings';
+
+	/// en: 'Change'
 	String get change => 'Change';
+
+	/// en: 'Remove'
 	String get remove => 'Remove';
+
+	/// en: 'No custom font selected'
 	String get noCustomFont => 'No custom font selected';
+
+	/// en: 'Select Font File (.ttf, .otf)''
 	String get selectFontFile => 'Select Font File (.ttf, .otf)\'';
 }
 
@@ -317,22 +602,56 @@ class TranslationsBackupAndRestoreEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Backup & Restore'
 	String get title => 'Backup & Restore';
+
+	/// en: 'Backup Data'
 	String get backupData => 'Backup Data';
+
+	/// en: 'Restore Data'
 	String get restoreData => 'Restore Data';
+
+	/// en: 'Save your current lists to a local file.'
 	String get backupDescription => 'Save your current lists to a local file.';
+
+	/// en: 'Restore your lists from a previously saved backup file. This will overwrite current data.'
 	String get restoreDescription => 'Restore your lists from a previously saved backup file. This will overwrite current data.';
+
+	/// en: 'Backup successful!'
 	String get backupSuccessful => 'Backup successful!';
+
+	/// en: 'Backup failed: '
 	String get backupFailed => 'Backup failed: ';
+
+	/// en: 'Restore successful!'
 	String get restoreSuccessful => 'Restore successful!';
+
+	/// en: 'Restore failed: '
 	String get restoreFailed => 'Restore failed: ';
+
+	/// en: 'No file selected.'
 	String get noFileSelected => 'No file selected.';
+
+	/// en: 'Invalid backup file format or missing data.'
 	String get invalidFileFormat => 'Invalid backup file format or missing data.';
+
+	/// en: 'Select Backup File'
 	String get selectBackupFile => 'Select Backup File';
+
+	/// en: 'Save Backup File As'
 	String get saveBackupFile => 'Save Backup File As';
+
+	/// en: 'noted_backup.json'
 	String get defaultBackupFileName => 'noted_backup.json';
+
+	/// en: 'Yes'
 	String get yes => 'Yes';
+
+	/// en: 'No'
 	String get no => 'No';
+
+	/// en: 'Data restored successfully.'
 	String get dataRestoredMessage => 'Data restored successfully.';
 }
 
@@ -343,9 +662,17 @@ class TranslationsHistoryEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'History'
 	String get history => 'History';
+
+	/// en: 'Item'
 	String get item => 'Item';
+
+	/// en: 'Items'
 	String get items => 'Items';
+
+	/// en: 'No history yet'
 	String get noHistory => 'No history yet';
 }
 
@@ -356,15 +683,35 @@ class TranslationsApiSettingsEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Games API'
 	String get gamesApiTitle => 'Games API';
+
+	/// en: 'Get your API key from RAWG.io'
 	String get gamesApiDescription => 'Get your API key from RAWG.io';
+
+	/// en: 'Movies & TV Series API'
 	String get moviesApiTitle => 'Movies & TV Series API';
+
+	/// en: 'Get your API key from The Movie Database'
 	String get moviesApiDescription => 'Get your API key from The Movie Database';
+
+	/// en: 'Books API'
 	String get booksApiTitle => 'Books API';
+
+	/// en: 'Get your API key from Google Cloud Console'
 	String get booksApiDescription => 'Get your API key from Google Cloud Console';
+
+	/// en: 'Get API Key'
 	String get getApiKey => 'Get API Key';
+
+	/// en: 'API Key'
 	String get apiKey => 'API Key';
+
+	/// en: 'Save'
 	String get save => 'Save';
+
+	/// en: 'Delete'
 	String get delete => 'Delete';
 }
 
@@ -375,10 +722,20 @@ class TranslationsStatisticsEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'This Month'
 	String get thisMonth => 'This Month';
+
+	/// en: 'All Time'
 	String get allTime => 'All Time';
+
+	/// en: 'Total Items'
 	String get totalItems => 'Total Items';
+
+	/// en: 'Category'
 	String get category => 'Category';
+
+	/// en: 'No data yet'
 	String get noData => 'No data yet';
 }
 
@@ -389,13 +746,29 @@ class TranslationsAboutEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'About This App'
 	String get aboutThisApp => 'About This App';
+
+	/// en: 'This app has been made for practice, so if you encounter any issue tell the developer on GitHub.'
 	String get appDescription => 'This app has been made for practice, so if you encounter any issue tell the developer on GitHub.';
+
+	/// en: 'APIs Used'
 	String get apisUsed => 'APIs Used';
+
+	/// en: 'Games data came from RAWG site'
 	String get gamesDescription => 'Games data came from RAWG site';
+
+	/// en: 'Movies and TV Series'
 	String get moviesAndTvSeries => 'Movies and TV Series';
+
+	/// en: 'All data about movies and TV series came from TMDB site'
 	String get moviesAndTvSeriesDescription => 'All data about movies and TV series came from TMDB site';
+
+	/// en: 'All data about books came from Google Books API'
 	String get booksDescription => 'All data about books came from Google Books API';
+
+	/// en: 'Thanks to their free plan, the app became usable as it is now.'
 	String get thanksMessage => 'Thanks to their free plan, the app became usable as it is now.';
 }
 
@@ -523,6 +896,14 @@ extension on Translations {
 			case 'settings.apiChange': return 'Change API';
 			case 'settings.statistics': return 'Statistics';
 			case 'settings.about': return 'About';
+			case 'settings.monthRolloverBehavior': return 'Month Rollover Behavior';
+			case 'settings.monthRolloverBehaviorDescription': return 'Choose what happens at the start of a new month.';
+			case 'settings.rolloverFull': return 'Full Rollover (Default)';
+			case 'settings.rolloverFullDescription': return 'Move finished items to history and ask which to-do items to keep.';
+			case 'settings.rolloverPartial': return 'Partial Rollover';
+			case 'settings.rolloverPartialDescription': return 'Only move finished items to history. Keep all to-do items.';
+			case 'settings.rolloverManual': return 'Manual';
+			case 'settings.rolloverManualDescription': return 'Do nothing. I will manage my lists myself.';
 			case 'qrSettings.title': return 'QR Code Sync';
 			case 'qrSettings.desktop': return 'Feature Not Available on Desktop';
 			case 'qrSettings.desktopDescription': return 'QR code scanning is only available on the mobile version of the app.';

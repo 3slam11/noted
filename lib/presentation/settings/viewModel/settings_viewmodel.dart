@@ -10,6 +10,7 @@ import 'package:noted/presentation/base/base_view_model.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer_impl.dart';
 import 'package:noted/presentation/resources/theme_manager.dart';
+import 'package:noted/presentation/settings/view/settings_view.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -27,6 +28,8 @@ class SettingsViewModel extends BaseViewModel
       BehaviorSubject<List<FlexScheme>>();
   final _currentFontTypeController = BehaviorSubject<FontType>();
   final _customFontInfoController = BehaviorSubject<String>();
+  final _monthRolloverBehaviorController =
+      BehaviorSubject<MonthRolloverBehavior>();
 
   SettingsViewModel(this.appPrefs, this.themeManager);
 
@@ -48,6 +51,7 @@ class SettingsViewModel extends BaseViewModel
     _availableManualThemesStreamController.close();
     _currentFontTypeController.close();
     _customFontInfoController.close();
+    _monthRolloverBehaviorController.close();
     super.dispose();
   }
 
@@ -70,6 +74,7 @@ class SettingsViewModel extends BaseViewModel
       );
     }
 
+    // Font
     final fontTypeIndex = await appPrefs.getFontType();
     final fontType = FontType.values[fontTypeIndex];
     inputCurrentFontType.add(fontType);
@@ -84,6 +89,10 @@ class SettingsViewModel extends BaseViewModel
         inputCustomFontInfo.add(t.fontSettings.noCustomFont);
       }
     }
+
+    // Month Rollover
+    final behaviorIndex = await appPrefs.getMonthRolloverBehavior();
+    inputMonthRolloverBehavior.add(MonthRolloverBehavior.values[behaviorIndex]);
   }
 
   @override
@@ -103,6 +112,10 @@ class SettingsViewModel extends BaseViewModel
 
   @override
   Sink<String> get inputCustomFontInfo => _customFontInfoController.sink;
+
+  @override
+  Sink<MonthRolloverBehavior> get inputMonthRolloverBehavior =>
+      _monthRolloverBehaviorController.sink;
 
   @override
   Future<void> setLanguage(String languageCode) async {
@@ -178,6 +191,12 @@ class SettingsViewModel extends BaseViewModel
   }
 
   @override
+  Future<void> setMonthRolloverBehavior(MonthRolloverBehavior behavior) async {
+    await appPrefs.setMonthRolloverBehavior(behavior.index);
+    inputMonthRolloverBehavior.add(behavior);
+  }
+
+  @override
   Stream<String> get outputCurrentLanguage =>
       _currentLanguageStreamController.stream;
 
@@ -203,6 +222,10 @@ class SettingsViewModel extends BaseViewModel
 
   @override
   Stream<String> get outputCustomFontInfo => _customFontInfoController.stream;
+
+  @override
+  Stream<MonthRolloverBehavior> get outputMonthRolloverBehavior =>
+      _monthRolloverBehaviorController.stream;
 }
 
 abstract class SettingsViewModelInputs {
@@ -211,6 +234,7 @@ abstract class SettingsViewModelInputs {
   Sink<FlexScheme> get inputCurrentManualTheme;
   Sink<FontType> get inputCurrentFontType;
   Sink<String> get inputCustomFontInfo;
+  Sink<MonthRolloverBehavior> get inputMonthRolloverBehavior;
 
   Future<void> setLanguage(String languageCode);
   Future<void> setThemeMode(ThemeType mode);
@@ -218,6 +242,7 @@ abstract class SettingsViewModelInputs {
   Future<void> setFontType(FontType type);
   Future<void> setCustomFont(String filePath, String fontFamilyName);
   Future<void> clearCustomFont();
+  Future<void> setMonthRolloverBehavior(MonthRolloverBehavior behavior);
 }
 
 abstract class SettingsViewModelOutputs {
@@ -228,4 +253,5 @@ abstract class SettingsViewModelOutputs {
   Stream<List<FlexScheme>> get outputAvailableManualThemes;
   Stream<FontType> get outputCurrentFontType;
   Stream<String> get outputCustomFontInfo;
+  Stream<MonthRolloverBehavior> get outputMonthRolloverBehavior;
 }

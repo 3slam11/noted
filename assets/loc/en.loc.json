@@ -143,7 +143,15 @@
     "history": "History",
     "apiChange": "Change API",
     "statistics": "Statistics",
-    "about": "About"
+    "about": "About",
+    "monthRolloverBehavior": "Month Rollover Behavior",
+    "monthRolloverBehaviorDescription": "Choose what happens at the start of a new month.",
+    "rolloverFull": "Full Rollover (Default)",
+    "rolloverFullDescription": "Move finished items to history and ask which to-do items to keep.",
+    "rolloverPartial": "Partial Rollover",
+    "rolloverPartialDescription": "Only move finished items to history. Keep all to-do items.",
+    "rolloverManual": "Manual",
+    "rolloverManualDescription": "Do nothing. I will manage my lists myself."
   },
 
   "qrSettings": {

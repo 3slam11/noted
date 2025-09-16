@@ -1,5 +1,6 @@
 import 'package:noted/app/constants.dart';
 import 'package:noted/presentation/resources/theme_manager.dart';
+import 'package:noted/presentation/settings/view/settings_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String languagePref = 'LANGUAGE_PREF';
@@ -13,6 +14,7 @@ const String customBooksApiKeyPref = 'CUSTOM_BOOKS_API_KEY';
 const String fontTypePref = 'FONT_TYPE_PREF';
 const String customFontPathPref = 'CUSTOM_FONT_PATH_PREF';
 const String customFontFamilyNamePref = 'CUSTOM_FONT_FAMILY_NAME_PREF';
+const String monthRolloverBehaviorPref = 'MONTH_ROLLOVER_BEHAVIOR_PREF';
 
 class AppPrefs {
   final SharedPreferences sharedPreferences;
@@ -129,5 +131,14 @@ class AppPrefs {
   Future<void> clearCustomFont() async {
     await sharedPreferences.remove(customFontPathPref);
     await sharedPreferences.remove(customFontFamilyNamePref);
+  }
+
+  Future<void> setMonthRolloverBehavior(int behaviorIndex) async {
+    await sharedPreferences.setInt(monthRolloverBehaviorPref, behaviorIndex);
+  }
+
+  Future<int> getMonthRolloverBehavior() async {
+    return sharedPreferences.getInt(monthRolloverBehaviorPref) ??
+        MonthRolloverBehavior.full.index;
   }
 }

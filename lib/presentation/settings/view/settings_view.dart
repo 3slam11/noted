@@ -8,6 +8,8 @@ import 'package:noted/presentation/resources/theme_manager.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
 import 'package:noted/presentation/settings/viewModel/settings_viewmodel.dart';
 
+enum MonthRolloverBehavior { full, partial, manual }
+
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
 
@@ -43,6 +45,8 @@ class _SettingsViewState extends State<SettingsView> {
           const SizedBox(height: AppSize.s12),
           _buildFontSettings(context),
           const SizedBox(height: AppSize.s12),
+          _buildMonthRolloverSettings(context),
+          const SizedBox(height: AppSize.s12),
           _buildSettingCard(
             context,
             title: t.settings.apiChange,
@@ -77,6 +81,85 @@ class _SettingsViewState extends State<SettingsView> {
             onTap: () {
               Navigator.pushNamed(context, RoutesManager.aboutRoute);
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMonthRolloverSettings(BuildContext context) {
+    return StreamBuilder<MonthRolloverBehavior>(
+      stream: viewModel.outputMonthRolloverBehavior,
+      builder: (context, snapshot) {
+        final behavior = snapshot.data ?? MonthRolloverBehavior.full;
+        String subtitle;
+        switch (behavior) {
+          case MonthRolloverBehavior.full:
+            subtitle = t.settings.rolloverFull;
+            break;
+          case MonthRolloverBehavior.partial:
+            subtitle = t.settings.rolloverPartial;
+            break;
+          case MonthRolloverBehavior.manual:
+            subtitle = t.settings.rolloverManual;
+            break;
+        }
+
+        return _buildSettingCard(
+          context,
+          title: t.settings.monthRolloverBehavior,
+          subtitle: subtitle,
+          icon: Icons.calendar_month_outlined,
+          onTap: () => _showMonthRolloverDialog(context),
+        );
+      },
+    );
+  }
+
+  void _showMonthRolloverDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(t.settings.monthRolloverBehavior),
+        content: StreamBuilder<MonthRolloverBehavior>(
+          stream: viewModel.outputMonthRolloverBehavior,
+          builder: (context, snapshot) {
+            final currentBehavior = snapshot.data ?? MonthRolloverBehavior.full;
+            return RadioGroup<MonthRolloverBehavior>(
+              groupValue: currentBehavior,
+              onChanged: (MonthRolloverBehavior? value) {
+                if (value != null) {
+                  viewModel.setMonthRolloverBehavior(value);
+                  Navigator.pop(context);
+                }
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<MonthRolloverBehavior>(
+                    title: Text(t.settings.rolloverFull),
+                    subtitle: Text(t.settings.rolloverFullDescription),
+                    value: MonthRolloverBehavior.full,
+                  ),
+                  RadioListTile<MonthRolloverBehavior>(
+                    title: Text(t.settings.rolloverPartial),
+                    subtitle: Text(t.settings.rolloverPartialDescription),
+                    value: MonthRolloverBehavior.partial,
+                  ),
+                  RadioListTile<MonthRolloverBehavior>(
+                    title: Text(t.settings.rolloverManual),
+                    subtitle: Text(t.settings.rolloverManualDescription),
+                    value: MonthRolloverBehavior.manual,
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(t.errorHandler.cancel),
           ),
         ],
       ),
@@ -457,47 +540,47 @@ class _FontSelectionDialogState extends State<FontSelectionDialog> {
           final currentType = snapshot.data!;
 
           return SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildFontOption(
-                  context: context,
-                  title: t.settings.appDefaultFont,
-                  fontType: FontType.appDefault,
-                  currentType: currentType,
-                  onChanged: (v) => widget.viewModel.setFontType(v!),
-                ),
-
-                _buildFontOption(
-                  context: context,
-                  title: t.settings.systemFont,
-                  fontType: FontType.systemDefault,
-                  currentType: currentType,
-                  onChanged: (v) => widget.viewModel.setFontType(v!),
-                ),
-
-                _buildFontOption(
-                  context: context,
-                  title: t.settings.customFont,
-                  fontType: FontType.custom,
-                  currentType: currentType,
-                  onChanged: (v) async {
-                    if (v != null) {
-                      await widget.viewModel.setFontType(v);
-                      final path = await widget.viewModel.appPrefs
-                          .getCustomFontPath();
-                      if (v == FontType.custom && path.isEmpty) {
-                        _pickAndSetFont();
-                      }
+            child: RadioGroup<FontType>(
+              groupValue: currentType,
+              onChanged: (FontType? value) async {
+                if (value != null) {
+                  await widget.viewModel.setFontType(value);
+                  if (value == FontType.custom) {
+                    final path = await widget.viewModel.appPrefs
+                        .getCustomFontPath();
+                    if (path.isEmpty) {
+                      _pickAndSetFont();
                     }
-                  },
-                ),
-
-                if (currentType == FontType.custom) ...[
-                  const SizedBox(height: 20),
-                  _buildCustomFontDetails(context),
+                  }
+                }
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildFontOption(
+                    context: context,
+                    title: t.settings.appDefaultFont,
+                    fontType: FontType.appDefault,
+                    currentType: currentType,
+                  ),
+                  _buildFontOption(
+                    context: context,
+                    title: t.settings.systemFont,
+                    fontType: FontType.systemDefault,
+                    currentType: currentType,
+                  ),
+                  _buildFontOption(
+                    context: context,
+                    title: t.settings.customFont,
+                    fontType: FontType.custom,
+                    currentType: currentType,
+                  ),
+                  if (currentType == FontType.custom) ...[
+                    const SizedBox(height: 20),
+                    _buildCustomFontDetails(context),
+                  ],
                 ],
-              ],
+              ),
             ),
           );
         },
@@ -516,38 +599,33 @@ class _FontSelectionDialogState extends State<FontSelectionDialog> {
     required String title,
     required FontType fontType,
     required FontType currentType,
-    required ValueChanged<FontType?> onChanged,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isSelected = currentType == fontType;
 
-    return RadioGroup<FontType>(
-      groupValue: currentType,
-      onChanged: onChanged,
-      child: InkWell(
-        onTap: () => onChanged(fontType),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isSelected
-                        ? colorScheme.primary
-                        : colorScheme.onSurface,
-                  ),
+    return InkWell(
+      onTap: () {
+        // The RadioGroup handles the onChanged callback,
+        // but we can still provide tap feedback
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: isSelected
+                      ? colorScheme.primary
+                      : colorScheme.onSurface,
                 ),
               ),
-              Radio<FontType>(
-                value: fontType,
-                activeColor: colorScheme.primary,
-              ),
-            ],
-          ),
+            ),
+            Radio<FontType>(value: fontType, activeColor: colorScheme.primary),
+          ],
         ),
       ),
     );
