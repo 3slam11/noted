@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutView extends StatelessWidget {
   const AboutView({super.key});
@@ -14,7 +15,6 @@ class AboutView extends StatelessWidget {
       backgroundColor: colorScheme.primaryContainer,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
-
         title: Text(t.settings.about),
       ),
       body: const Padding(
@@ -32,6 +32,11 @@ class AboutView extends StatelessWidget {
 
 class _AboutAppCard extends StatelessWidget {
   const _AboutAppCard();
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    await launchUrl(uri);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +59,52 @@ class _AboutAppCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(t.about.appDescription, style: theme.textTheme.bodyLarge),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () =>
+                        _launchUrl('https://github.com/3slam11/noted/issues'),
+                    icon: Icon(
+                      Icons.bug_report_outlined,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                    label: Text(
+                      t.about.reportIssue,
+                      style: TextStyle(color: theme.colorScheme.onPrimary),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () =>
+                        _launchUrl('https://github.com/3slam11/noted'),
+                    icon: Icon(
+                      Icons.code_outlined,
+                      color: theme.colorScheme.primary,
+                    ),
+                    label: Text(
+                      t.about.viewProject,
+                      style: TextStyle(color: theme.colorScheme.primary),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: theme.colorScheme.primary),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

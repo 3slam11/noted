@@ -222,6 +222,8 @@
   "about": {
     "aboutThisApp": "حول هذا التطبيق",
     "appDescription": "هذا التطبيق اٌنشئ بغرض التدريب فإذا واجهت مشكلة، ابلغ المطور على Github.",
+    "reportIssue": "أبلغ عن مشكلة",
+    "viewProject": "صفحة التطبيق",
     "apisUsed": "الـAPIs المستخدمة",
     "gamesDescription": "بيانات الألعاب جاءت من موقع RAWG",
     "moviesAndTvSeries": "الأفلام والمسلسلات التلفزيونية",

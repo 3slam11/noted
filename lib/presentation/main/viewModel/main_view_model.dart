@@ -7,7 +7,6 @@ import 'package:noted/domain/usecases/main_usecase.dart';
 import 'package:noted/presentation/base/base_view_model.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer_impl.dart';
-import 'package:noted/presentation/main/view/main_view.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MainViewModel extends BaseViewModel

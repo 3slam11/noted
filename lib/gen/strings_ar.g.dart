@@ -396,6 +396,8 @@ class _TranslationsAboutAr implements TranslationsAboutEn {
 	// Translations
 	@override String get aboutThisApp => 'حول هذا التطبيق';
 	@override String get appDescription => 'هذا التطبيق اٌنشئ بغرض التدريب فإذا واجهت مشكلة، ابلغ المطور على Github.';
+	@override String get reportIssue => 'أبلغ عن مشكلة';
+	@override String get viewProject => 'صفحة التطبيق';
 	@override String get apisUsed => 'الـAPIs المستخدمة';
 	@override String get gamesDescription => 'بيانات الألعاب جاءت من موقع RAWG';
 	@override String get moviesAndTvSeries => 'الأفلام والمسلسلات التلفزيونية';
@@ -597,6 +599,8 @@ extension on TranslationsAr {
 			case 'statistics.noData': return 'لا يوجد بيانات حتى الان';
 			case 'about.aboutThisApp': return 'حول هذا التطبيق';
 			case 'about.appDescription': return 'هذا التطبيق اٌنشئ بغرض التدريب فإذا واجهت مشكلة، ابلغ المطور على Github.';
+			case 'about.reportIssue': return 'أبلغ عن مشكلة';
+			case 'about.viewProject': return 'صفحة التطبيق';
 			case 'about.apisUsed': return 'الـAPIs المستخدمة';
 			case 'about.gamesDescription': return 'بيانات الألعاب جاءت من موقع RAWG';
 			case 'about.moviesAndTvSeries': return 'الأفلام والمسلسلات التلفزيونية';

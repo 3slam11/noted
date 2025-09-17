@@ -107,31 +107,14 @@ class _HomeViewState extends State<HomeView>
 
     return Scaffold(
       backgroundColor: colorScheme.primaryContainer,
-      extendBody:
-          true, // This allows the body to extend behind the bottom navigation
+      extendBody: true,
       appBar: AppBar(title: Text(pageTitles[_bottomNavIndex])),
       body: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
           _handleScrollNotification(notification);
-          return false; // Allow notification to continue bubbling
+          return false;
         },
-        child: Stack(
-          children: [
-            // Main content with padding that animates
-            AnimatedBuilder(
-              animation: _hideBottomBarAnimationController,
-              builder: (context, child) {
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: (1 - _hideBottomBarAnimationController.value) * 65,
-                  ),
-                  child: child,
-                );
-              },
-              child: IndexedStack(index: _bottomNavIndex, children: _pages),
-            ),
-          ],
-        ),
+        child: IndexedStack(index: _bottomNavIndex, children: _pages),
       ),
       bottomNavigationBar: AnimatedBuilder(
         animation: _hideBottomBarAnimationController,
@@ -148,13 +131,6 @@ class _HomeViewState extends State<HomeView>
               topLeft: Radius.circular(32),
               topRight: Radius.circular(32),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
           ),
           child: SafeArea(
             top: false,

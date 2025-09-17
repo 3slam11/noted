@@ -5,9 +5,10 @@ import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/common/state_renderer/state_flow_handler.dart';
+import 'package:noted/presentation/common/widgets/item_actions_dialog.dart';
+import 'package:noted/presentation/common/widgets/item_tile.dart';
 import 'package:noted/presentation/details/view/details_view.dart';
 import 'package:noted/presentation/history/viewModel/history_view_model.dart';
-import 'package:noted/presentation/main/view/main_view.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
 

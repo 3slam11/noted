@@ -753,6 +753,12 @@ class TranslationsAboutEn {
 	/// en: 'This app has been made for practice, so if you encounter any issue tell the developer on GitHub.'
 	String get appDescription => 'This app has been made for practice, so if you encounter any issue tell the developer on GitHub.';
 
+	/// en: 'Report Issue'
+	String get reportIssue => 'Report Issue';
+
+	/// en: 'View Project'
+	String get viewProject => 'View Project';
+
 	/// en: 'APIs Used'
 	String get apisUsed => 'APIs Used';
 
@@ -965,6 +971,8 @@ extension on Translations {
 			case 'statistics.noData': return 'No data yet';
 			case 'about.aboutThisApp': return 'About This App';
 			case 'about.appDescription': return 'This app has been made for practice, so if you encounter any issue tell the developer on GitHub.';
+			case 'about.reportIssue': return 'Report Issue';
+			case 'about.viewProject': return 'View Project';
 			case 'about.apisUsed': return 'APIs Used';
 			case 'about.gamesDescription': return 'Games data came from RAWG site';
 			case 'about.moviesAndTvSeries': return 'Movies and TV Series';

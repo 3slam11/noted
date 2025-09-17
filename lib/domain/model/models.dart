@@ -2,6 +2,8 @@ import 'package:noted/gen/strings.g.dart';
 
 // main models
 
+enum ItemListType { todo, finished, history }
+
 enum Category {
   all,
   movies,

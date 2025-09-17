@@ -240,6 +240,8 @@
   "about": {
     "aboutThisApp": "About This App",
     "appDescription": "This app has been made for practice, so if you encounter any issue tell the developer on GitHub.",
+    "reportIssue": "Report Issue",
+    "viewProject": "View Project",
     "apisUsed": "APIs Used",
     "gamesDescription": "Games data came from RAWG site",
     "moviesAndTvSeries": "Movies and TV Series",
