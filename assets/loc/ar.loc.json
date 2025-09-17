@@ -135,7 +135,7 @@
     "apiChange": "تغيير الـAPI",
     "statistics": "الإحصائيات",
     "about": "حول التطبيق",
-    "monthRolloverBehavior": " 'سلوك ترحيل الشهر",
+    "monthRolloverBehavior": "سلوك ترحيل الشهر",
     "monthRolloverBehaviorDescription": "اختر ما يحدث في بداية شهر جديد.",
     "rolloverFull": "ترحيل كامل (افتراضي)",
     "rolloverFullDescription": "نقل العناصر المكتملة إلى السجل والسؤال عن العناصر التي يجب الاحتفاظ بها في قائمة المهام.",

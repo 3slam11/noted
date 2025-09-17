@@ -246,7 +246,7 @@ class _TranslationsSettingsAr implements TranslationsSettingsEn {
 	@override String get apiChange => 'تغيير الـAPI';
 	@override String get statistics => 'الإحصائيات';
 	@override String get about => 'حول التطبيق';
-	@override String get monthRolloverBehavior => ' \'سلوك ترحيل الشهر';
+	@override String get monthRolloverBehavior => 'سلوك ترحيل الشهر';
 	@override String get monthRolloverBehaviorDescription => 'اختر ما يحدث في بداية شهر جديد.';
 	@override String get rolloverFull => 'ترحيل كامل (افتراضي)';
 	@override String get rolloverFullDescription => 'نقل العناصر المكتملة إلى السجل والسؤال عن العناصر التي يجب الاحتفاظ بها في قائمة المهام.';
@@ -528,7 +528,7 @@ extension on TranslationsAr {
 			case 'settings.apiChange': return 'تغيير الـAPI';
 			case 'settings.statistics': return 'الإحصائيات';
 			case 'settings.about': return 'حول التطبيق';
-			case 'settings.monthRolloverBehavior': return ' \'سلوك ترحيل الشهر';
+			case 'settings.monthRolloverBehavior': return 'سلوك ترحيل الشهر';
 			case 'settings.monthRolloverBehaviorDescription': return 'اختر ما يحدث في بداية شهر جديد.';
 			case 'settings.rolloverFull': return 'ترحيل كامل (افتراضي)';
 			case 'settings.rolloverFullDescription': return 'نقل العناصر المكتملة إلى السجل والسؤال عن العناصر التي يجب الاحتفاظ بها في قائمة المهام.';
