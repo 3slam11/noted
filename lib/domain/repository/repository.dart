@@ -16,6 +16,7 @@ abstract class Repository {
     Category category,
   );
 
+  Future<Either<Failure, Item?>> getLocalItem(String id, Category category);
   Future<Either<Failure, void>> addTodo(ItemResponse todo);
   Future<Either<Failure, void>> updateItem(Item item);
   Future<Either<Failure, void>> deleteTodo(Item item);

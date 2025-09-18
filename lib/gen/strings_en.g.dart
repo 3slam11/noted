@@ -396,6 +396,15 @@ class TranslationsDetailsEn {
 	/// en: 'Genre'
 	String get genres => 'Genre';
 
+	/// en: 'Progress Tracker'
+	String get progressTracker => 'Progress Tracker';
+
+	/// en: 'Season'
+	String get season => 'Season';
+
+	/// en: 'Episode'
+	String get episode => 'Episode';
+
 	/// en: 'Release Date'
 	String get releaseDate => 'Release Date';
 
@@ -885,6 +894,9 @@ extension on Translations {
 			case 'details.books': return 'Books';
 			case 'details.description': return 'Description';
 			case 'details.genres': return 'Genre';
+			case 'details.progressTracker': return 'Progress Tracker';
+			case 'details.season': return 'Season';
+			case 'details.episode': return 'Episode';
 			case 'details.releaseDate': return 'Release Date';
 			case 'details.platforms': return 'Platforms';
 			case 'details.rating': return 'Rating';

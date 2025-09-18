@@ -38,6 +38,12 @@ class ItemResponse {
   @JsonKey(name: 'dateAdded')
   DateTime? dateAdded;
 
+  @JsonKey(name: 'currentSeason')
+  int? currentSeason;
+
+  @JsonKey(name: 'currentEpisode')
+  int? currentEpisode;
+
   ItemResponse(
     this.id,
     this.title,
@@ -47,6 +53,8 @@ class ItemResponse {
     this.personalRating,
     this.personalNotes,
     this.dateAdded,
+    this.currentSeason,
+    this.currentEpisode,
   });
 
   // from json
@@ -550,6 +558,12 @@ class TvDetailsResponse {
   @JsonKey(name: 'genres')
   List<TmdbGenreInfo>? genresInfo;
 
+  @JsonKey(name: 'number_of_seasons')
+  int? numberOfSeasons;
+
+  @JsonKey(name: 'seasons')
+  List<TvSeasonInfo>? seasons;
+
   // Helper getters
   String? get companyName => (networks?.isNotEmpty ?? false)
       ? networks!.first.name
@@ -586,11 +600,28 @@ class TvDetailsResponse {
     this.productionCompanies,
     this.images,
     this.genresInfo,
+    this.numberOfSeasons,
+    this.seasons,
   });
 
   factory TvDetailsResponse.fromJson(Map<String, dynamic> json) =>
       _$TvDetailsResponseFromJson(json);
   Map<String, dynamic> toJson() => _$TvDetailsResponseToJson(this);
+}
+
+@JsonSerializable()
+class TvSeasonInfo {
+  @JsonKey(name: 'season_number')
+  int? seasonNumber;
+
+  @JsonKey(name: 'episode_count')
+  int? episodeCount;
+
+  TvSeasonInfo({this.seasonNumber, this.episodeCount});
+
+  factory TvSeasonInfo.fromJson(Map<String, dynamic> json) =>
+      _$TvSeasonInfoFromJson(json);
+  Map<String, dynamic> toJson() => _$TvSeasonInfoToJson(this);
 }
 
 @JsonSerializable()

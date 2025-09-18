@@ -14,6 +14,8 @@ extension ItemToResponseMapper on Item {
       personalRating: personalRating,
       personalNotes: personalNotes,
       dateAdded: dateAdded,
+      currentSeason: currentSeason,
+      currentEpisode: currentEpisode,
     );
   }
 }
@@ -29,6 +31,8 @@ extension ItemResponseMapper on ItemResponse? {
       personalRating: this?.personalRating,
       personalNotes: this?.personalNotes,
       dateAdded: this?.dateAdded,
+      currentSeason: this?.currentSeason,
+      currentEpisode: this?.currentEpisode,
     );
   }
 }

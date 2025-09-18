@@ -72,7 +72,6 @@ class DetailsViewState extends State<DetailsView> {
         stream: _viewModel.outputItemDetails,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            // This can be replaced with a shimmer/loading skeleton for better UX
             return const Center(child: CircularProgressIndicator());
           }
           final details = snapshot.data!;
@@ -100,6 +99,9 @@ class DetailsViewState extends State<DetailsView> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ).animate(delay: 300.ms).fadeIn(duration: 400.ms),
+                _buildSeriesTracker(
+                  details,
+                ).animate(delay: 350.ms).fadeIn(duration: 400.ms),
                 if (details.description?.isNotEmpty ?? false) ...[
                   const SizedBox(height: AppSize.s16),
                   InfoCard(
@@ -151,6 +153,28 @@ class DetailsViewState extends State<DetailsView> {
     );
   }
 
+  Widget _buildSeriesTracker(Details details) {
+    if (details.category != Category.series ||
+        (details.numberOfSeasons ?? 0) == 0) {
+      return const SizedBox.shrink();
+    }
+
+    return StreamBuilder<Item?>(
+      stream: _viewModel.outputLocalItem,
+      builder: (context, snapshot) {
+        final localItem = snapshot.data;
+        if (localItem == null) {
+          return const SizedBox.shrink();
+        }
+        return _SeriesTracker(
+          details: details,
+          localItem: localItem,
+          viewModel: _viewModel,
+        );
+      },
+    );
+  }
+
   Widget _buildGenresSection(List<String> genres) {
     final theme = Theme.of(context);
 
@@ -170,16 +194,14 @@ class DetailsViewState extends State<DetailsView> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: AppSize.s12),
-          // Chips as tags
           Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
             children: genres.map((genre) {
               return Container(
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                  color: theme.colorScheme.primary.withAlpha(25),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding: const EdgeInsets.symmetric(
@@ -473,9 +495,10 @@ class _NavigationArrow extends StatelessWidget {
 
 class InfoCard extends StatelessWidget {
   final String title;
-  final String content;
+  final String? content;
+  final Widget? child;
 
-  const InfoCard({super.key, required this.title, required this.content});
+  const InfoCard({super.key, required this.title, this.content, this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -498,8 +521,280 @@ class InfoCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSize.s8),
-          Text(content, style: theme.textTheme.bodyLarge),
+          if (content != null) Text(content!, style: theme.textTheme.bodyLarge),
+          if (child != null) child!,
         ],
+      ),
+    );
+  }
+}
+
+class _SeriesTracker extends StatefulWidget {
+  final Details details;
+  final Item localItem;
+  final DetailsViewModel viewModel;
+
+  const _SeriesTracker({
+    required this.details,
+    required this.localItem,
+    required this.viewModel,
+  });
+
+  @override
+  State<_SeriesTracker> createState() => _SeriesTrackerState();
+}
+
+class _SeriesTrackerState extends State<_SeriesTracker> {
+  int? _selectedSeason;
+  int? _selectedEpisode;
+  int _episodeCountForSelectedSeason = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeState();
+  }
+
+  @override
+  void didUpdateWidget(covariant _SeriesTracker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.localItem.currentSeason != _selectedSeason ||
+        widget.localItem.currentEpisode != _selectedEpisode) {
+      _initializeState();
+    }
+  }
+
+  void _initializeState() {
+    _selectedSeason = widget.localItem.currentSeason;
+    _selectedEpisode = widget.localItem.currentEpisode;
+    _updateEpisodeCount();
+  }
+
+  void _updateEpisodeCount() {
+    if (_selectedSeason != null && widget.details.seasons != null) {
+      final seasonInfo = widget.details.seasons!.firstWhere(
+        (s) => s.seasonNumber == _selectedSeason,
+        orElse: () => SeasonInfo(seasonNumber: 0, episodeCount: 0),
+      );
+      _episodeCountForSelectedSeason = seasonInfo.episodeCount;
+    } else {
+      _episodeCountForSelectedSeason = 0;
+    }
+  }
+
+  double get _progressPercentage {
+    if (_selectedSeason == null || _selectedEpisode == null) return 0.0;
+
+    final seasons = widget.details.seasons;
+    if (seasons == null || seasons.isEmpty) return 0.0;
+
+    // calculate total episodes watched (completed seasons + current season progress)
+    int totalEpisodesWatched = 0;
+
+    // add episodes from completed seasons (seasons before current)
+    for (final season in seasons) {
+      if (season.seasonNumber < _selectedSeason!) {
+        totalEpisodesWatched += season.episodeCount;
+      }
+    }
+
+    // add current season progress
+    totalEpisodesWatched += _selectedEpisode!;
+
+    // calculate total episodes in entire series
+    final totalEpisodesInSeries = seasons.fold<int>(
+      0,
+      (sum, season) => sum + season.episodeCount,
+    );
+
+    if (totalEpisodesInSeries == 0) return 0.0;
+
+    return (totalEpisodesWatched / totalEpisodesInSeries).clamp(0.0, 1.0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final seasons = widget.details.seasons ?? [];
+
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSize.s16),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppPadding.p16),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.secondary.withAlpha(25),
+          borderRadius: BorderRadius.circular(AppSize.s12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.tv_rounded,
+                  color: theme.colorScheme.primary,
+                  size: 20,
+                ),
+                const SizedBox(width: AppSize.s8),
+                Text(
+                  t.details.progressTracker,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withAlpha(25),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${(_progressPercentage * 100).toInt()}%',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSize.s12),
+
+            // Progress Bar
+            Container(
+              height: 6,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(3),
+                color: theme.colorScheme.outline.withAlpha(30),
+              ),
+              child: FractionallySizedBox(
+                alignment: Alignment.centerLeft,
+                widthFactor: _progressPercentage,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(3),
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSize.s16),
+
+            // Dropdowns Row
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStyledDropdown(
+                    label: t.details.season,
+                    icon: Icons.calendar_view_month_rounded,
+                    value: _selectedSeason,
+                    items: seasons.map((s) => s.seasonNumber).toList(),
+                    onChanged: (newSeason) {
+                      if (newSeason == null) return;
+                      setState(() {
+                        _selectedSeason = newSeason;
+                        _selectedEpisode = 1;
+                        _updateEpisodeCount();
+                      });
+                      widget.viewModel.updateTracking(
+                        season: _selectedSeason,
+                        episode: _selectedEpisode,
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: AppSize.s12),
+                Expanded(
+                  child: _buildStyledDropdown(
+                    label: t.details.episode,
+                    icon: Icons.play_circle_outline_rounded,
+                    value: _selectedEpisode,
+                    items: List.generate(
+                      _episodeCountForSelectedSeason,
+                      (i) => i + 1,
+                    ),
+                    onChanged: (newEpisode) {
+                      if (newEpisode == null) return;
+                      setState(() {
+                        _selectedEpisode = newEpisode;
+                      });
+                      widget.viewModel.updateTracking(
+                        season: _selectedSeason,
+                        episode: _selectedEpisode,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStyledDropdown({
+    required String label,
+    required IconData icon,
+    required int? value,
+    required List<int> items,
+    required ValueChanged<int?> onChanged,
+  }) {
+    final theme = Theme.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(AppSize.s12),
+        border: Border.all(color: theme.colorScheme.outline.withAlpha(50)),
+      ),
+      child: DropdownButtonFormField<int>(
+        initialValue: value,
+        items: items.map((number) {
+          return DropdownMenuItem<int>(
+            value: number,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 16, color: theme.colorScheme.primary),
+                const SizedBox(width: AppSize.s8),
+                Text(
+                  '$number',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.w600,
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppPadding.p12,
+            vertical: AppPadding.p8,
+          ),
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+        ),
+        dropdownColor: theme.colorScheme.surface,
+        icon: Icon(
+          Icons.keyboard_arrow_down_rounded,
+          color: theme.colorScheme.primary,
+        ),
+        isExpanded: true,
       ),
     );
   }

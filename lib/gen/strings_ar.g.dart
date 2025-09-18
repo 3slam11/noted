@@ -217,6 +217,9 @@ class _TranslationsDetailsAr implements TranslationsDetailsEn {
 	@override String get books => 'الكتب';
 	@override String get description => 'الوصف';
 	@override String get genres => 'التصنيف';
+	@override String get progressTracker => 'تتبع التقدم';
+	@override String get season => 'الموسم';
+	@override String get episode => 'الحلقة';
 	@override String get releaseDate => 'تاريخ الإصدار';
 	@override String get platforms => 'المنصات';
 	@override String get rating => 'التقييم';
@@ -511,6 +514,9 @@ extension on TranslationsAr {
 			case 'details.books': return 'الكتب';
 			case 'details.description': return 'الوصف';
 			case 'details.genres': return 'التصنيف';
+			case 'details.progressTracker': return 'تتبع التقدم';
+			case 'details.season': return 'الموسم';
+			case 'details.episode': return 'الحلقة';
 			case 'details.releaseDate': return 'تاريخ الإصدار';
 			case 'details.platforms': return 'المنصات';
 			case 'details.rating': return 'التقييم';

@@ -68,6 +68,8 @@ class Item {
   final double? personalRating;
   final String? personalNotes;
   final DateTime? dateAdded;
+  final int? currentSeason;
+  final int? currentEpisode;
 
   Item(
     this.id,
@@ -78,6 +80,8 @@ class Item {
     this.personalRating,
     this.personalNotes,
     this.dateAdded,
+    this.currentSeason,
+    this.currentEpisode,
   });
 
   Item copyWith({
@@ -89,6 +93,8 @@ class Item {
     double? personalRating,
     String? personalNotes,
     DateTime? dateAdded,
+    int? currentSeason,
+    int? currentEpisode,
   }) {
     return Item(
       id ?? this.id,
@@ -99,6 +105,8 @@ class Item {
       personalRating: personalRating ?? this.personalRating,
       personalNotes: personalNotes ?? this.personalNotes,
       dateAdded: dateAdded ?? this.dateAdded,
+      currentSeason: currentSeason ?? this.currentSeason,
+      currentEpisode: currentEpisode ?? this.currentEpisode,
     );
   }
 }
@@ -125,7 +133,9 @@ class Details {
   final List<String>? platforms;
   final List<String> imageUrls;
   final List<String>? genres;
-  Category category;
+  final Category category;
+  final int? numberOfSeasons;
+  final List<SeasonInfo>? seasons;
 
   Details({
     required this.id,
@@ -138,7 +148,16 @@ class Details {
     this.platforms,
     this.genres,
     required this.category,
+    this.numberOfSeasons,
+    this.seasons,
   });
+}
+
+class SeasonInfo {
+  final int seasonNumber;
+  final int episodeCount;
+
+  SeasonInfo({required this.seasonNumber, required this.episodeCount});
 }
 
 // search models

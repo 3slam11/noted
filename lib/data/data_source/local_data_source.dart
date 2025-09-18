@@ -20,7 +20,8 @@ abstract class LocalDataSource {
   void clearCache();
   void removeFromCache(String key);
 
-  // Item update
+  // Item operations
+  Future<ItemResponse?> getItem(String id, Category category);
   Future<void> updateItem(ItemResponse itemResponse);
 
   // Todo operations
@@ -88,7 +89,13 @@ class LocalDataSourceImpl implements LocalDataSource {
     _objectBoxManager.removeCache(key);
   }
 
-  // Item update
+  // Item operations
+  @override
+  Future<ItemResponse?> getItem(String id, Category category) async {
+    final entity = _objectBoxManager.getItem(id, category.name);
+    return entity != null ? _convertEntityToResponse(entity) : null;
+  }
+
   @override
   Future<void> updateItem(ItemResponse itemResponse) async {
     await _updateItemInList(itemResponse);
@@ -162,6 +169,8 @@ class LocalDataSourceImpl implements LocalDataSource {
         personalRating: entity.personalRating,
         personalNotes: entity.personalNotes,
         dateAdded: entity.dateAdded,
+        currentSeason: entity.currentSeason,
+        currentEpisode: entity.currentEpisode,
       );
     } catch (error) {
       return null;
@@ -185,6 +194,8 @@ class LocalDataSourceImpl implements LocalDataSource {
         personalRating: item.personalRating,
         personalNotes: item.personalNotes,
         dateAdded: item.dateAdded ?? DateTime.now(),
+        currentSeason: item.currentSeason,
+        currentEpisode: item.currentEpisode,
       );
 
       _objectBoxManager.addItem(entity);

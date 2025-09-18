@@ -109,7 +109,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(3, 6860424063945157781),
     name: 'ItemEntity',
-    lastPropertyId: const obx_int.IdUid(10, 8317106818819969362),
+    lastPropertyId: const obx_int.IdUid(12, 8063182753400783052),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -170,6 +170,18 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(10, 8317106818819969362),
         name: 'dateAdded',
         type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(11, 7029453577689927036),
+        name: 'currentSeason',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(12, 8063182753400783052),
+        name: 'currentEpisode',
+        type: 6,
         flags: 0,
       ),
     ],
@@ -379,7 +391,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final personalNotesOffset = object.personalNotes == null
             ? null
             : fbb.writeString(object.personalNotes!);
-        fbb.startTable(11);
+        fbb.startTable(13);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, itemIdOffset);
         fbb.addOffset(2, titleOffset);
@@ -390,6 +402,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addFloat64(7, object.personalRating);
         fbb.addOffset(8, personalNotesOffset);
         fbb.addInt64(9, object.dateAdded?.millisecondsSinceEpoch);
+        fbb.addInt64(10, object.currentSeason);
+        fbb.addInt64(11, object.currentEpisode);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -436,6 +450,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final dateAddedParam = dateAddedValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(dateAddedValue);
+        final currentSeasonParam = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          24,
+        );
+        final currentEpisodeParam = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          26,
+        );
         final object = ItemEntity(
           id: idParam,
           itemId: itemIdParam,
@@ -447,6 +471,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           personalRating: personalRatingParam,
           personalNotes: personalNotesParam,
           dateAdded: dateAddedParam,
+          currentSeason: currentSeasonParam,
+          currentEpisode: currentEpisodeParam,
         );
 
         return object;
@@ -568,5 +594,15 @@ class ItemEntity_ {
   /// See [ItemEntity.dateAdded].
   static final dateAdded = obx.QueryDateProperty<ItemEntity>(
     _entities[2].properties[9],
+  );
+
+  /// See [ItemEntity.currentSeason].
+  static final currentSeason = obx.QueryIntegerProperty<ItemEntity>(
+    _entities[2].properties[10],
+  );
+
+  /// See [ItemEntity.currentEpisode].
+  static final currentEpisode = obx.QueryIntegerProperty<ItemEntity>(
+    _entities[2].properties[11],
   );
 }

@@ -19,6 +19,9 @@ class ItemEntity {
   @Property(type: PropertyType.date)
   DateTime? dateAdded;
 
+  int? currentSeason;
+  int? currentEpisode;
+
   ItemEntity({
     this.id = 0,
     required this.itemId,
@@ -30,6 +33,8 @@ class ItemEntity {
     this.personalRating,
     this.personalNotes,
     this.dateAdded,
+    this.currentSeason,
+    this.currentEpisode,
   });
 
   // Convert from domain model
@@ -43,6 +48,8 @@ class ItemEntity {
     double? personalRating,
     String? personalNotes,
     DateTime? dateAdded,
+    int? currentSeason,
+    int? currentEpisode,
   }) {
     return ItemEntity(
       itemId: itemId,
@@ -54,6 +61,8 @@ class ItemEntity {
       personalRating: personalRating,
       personalNotes: personalNotes,
       dateAdded: dateAdded,
+      currentSeason: currentSeason,
+      currentEpisode: currentEpisode,
     );
   }
 

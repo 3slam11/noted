@@ -1,25 +1,22 @@
 {
   "appName": "Noted",
-
   "months": [
-   "January",
-   "February",
-   "March",
-   "April",
-   "May",
-   "June",
-   "July",
-   "August",
-   "September",
-   "October",
-   "November",
-   "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
   ],
-
   "routes": {
     "noRouteFound": "No Route Found"
   },
-
   "errorHandler": {
     "defaultError": "Something went wrong, try again later",
     "success": "Success",
@@ -41,7 +38,6 @@
     "customApiError": "Your custom API might be written incorrectly.",
     "siteDownError": "Site might be down at the moment, wait a few minutes and try later."
   },
-
   "stateRenderer": {
     "content": "Content",
     "error": "Error",
@@ -49,7 +45,6 @@
     "retry": "Retry",
     "ok": "Ok"
   },
-
   "home": {
     "titleSection": "Entertainment list for ",
     "emptySection": "This list is empty",
@@ -91,7 +86,6 @@
     "save": "Save",
     "delete": "Delete"
   },
-
   "sort": {
     "sort": "Sort",
     "sortBy": "Sort by",
@@ -104,7 +98,6 @@
     "dateAddedNewest": "Date Added (Newest)",
     "dateAddedOldest": "Date Added (Oldest)"
   },
-
   "search": {
     "search": "Search",
     "searchPlaceholder": "Search...",
@@ -112,7 +105,6 @@
     "noResultsFound": "No results found",
     "cantSearch": "Can't search now"
   },
-
   "details": {
     "title": "Details",
     "movies": "Movies",
@@ -121,6 +113,9 @@
     "books": "Books",
     "description": "Description",
     "genres": "Genre",
+    "progressTracker": "Progress Tracker",
+    "season": "Season",
+    "episode": "Episode",
     "releaseDate": "Release Date",
     "platforms": "Platforms",
     "rating": "Rating",
@@ -130,7 +125,6 @@
     "moreLikeThis": "More like this",
     "noRecommendations": "No Recommendations"
   },
-
   "settings": {
     "backupAndRestore": "Backup & Restore",
     "settings": "Settings",
@@ -140,7 +134,7 @@
     "appDefaultFont": "App Default",
     "systemFont": "System Default",
     "customFont": "Custom Font",
-    "customFontDetails":"Custom Font Details",
+    "customFontDetails": "Custom Font Details",
     "history": "History",
     "apiChange": "Change API",
     "statistics": "Statistics",
@@ -154,7 +148,6 @@
     "rolloverManual": "Manual",
     "rolloverManualDescription": "Do nothing. I will manage my lists myself."
   },
-
   "qrSettings": {
     "title": "QR Code Sync",
     "desktop": "Feature Not Available on Desktop",
@@ -167,13 +160,11 @@
     "generating": "Generating QR Code...",
     "generated": "QR Code Generated"
   },
-
   "languageSettings": {
     "selectLanguage": "Select Language",
     "en": "English",
     "ar": "العربية"
   },
-
   "themeSettings": {
     "themeSettings": "Theme Settings",
     "autoTheme": "Auto Theme",
@@ -181,7 +172,6 @@
     "autoThemeDescription": "Automatically changes theme based on current month",
     "selectTheme": "Select Theme:"
   },
-
   "fontSettings": {
     "title": "Font Settings",
     "change": "Change",
@@ -189,34 +179,31 @@
     "noCustomFont": "No custom font selected",
     "selectFontFile": "Select Font File (.ttf, .otf)'"
   },
-
-   "backupAndRestore": {
-     "title": "Backup & Restore",
-     "backupData": "Backup Data",
-     "restoreData": "Restore Data",
-     "backupDescription": "Save your current lists to a local file.",
-     "restoreDescription": "Restore your lists from a previously saved backup file. This will overwrite current data.",
-     "backupSuccessful": "Backup successful!",
-     "backupFailed": "Backup failed: ",
-     "restoreSuccessful": "Restore successful!",
-     "restoreFailed": "Restore failed: ",
-     "noFileSelected": "No file selected.",
-     "invalidFileFormat": "Invalid backup file format or missing data.",
-     "selectBackupFile": "Select Backup File",
-     "saveBackupFile": "Save Backup File As",
-     "defaultBackupFileName": "noted_backup.json",
-     "yes": "Yes",
-     "no": "No",
-     "dataRestoredMessage": "Data restored successfully."
-},
-
+  "backupAndRestore": {
+    "title": "Backup & Restore",
+    "backupData": "Backup Data",
+    "restoreData": "Restore Data",
+    "backupDescription": "Save your current lists to a local file.",
+    "restoreDescription": "Restore your lists from a previously saved backup file. This will overwrite current data.",
+    "backupSuccessful": "Backup successful!",
+    "backupFailed": "Backup failed: ",
+    "restoreSuccessful": "Restore successful!",
+    "restoreFailed": "Restore failed: ",
+    "noFileSelected": "No file selected.",
+    "invalidFileFormat": "Invalid backup file format or missing data.",
+    "selectBackupFile": "Select Backup File",
+    "saveBackupFile": "Save Backup File As",
+    "defaultBackupFileName": "noted_backup.json",
+    "yes": "Yes",
+    "no": "No",
+    "dataRestoredMessage": "Data restored successfully."
+  },
   "history": {
     "history": "History",
     "item": "Item",
     "items": "Items",
     "noHistory": "No history yet"
   },
-
   "apiSettings": {
     "gamesApiTitle": "Games API",
     "gamesApiDescription": "Get your API key from RAWG.io",
@@ -229,7 +216,6 @@
     "save": "Save",
     "delete": "Delete"
   },
-
   "statistics": {
     "thisMonth": "This Month",
     "allTime": "All Time",
@@ -237,7 +223,6 @@
     "category": "Category",
     "noData": "No data yet"
   },
-
   "about": {
     "aboutThisApp": "About This App",
     "appDescription": "This app has been made for practice, so if you encounter any issue tell the developer on GitHub.",

@@ -13,6 +13,14 @@ class DetailsUsecase implements BaseUsecase<DetailsInput, Details> {
   Future<Either<Failure, Details>> execute(DetailsInput input) {
     return repository.getDetails(input.id, input.category);
   }
+
+  Future<Either<Failure, Item?>> getLocalItem(DetailsInput input) {
+    return repository.getLocalItem(input.id, input.category);
+  }
+
+  Future<Either<Failure, void>> updateItem(Item item) {
+    return repository.updateItem(item);
+  }
 }
 
 class DetailsInput {

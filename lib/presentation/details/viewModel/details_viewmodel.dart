@@ -17,6 +17,7 @@ class DetailsViewModel extends BaseViewModel
   final _itemDetailsStreamController = BehaviorSubject<Details>();
   final _recommendationsStreamController = BehaviorSubject<List<SearchItem>>();
   final _recommendationsStateStreamController = BehaviorSubject<FlowState>();
+  final _localItemStreamController = BehaviorSubject<Item?>();
 
   @override
   void start() {}
@@ -26,6 +27,7 @@ class DetailsViewModel extends BaseViewModel
     _itemDetailsStreamController.close();
     _recommendationsStreamController.close();
     _recommendationsStateStreamController.close();
+    _localItemStreamController.close();
     super.dispose();
   }
 
@@ -48,6 +50,19 @@ class DetailsViewModel extends BaseViewModel
         inputState.add(ContentState());
         inputItemDetails.add(details);
         loadRecommendations(id, category);
+        _loadLocalItemDetails(id, category);
+      },
+    );
+  }
+
+  Future<void> _loadLocalItemDetails(String id, Category category) async {
+    (await _itemDetailsUseCase.getLocalItem(DetailsInput(id, category))).fold(
+      (failure) {
+        // Don't show an error, just means it's not in the list
+        inputLocalItem.add(null);
+      },
+      (localItem) {
+        inputLocalItem.add(localItem);
       },
     );
   }
@@ -73,6 +88,31 @@ class DetailsViewModel extends BaseViewModel
     );
   }
 
+  @override
+  Future<void> updateTracking({int? season, int? episode}) async {
+    final currentItem = _localItemStreamController.value;
+    if (currentItem == null) return;
+
+    final updatedItem = currentItem.copyWith(
+      currentSeason: season,
+      currentEpisode: episode,
+    );
+
+    (await _itemDetailsUseCase.updateItem(updatedItem)).fold(
+      (failure) {
+        inputState.add(
+          ErrorState(
+            stateRendererType: StateRendererType.popupErrorState,
+            message: failure.message,
+          ),
+        );
+      },
+      (_) {
+        inputLocalItem.add(updatedItem);
+      },
+    );
+  }
+
   // Inputs
   @override
   Sink<Details> get inputItemDetails => _itemDetailsStreamController.sink;
@@ -85,6 +125,9 @@ class DetailsViewModel extends BaseViewModel
   Sink<FlowState> get inputRecommendationsState =>
       _recommendationsStateStreamController.sink;
 
+  @override
+  Sink<Item?> get inputLocalItem => _localItemStreamController.sink;
+
   // Outputs
   @override
   Stream<Details> get outputItemDetails => _itemDetailsStreamController.stream;
@@ -96,18 +139,24 @@ class DetailsViewModel extends BaseViewModel
   @override
   Stream<FlowState> get outputRecommendationsState =>
       _recommendationsStateStreamController.stream;
+
+  @override
+  Stream<Item?> get outputLocalItem => _localItemStreamController.stream;
 }
 
 abstract class DetailsViewModelInputs {
   Sink<Details> get inputItemDetails;
   Sink<List<SearchItem>> get inputRecommendations;
   Sink<FlowState> get inputRecommendationsState;
+  Sink<Item?> get inputLocalItem;
 
   Future<void> loadItemDetails(String id, Category category);
+  Future<void> updateTracking({int? season, int? episode});
 }
 
 abstract class DetailsViewModelOutputs {
   Stream<Details> get outputItemDetails;
   Stream<List<SearchItem>> get outputRecommendations;
   Stream<FlowState> get outputRecommendationsState;
+  Stream<Item?> get outputLocalItem;
 }

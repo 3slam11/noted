@@ -12,7 +12,6 @@ class ObjectBoxManager {
   late final Box<AppPreferenceEntity> _preferenceBox;
   late final Box<CacheEntity> _cacheBox;
 
-  // FIX: Expose the store instance for transaction support.
   Store get store => _store;
 
   ObjectBoxManager._create(this._store) {
@@ -45,6 +44,19 @@ class ObjectBoxManager {
     return _itemBox.query(ItemEntity_.listType.equals(listType)).build().find();
   }
 
+  ItemEntity? getItem(String itemId, String categoryName) {
+    final query = _itemBox
+        .query(
+          ItemEntity_.itemId
+              .equals(itemId)
+              .and(ItemEntity_.categoryName.equals(categoryName)),
+        )
+        .build();
+    final item = query.findFirst();
+    query.close();
+    return item;
+  }
+
   void addItem(ItemEntity item) {
     _itemBox.put(item);
   }
@@ -63,6 +75,8 @@ class ObjectBoxManager {
     if (existingItem != null) {
       existingItem.personalRating = item.personalRating;
       existingItem.personalNotes = item.personalNotes;
+      existingItem.currentSeason = item.currentSeason;
+      existingItem.currentEpisode = item.currentEpisode;
       _itemBox.put(existingItem);
     }
   }

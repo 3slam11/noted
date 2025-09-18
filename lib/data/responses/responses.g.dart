@@ -17,6 +17,8 @@ ItemResponse _$ItemResponseFromJson(Map<String, dynamic> json) => ItemResponse(
   dateAdded: json['dateAdded'] == null
       ? null
       : DateTime.parse(json['dateAdded'] as String),
+  currentSeason: (json['currentSeason'] as num?)?.toInt(),
+  currentEpisode: (json['currentEpisode'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$ItemResponseToJson(ItemResponse instance) =>
@@ -29,6 +31,8 @@ Map<String, dynamic> _$ItemResponseToJson(ItemResponse instance) =>
       'personalRating': instance.personalRating,
       'personalNotes': instance.personalNotes,
       'dateAdded': instance.dateAdded?.toIso8601String(),
+      'currentSeason': instance.currentSeason,
+      'currentEpisode': instance.currentEpisode,
     };
 
 const _$CategoryEnumMap = {
@@ -351,6 +355,10 @@ TvDetailsResponse _$TvDetailsResponseFromJson(Map<String, dynamic> json) =>
       genresInfo: (json['genres'] as List<dynamic>?)
           ?.map((e) => TmdbGenreInfo.fromJson(e as Map<String, dynamic>))
           .toList(),
+      numberOfSeasons: (json['number_of_seasons'] as num?)?.toInt(),
+      seasons: (json['seasons'] as List<dynamic>?)
+          ?.map((e) => TvSeasonInfo.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$TvDetailsResponseToJson(TvDetailsResponse instance) =>
@@ -364,6 +372,19 @@ Map<String, dynamic> _$TvDetailsResponseToJson(TvDetailsResponse instance) =>
       'production_companies': instance.productionCompanies,
       'images': instance.images,
       'genres': instance.genresInfo,
+      'number_of_seasons': instance.numberOfSeasons,
+      'seasons': instance.seasons,
+    };
+
+TvSeasonInfo _$TvSeasonInfoFromJson(Map<String, dynamic> json) => TvSeasonInfo(
+  seasonNumber: (json['season_number'] as num?)?.toInt(),
+  episodeCount: (json['episode_count'] as num?)?.toInt(),
+);
+
+Map<String, dynamic> _$TvSeasonInfoToJson(TvSeasonInfo instance) =>
+    <String, dynamic>{
+      'season_number': instance.seasonNumber,
+      'episode_count': instance.episodeCount,
     };
 
 TmdbGenreInfo _$TmdbGenreInfoFromJson(Map<String, dynamic> json) =>

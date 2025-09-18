@@ -177,6 +177,18 @@ class RepositoryImpl implements Repository {
       imageUrls: response.imageGalleryUrls,
       genres: response.genres,
       category: Category.series,
+      numberOfSeasons: response.numberOfSeasons,
+      seasons: response.seasons
+          ?.where(
+            (s) => (s.seasonNumber ?? -1) >= 0 && (s.episodeCount ?? 0) > 0,
+          )
+          .map(
+            (s) => SeasonInfo(
+              seasonNumber: s.seasonNumber!,
+              episodeCount: s.episodeCount!,
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -304,6 +316,19 @@ class RepositoryImpl implements Repository {
             [];
       case Category.all:
         return [];
+    }
+  }
+
+  @override
+  Future<Either<Failure, Item?>> getLocalItem(
+    String id,
+    Category category,
+  ) async {
+    try {
+      final itemResponse = await _localDataSource.getItem(id, category);
+      return Right(itemResponse?.toDomain());
+    } catch (error) {
+      return Left(_createCacheFailure('Failed to get local item', error));
     }
   }
 
