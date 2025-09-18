@@ -1,0 +1,4 @@
+- Enable users to customize how the app handles month rollover
+- Fixed minor localization mistakes
+- Added a section for genre in details view
+- Added a progress tracker for series
