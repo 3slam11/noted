@@ -107,6 +107,12 @@ class DetailsViewState extends State<DetailsView> {
                     content: details.description!,
                   ).animate(delay: 400.ms).fadeIn(duration: 400.ms),
                 ],
+                if (details.genres?.isNotEmpty ?? false) ...[
+                  const SizedBox(height: AppSize.s16),
+                  _buildGenresSection(
+                    details.genres!,
+                  ).animate(delay: 450.ms).fadeIn(duration: 400.ms),
+                ],
                 if (details.platforms?.isNotEmpty ?? false) ...[
                   const SizedBox(height: AppSize.s16),
                   InfoCard(
@@ -145,13 +151,62 @@ class DetailsViewState extends State<DetailsView> {
     );
   }
 
+  Widget _buildGenresSection(List<String> genres) {
+    final theme = Theme.of(context);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppPadding.p16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.secondary.withAlpha(20),
+        borderRadius: BorderRadius.circular(AppSize.s12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            t.details.genres,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: AppSize.s12),
+          // Chips as tags
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: genres.map((genre) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                child: Text(
+                  genre,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildRecommendationsSection() {
     final theme = Theme.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppPadding.p16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+        color: theme.colorScheme.secondary.withAlpha(25),
         borderRadius: BorderRadius.circular(AppSize.s12),
       ),
       child: Column(
@@ -290,13 +345,13 @@ class DetailsViewState extends State<DetailsView> {
         height: AppSize.s200,
         width: double.infinity,
         decoration: BoxDecoration(
-          color: theme.colorScheme.secondary.withValues(alpha: 0.2),
+          color: theme.colorScheme.secondary.withAlpha(25),
           borderRadius: BorderRadius.circular(AppSize.s12),
         ),
         child: Icon(
           Icons.image_not_supported_outlined,
           size: AppSize.s50,
-          color: theme.colorScheme.primary.withValues(alpha: 0.7),
+          color: theme.colorScheme.primary.withAlpha(128),
         ),
       );
     }
@@ -333,15 +388,11 @@ class DetailsViewState extends State<DetailsView> {
                       },
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          color: theme.colorScheme.secondary.withValues(
-                            alpha: 0.1,
-                          ),
+                          color: theme.colorScheme.secondary.withAlpha(15),
                           child: Icon(
                             Icons.broken_image_outlined,
                             size: AppSize.s50,
-                            color: theme.colorScheme.primary.withValues(
-                              alpha: 0.7,
-                            ),
+                            color: theme.colorScheme.primary.withAlpha(128),
                           ),
                         );
                       },
@@ -360,7 +411,7 @@ class DetailsViewState extends State<DetailsView> {
                     dotHeight: 8,
                     dotWidth: 8,
                     activeDotColor: theme.colorScheme.primary,
-                    dotColor: Colors.white.withValues(alpha: 0.5),
+                    dotColor: Colors.white.withAlpha(128),
                   ),
                 ),
               ),
@@ -408,7 +459,7 @@ class _NavigationArrow extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: AppPadding.p8),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.4),
+        color: Colors.black.withAlpha(100),
         shape: BoxShape.circle,
       ),
       child: IconButton(
@@ -433,7 +484,7 @@ class InfoCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppPadding.p16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+        color: theme.colorScheme.secondary.withAlpha(25),
         borderRadius: BorderRadius.circular(AppSize.s12),
       ),
       child: Column(

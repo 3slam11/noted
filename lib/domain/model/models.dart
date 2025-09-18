@@ -124,6 +124,7 @@ class Details {
   final String? publisher;
   final List<String>? platforms;
   final List<String> imageUrls;
+  final List<String>? genres;
   Category category;
 
   Details({
@@ -135,6 +136,7 @@ class Details {
     this.rating,
     this.publisher,
     this.platforms,
+    this.genres,
     required this.category,
   });
 }

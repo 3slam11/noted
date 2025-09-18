@@ -160,6 +160,7 @@ class RepositoryImpl implements Repository {
       rating: response.rating,
       publisher: response.companyName,
       imageUrls: response.imageGalleryUrls,
+      genres: response.genres,
       category: Category.movies,
     );
   }
@@ -174,6 +175,7 @@ class RepositoryImpl implements Repository {
       rating: response.rating,
       publisher: response.companyName,
       imageUrls: response.imageGalleryUrls,
+      genres: response.genres,
       category: Category.series,
     );
   }
@@ -188,6 +190,7 @@ class RepositoryImpl implements Repository {
       rating: response.rating,
       publisher: response.publisher,
       imageUrls: response.imageGalleryUrls,
+      genres: response.genres,
       category: Category.books,
     );
   }
@@ -203,6 +206,7 @@ class RepositoryImpl implements Repository {
       publisher: response.publisherName,
       platforms: response.platformNames,
       imageUrls: response.imageGalleryUrls,
+      genres: response.genres,
       category: Category.games,
     );
   }

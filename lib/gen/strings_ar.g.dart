@@ -216,6 +216,7 @@ class _TranslationsDetailsAr implements TranslationsDetailsEn {
 	@override String get games => 'الألعاب';
 	@override String get books => 'الكتب';
 	@override String get description => 'الوصف';
+	@override String get genres => 'التصنيف';
 	@override String get releaseDate => 'تاريخ الإصدار';
 	@override String get platforms => 'المنصات';
 	@override String get rating => 'التقييم';
@@ -509,6 +510,7 @@ extension on TranslationsAr {
 			case 'details.games': return 'الألعاب';
 			case 'details.books': return 'الكتب';
 			case 'details.description': return 'الوصف';
+			case 'details.genres': return 'التصنيف';
 			case 'details.releaseDate': return 'تاريخ الإصدار';
 			case 'details.platforms': return 'المنصات';
 			case 'details.rating': return 'التقييم';

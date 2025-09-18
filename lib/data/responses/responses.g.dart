@@ -115,6 +115,9 @@ BookVolumeInfo _$BookVolumeInfoFromJson(Map<String, dynamic> json) =>
       imageLinks: json['imageLinks'] == null
           ? null
           : BookImageLinks.fromJson(json['imageLinks'] as Map<String, dynamic>),
+      categories: (json['categories'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$BookVolumeInfoToJson(BookVolumeInfo instance) =>
@@ -126,6 +129,7 @@ Map<String, dynamic> _$BookVolumeInfoToJson(BookVolumeInfo instance) =>
       'averageRating': instance.averageRating,
       'publisher': instance.publisher,
       'imageLinks': instance.imageLinks,
+      'categories': instance.categories,
     };
 
 BookImageLinks _$BookImageLinksFromJson(Map<String, dynamic> json) =>
@@ -190,6 +194,9 @@ GameDetailsResponse _$GameDetailsResponseFromJson(Map<String, dynamic> json) =>
           .toList(),
       mainImageUrl: json['background_image'] as String?,
       additionalImageUrl: json['background_image_additional'] as String?,
+      genresInfo: (json['genres'] as List<dynamic>?)
+          ?.map((e) => GameGenreInfo.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$GameDetailsResponseToJson(
@@ -204,7 +211,14 @@ Map<String, dynamic> _$GameDetailsResponseToJson(
   'platforms': instance.platformWrappers,
   'background_image': instance.mainImageUrl,
   'background_image_additional': instance.additionalImageUrl,
+  'genres': instance.genresInfo,
 };
+
+GameGenreInfo _$GameGenreInfoFromJson(Map<String, dynamic> json) =>
+    GameGenreInfo(name: json['name'] as String?);
+
+Map<String, dynamic> _$GameGenreInfoToJson(GameGenreInfo instance) =>
+    <String, dynamic>{'name': instance.name};
 
 GamePublisherInfo _$GamePublisherInfoFromJson(Map<String, dynamic> json) =>
     GamePublisherInfo(
@@ -300,6 +314,9 @@ MovieDetailsResponse _$MovieDetailsResponseFromJson(
   images: json['images'] == null
       ? null
       : TmdbImagesResponse.fromJson(json['images'] as Map<String, dynamic>),
+  genresInfo: (json['genres'] as List<dynamic>?)
+      ?.map((e) => TmdbGenreInfo.fromJson(e as Map<String, dynamic>))
+      .toList(),
 );
 
 Map<String, dynamic> _$MovieDetailsResponseToJson(
@@ -312,6 +329,7 @@ Map<String, dynamic> _$MovieDetailsResponseToJson(
   'vote_average': instance.rating,
   'production_companies': instance.productionCompanies,
   'images': instance.images,
+  'genres': instance.genresInfo,
 };
 
 TvDetailsResponse _$TvDetailsResponseFromJson(Map<String, dynamic> json) =>
@@ -330,6 +348,9 @@ TvDetailsResponse _$TvDetailsResponseFromJson(Map<String, dynamic> json) =>
       images: json['images'] == null
           ? null
           : TmdbImagesResponse.fromJson(json['images'] as Map<String, dynamic>),
+      genresInfo: (json['genres'] as List<dynamic>?)
+          ?.map((e) => TmdbGenreInfo.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$TvDetailsResponseToJson(TvDetailsResponse instance) =>
@@ -342,7 +363,14 @@ Map<String, dynamic> _$TvDetailsResponseToJson(TvDetailsResponse instance) =>
       'networks': instance.networks,
       'production_companies': instance.productionCompanies,
       'images': instance.images,
+      'genres': instance.genresInfo,
     };
+
+TmdbGenreInfo _$TmdbGenreInfoFromJson(Map<String, dynamic> json) =>
+    TmdbGenreInfo(name: json['name'] as String?);
+
+Map<String, dynamic> _$TmdbGenreInfoToJson(TmdbGenreInfo instance) =>
+    <String, dynamic>{'name': instance.name};
 
 TmdbCompanyInfo _$TmdbCompanyInfoFromJson(Map<String, dynamic> json) =>
     TmdbCompanyInfo(name: json['name'] as String?);

@@ -393,6 +393,9 @@ class TranslationsDetailsEn {
 	/// en: 'Description'
 	String get description => 'Description';
 
+	/// en: 'Genre'
+	String get genres => 'Genre';
+
 	/// en: 'Release Date'
 	String get releaseDate => 'Release Date';
 
@@ -881,6 +884,7 @@ extension on Translations {
 			case 'details.games': return 'Games';
 			case 'details.books': return 'Books';
 			case 'details.description': return 'Description';
+			case 'details.genres': return 'Genre';
 			case 'details.releaseDate': return 'Release Date';
 			case 'details.platforms': return 'Platforms';
 			case 'details.rating': return 'Rating';

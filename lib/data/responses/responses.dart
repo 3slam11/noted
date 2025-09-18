@@ -137,6 +137,7 @@ class BookDetailsResponse {
   String? get releaseDate => volumeInfo?.publishedDate;
   double? get rating => volumeInfo?.averageRating;
   String? get publisher => volumeInfo?.publisher;
+  List<String>? get genres => volumeInfo?.categories;
   List<String> get imageGalleryUrls => [
     volumeInfo?.imageLinks?.large,
     volumeInfo?.imageLinks?.medium,
@@ -174,6 +175,9 @@ class BookVolumeInfo {
   @JsonKey(name: 'imageLinks')
   BookImageLinks? imageLinks;
 
+  @JsonKey(name: 'categories')
+  List<String>? categories;
+
   BookVolumeInfo({
     this.title,
     this.authors,
@@ -182,6 +186,7 @@ class BookVolumeInfo {
     this.averageRating,
     this.publisher,
     this.imageLinks,
+    this.categories,
   });
 
   factory BookVolumeInfo.fromJson(Map<String, dynamic> json) =>
@@ -282,6 +287,17 @@ class GameDetailsResponse {
   @JsonKey(name: 'background_image_additional')
   String? additionalImageUrl;
 
+  @JsonKey(name: 'genres')
+  List<GameGenreInfo>? genresInfo;
+
+  List<String> get genres =>
+      genresInfo
+          ?.map((g) => g.name)
+          .where((name) => name != null)
+          .cast<String>()
+          .toList() ??
+      [];
+
   List<String> get imageGalleryUrls {
     final List<String> images = [];
     if (mainImageUrl != null && mainImageUrl!.isNotEmpty) {
@@ -314,11 +330,23 @@ class GameDetailsResponse {
     this.platformWrappers,
     this.mainImageUrl,
     this.additionalImageUrl,
+    this.genresInfo,
   });
 
   factory GameDetailsResponse.fromJson(Map<String, dynamic> json) =>
       _$GameDetailsResponseFromJson(json);
   Map<String, dynamic> toJson() => _$GameDetailsResponseToJson(this);
+}
+
+@JsonSerializable()
+class GameGenreInfo {
+  @JsonKey(name: 'name')
+  String? name;
+
+  GameGenreInfo({this.name});
+  factory GameGenreInfo.fromJson(Map<String, dynamic> json) =>
+      _$GameGenreInfoFromJson(json);
+  Map<String, dynamic> toJson() => _$GameGenreInfoToJson(this);
 }
 
 @JsonSerializable()
@@ -451,9 +479,20 @@ class MovieDetailsResponse {
   @JsonKey(name: 'images')
   TmdbImagesResponse? images;
 
+  @JsonKey(name: 'genres')
+  List<TmdbGenreInfo>? genresInfo;
+
   String? get companyName => productionCompanies?.isNotEmpty ?? false
       ? productionCompanies!.first.name
       : null;
+
+  List<String> get genres =>
+      genresInfo
+          ?.map((g) => g.name)
+          .where((name) => name != null)
+          .cast<String>()
+          .toList() ??
+      [];
 
   List<String> get imageGalleryUrls {
     final List<String?> paths = [];
@@ -474,6 +513,7 @@ class MovieDetailsResponse {
     this.rating,
     this.productionCompanies,
     this.images,
+    this.genresInfo,
   });
 
   factory MovieDetailsResponse.fromJson(Map<String, dynamic> json) =>
@@ -507,12 +547,23 @@ class TvDetailsResponse {
   @JsonKey(name: 'images')
   TmdbImagesResponse? images;
 
+  @JsonKey(name: 'genres')
+  List<TmdbGenreInfo>? genresInfo;
+
   // Helper getters
   String? get companyName => (networks?.isNotEmpty ?? false)
       ? networks!.first.name
       : (productionCompanies?.isNotEmpty ?? false
             ? productionCompanies!.first.name
             : null);
+
+  List<String> get genres =>
+      genresInfo
+          ?.map((g) => g.name)
+          .where((name) => name != null)
+          .cast<String>()
+          .toList() ??
+      [];
 
   List<String> get imageGalleryUrls {
     final List<String?> paths = [];
@@ -534,11 +585,23 @@ class TvDetailsResponse {
     this.networks,
     this.productionCompanies,
     this.images,
+    this.genresInfo,
   });
 
   factory TvDetailsResponse.fromJson(Map<String, dynamic> json) =>
       _$TvDetailsResponseFromJson(json);
   Map<String, dynamic> toJson() => _$TvDetailsResponseToJson(this);
+}
+
+@JsonSerializable()
+class TmdbGenreInfo {
+  @JsonKey(name: 'name')
+  String? name;
+
+  TmdbGenreInfo({this.name});
+  factory TmdbGenreInfo.fromJson(Map<String, dynamic> json) =>
+      _$TmdbGenreInfoFromJson(json);
+  Map<String, dynamic> toJson() => _$TmdbGenreInfoToJson(this);
 }
 
 @JsonSerializable()

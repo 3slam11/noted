@@ -120,6 +120,7 @@
     "games": "Games",
     "books": "Books",
     "description": "Description",
+    "genres": "Genre",
     "releaseDate": "Release Date",
     "platforms": "Platforms",
     "rating": "Rating",
