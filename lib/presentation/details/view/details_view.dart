@@ -522,7 +522,7 @@ class InfoCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSize.s8),
           if (content != null) Text(content!, style: theme.textTheme.bodyLarge),
-          if (child != null) child!,
+          ?child,
         ],
       ),
     );

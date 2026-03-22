@@ -4,8 +4,8 @@ publish_to: 'none'
 version: 2.6.0+18
 
 environment:
-  sdk: ^3.9.2
-  flutter: 3.35.6
+  sdk: ^3.11.0
+  flutter: 3.41.1
 
 dependencies:
   flutter:
@@ -14,42 +14,42 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-  analyzer: ^7.7.1
+  analyzer: ^10.0.1
   rxdart: ^0.28.0
-  freezed: ^3.2.3
+  freezed: ^3.2.5
   freezed_annotation: ^3.1.0
-  flex_color_scheme: ^8.3.0
-  get_it: ^8.2.0
-  shared_preferences: ^2.5.3
-  slang_flutter: ^4.9.0
-  retrofit: ^4.7.3
-  dio: ^5.9.0
+  flex_color_scheme: ^8.4.0
+  get_it: ^9.2.0
+  shared_preferences: ^2.5.4
+  slang_flutter: ^4.12.1
+  retrofit: ^4.9.2
+  dio: ^5.9.1
   pretty_dio_logger: ^1.4.0
-  internet_connection_checker_plus: ^2.9.0
+  internet_connection_checker_plus: ^2.9.1+2
   dartz: ^0.10.1
-  json_annotation: ^4.9.0
-  flutter_riverpod: ^3.0.3
+  json_annotation: ^4.10.0
+  flutter_riverpod: ^3.2.1
   path: ^1.9.1
   path_provider: ^2.1.5
   fl_chart: ^1.1.1
   flutter_launcher_icons: ^0.14.4
   url_launcher: ^6.3.2
-  file_picker: ^10.3.3
+  file_picker: ^10.3.10
   flutter_dotenv: ^6.0.0
-  objectbox: ^5.0.0
-  objectbox_flutter_libs: ^5.0.0
-  objectbox_generator: ^5.0.0
+  objectbox: ^5.2.0
+  objectbox_flutter_libs: ^5.2.0
+  objectbox_generator: ^5.2.0
   flutter_animate: ^4.5.2
   flutter_rating_bar: ^4.0.1
-  smooth_page_indicator: ^1.2.1
+  smooth_page_indicator: ^2.0.1
   
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.7.1
+  build_runner: ^2.11.1
   flutter_lints: ^6.0.0
-  json_serializable: ^6.11.1
-  retrofit_generator: ^10.0.6
+  json_serializable: ^6.12.0
+  retrofit_generator: ^10.2.3
 
 flutter_launcher_icons:
   android: true

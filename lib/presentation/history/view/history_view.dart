@@ -395,6 +395,21 @@ class HistoryViewState extends State<HistoryView> {
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
+              if (_viewModel.showSeriesTracker &&
+                  item.category == Category.series &&
+                  item.currentSeason != null &&
+                  item.currentEpisode != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2.0),
+                  child: Text(
+                    '${t.details.season} ${item.currentSeason} • ${t.details.episode} ${item.currentEpisode}',
+                    style: TextStyle(
+                      fontSize: AppSize.s12,
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
               if (item.personalRating != null && item.personalRating! > 0)
                 Padding(
                   padding: const EdgeInsets.only(top: 4.0),

@@ -3,12 +3,13 @@
 ///
 // coverage:ignore-file
 // ignore_for_file: type=lint, unused_import
+// dart format off
 
 part of 'strings.g.dart';
 
 // Path: <root>
 typedef TranslationsEn = Translations; // ignore: unused_element
-class Translations implements BaseTranslations<AppLocale, Translations> {
+class Translations with BaseTranslations<AppLocale, Translations> {
 	/// Returns the current translations of the given [context].
 	///
 	/// Usage:
@@ -65,7 +66,6 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	late final TranslationsSearchEn search = TranslationsSearchEn._(_root);
 	late final TranslationsDetailsEn details = TranslationsDetailsEn._(_root);
 	late final TranslationsSettingsEn settings = TranslationsSettingsEn._(_root);
-	late final TranslationsQrSettingsEn qrSettings = TranslationsQrSettingsEn._(_root);
 	late final TranslationsLanguageSettingsEn languageSettings = TranslationsLanguageSettingsEn._(_root);
 	late final TranslationsThemeSettingsEn themeSettings = TranslationsThemeSettingsEn._(_root);
 	late final TranslationsFontSettingsEn fontSettings = TranslationsFontSettingsEn._(_root);
@@ -185,6 +185,9 @@ class TranslationsHomeEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
+
+	/// en: 'Home'
+	String get home => 'Home';
 
 	/// en: 'Entertainment list for '
 	String get titleSection => 'Entertainment list for ';
@@ -500,45 +503,12 @@ class TranslationsSettingsEn {
 
 	/// en: 'Do nothing. I will manage my lists myself.'
 	String get rolloverManualDescription => 'Do nothing. I will manage my lists myself.';
-}
 
-// Path: qrSettings
-class TranslationsQrSettingsEn {
-	TranslationsQrSettingsEn._(this._root);
+	/// en: 'Show Series Tracker'
+	String get showSeriesTracker => 'Show Series Tracker';
 
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'QR Code Sync'
-	String get title => 'QR Code Sync';
-
-	/// en: 'Feature Not Available on Desktop'
-	String get desktop => 'Feature Not Available on Desktop';
-
-	/// en: 'QR code scanning is only available on the mobile version of the app.'
-	String get desktopDescription => 'QR code scanning is only available on the mobile version of the app.';
-
-	/// en: 'Sync between devices with a QR code'
-	String get subtitle => 'Sync between devices with a QR code';
-
-	/// en: 'You can export and import your data and settings with QR code to another device.'
-	String get description => 'You can export and import your data and settings with QR code to another device.';
-
-	/// en: 'Importing will overwrite all current settings and lists.'
-	String get alert => 'Importing will overwrite all current settings and lists.';
-
-	/// en: 'Scan'
-	String get scan => 'Scan';
-
-	/// en: 'Generate'
-	String get generate => 'Generate';
-
-	/// en: 'Generating QR Code...'
-	String get generating => 'Generating QR Code...';
-
-	/// en: 'QR Code Generated'
-	String get generated => 'QR Code Generated';
+	/// en: 'Display current season and episode for TV series on the main lists.'
+	String get showSeriesTrackerDescription => 'Display current season and episode for TV series on the main lists.';
 }
 
 // Path: languageSettings
@@ -790,213 +760,208 @@ class TranslationsAboutEn {
 	String get thanksMessage => 'Thanks to their free plan, the app became usable as it is now.';
 }
 
-/// Flat map(s) containing all translations.
+/// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
+///
+/// The Dart AOT compiler has issues with very large switch statements,
+/// so the map is split into smaller functions (512 entries each).
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
-		switch (path) {
-			case 'appName': return 'Noted';
-			case 'months.0': return 'January';
-			case 'months.1': return 'February';
-			case 'months.2': return 'March';
-			case 'months.3': return 'April';
-			case 'months.4': return 'May';
-			case 'months.5': return 'June';
-			case 'months.6': return 'July';
-			case 'months.7': return 'August';
-			case 'months.8': return 'September';
-			case 'months.9': return 'October';
-			case 'months.10': return 'November';
-			case 'months.11': return 'December';
-			case 'routes.noRouteFound': return 'No Route Found';
-			case 'errorHandler.defaultError': return 'Something went wrong, try again later';
-			case 'errorHandler.success': return 'Success';
-			case 'errorHandler.noContent': return 'No Content';
-			case 'errorHandler.badRequest': return 'Bad Request';
-			case 'errorHandler.unauthorized': return 'Unauthorized';
-			case 'errorHandler.forbidden': return 'Forbidden';
-			case 'errorHandler.internalServerError': return 'Internal Server Error';
-			case 'errorHandler.notFound': return 'Not Found';
-			case 'errorHandler.timeOut': return 'Time Out';
-			case 'errorHandler.cancel': return 'Cancel';
-			case 'errorHandler.cacheError': return 'Cache Error';
-			case 'errorHandler.noInternetConnection': return 'No Internet Connection';
-			case 'errorHandler.errorOccurred': return 'An error occurred';
-			case 'errorHandler.connectionIssuesTitle': return 'Connection Issues';
-			case 'errorHandler.connectionIssuesSubtitle': return 'There might be several reasons for this issue:';
-			case 'errorHandler.internetNotWorking': return 'Internet might be not working.';
-			case 'errorHandler.apiCapacityHit': return 'Default API might have hit the capacity.';
-			case 'errorHandler.customApiError': return 'Your custom API might be written incorrectly.';
-			case 'errorHandler.siteDownError': return 'Site might be down at the moment, wait a few minutes and try later.';
-			case 'stateRenderer.content': return 'Content';
-			case 'stateRenderer.error': return 'Error';
-			case 'stateRenderer.loading': return 'Loading';
-			case 'stateRenderer.retry': return 'Retry';
-			case 'stateRenderer.ok': return 'Ok';
-			case 'home.titleSection': return 'Entertainment list for ';
-			case 'home.emptySection': return 'This list is empty';
-			case 'home.finishedList': return 'Finished List';
-			case 'home.movies': return 'Movies';
-			case 'home.series': return 'Series';
-			case 'home.games': return 'Games';
-			case 'home.books': return 'Books';
-			case 'home.all': return 'All';
-			case 'home.deleted': return 'Deleted';
-			case 'home.undo': return 'Undo';
-			case 'home.newMonthStarted': return 'New Month Started! 🎉';
-			case 'home.description': return ({required Object month}) => 'Welcome to ${month}!';
-			case 'home.description2': return 'Your finished items have been moved to history. Here are your unfinished items from last month:';
-			case 'home.pending': return '📝 Pending: ';
-			case 'home.completed': return '🎯 Completed: ';
-			case 'home.selectAll': return 'Select All';
-			case 'home.deselectAll': return 'Deselect All';
-			case 'home.deleteAll': return 'Delete All';
-			case 'home.addAll': return 'Add All';
-			case 'home.keepSelected': return 'Keep Selected';
-			case 'home.noCompleted': return 'No completed items yet';
-			case 'home.congratulations': return 'Congratulations!';
-			case 'home.todosDone': return 'You have completed everything last month!';
-			case 'home.close': return 'Close';
-			case 'home.timeWrong': return 'Either you\'re a time traveler or you messed with your date settings! 🕰️';
-			case 'home.timeWrongDescription': return 'The app detected that your current date may be wrong. This could mess with your lists.';
-			case 'home.continueAnyway': return 'Continue';
-			case 'home.itemActions': return 'Item Actions';
-			case 'home.moveToTodo': return 'Move to todo';
-			case 'home.moveToFinished': return 'Move to finished';
-			case 'home.moveToHistory': return 'Move to history';
-			case 'home.editNotes': return 'Edit/View Notes';
-			case 'home.yourRating': return 'Your Rating';
-			case 'home.yourNotes': return 'Your Notes';
-			case 'home.notesHint': return 'Add your thoughts here...';
-			case 'home.noNotes': return 'No note yet.';
-			case 'home.notesSaved': return 'Note saved.';
-			case 'home.save': return 'Save';
-			case 'home.delete': return 'Delete';
-			case 'sort.sort': return 'Sort';
-			case 'sort.sortBy': return 'Sort by';
-			case 'sort.titleAsc': return 'Title (A-Z)';
-			case 'sort.titleDesc': return 'Title (Z-A)';
-			case 'sort.releaseDateNewest': return 'Release Date (Newest)';
-			case 'sort.releaseDateOldest': return 'Release Date (Oldest)';
-			case 'sort.ratingHighest': return 'Rating (Highest)';
-			case 'sort.ratingLowest': return 'Rating (Lowest)';
-			case 'sort.dateAddedNewest': return 'Date Added (Newest)';
-			case 'sort.dateAddedOldest': return 'Date Added (Oldest)';
-			case 'search.search': return 'Search';
-			case 'search.searchPlaceholder': return 'Search...';
-			case 'search.searchForSomething': return 'Search for anything';
-			case 'search.noResultsFound': return 'No results found';
-			case 'search.cantSearch': return 'Can\'t search now';
-			case 'details.title': return 'Details';
-			case 'details.movies': return 'Movies';
-			case 'details.series': return 'Series';
-			case 'details.games': return 'Games';
-			case 'details.books': return 'Books';
-			case 'details.description': return 'Description';
-			case 'details.genres': return 'Genre';
-			case 'details.progressTracker': return 'Progress Tracker';
-			case 'details.season': return 'Season';
-			case 'details.episode': return 'Episode';
-			case 'details.releaseDate': return 'Release Date';
-			case 'details.platforms': return 'Platforms';
-			case 'details.rating': return 'Rating';
-			case 'details.publisher': return 'Publisher';
-			case 'details.studio': return 'Studio';
-			case 'details.network': return 'Network';
-			case 'details.moreLikeThis': return 'More like this';
-			case 'details.noRecommendations': return 'No Recommendations';
-			case 'settings.backupAndRestore': return 'Backup & Restore';
-			case 'settings.settings': return 'Settings';
-			case 'settings.language': return 'Language';
-			case 'settings.theme': return 'Theme';
-			case 'settings.font': return 'Font';
-			case 'settings.appDefaultFont': return 'App Default';
-			case 'settings.systemFont': return 'System Default';
-			case 'settings.customFont': return 'Custom Font';
-			case 'settings.customFontDetails': return 'Custom Font Details';
-			case 'settings.history': return 'History';
-			case 'settings.apiChange': return 'Change API';
-			case 'settings.statistics': return 'Statistics';
-			case 'settings.about': return 'About';
-			case 'settings.monthRolloverBehavior': return 'Month Rollover Behavior';
-			case 'settings.monthRolloverBehaviorDescription': return 'Choose what happens at the start of a new month.';
-			case 'settings.rolloverFull': return 'Full Rollover (Default)';
-			case 'settings.rolloverFullDescription': return 'Move finished items to history and ask which to-do items to keep.';
-			case 'settings.rolloverPartial': return 'Partial Rollover';
-			case 'settings.rolloverPartialDescription': return 'Only move finished items to history. Keep all to-do items.';
-			case 'settings.rolloverManual': return 'Manual';
-			case 'settings.rolloverManualDescription': return 'Do nothing. I will manage my lists myself.';
-			case 'qrSettings.title': return 'QR Code Sync';
-			case 'qrSettings.desktop': return 'Feature Not Available on Desktop';
-			case 'qrSettings.desktopDescription': return 'QR code scanning is only available on the mobile version of the app.';
-			case 'qrSettings.subtitle': return 'Sync between devices with a QR code';
-			case 'qrSettings.description': return 'You can export and import your data and settings with QR code to another device.';
-			case 'qrSettings.alert': return 'Importing will overwrite all current settings and lists.';
-			case 'qrSettings.scan': return 'Scan';
-			case 'qrSettings.generate': return 'Generate';
-			case 'qrSettings.generating': return 'Generating QR Code...';
-			case 'qrSettings.generated': return 'QR Code Generated';
-			case 'languageSettings.selectLanguage': return 'Select Language';
-			case 'languageSettings.en': return 'English';
-			case 'languageSettings.ar': return 'العربية';
-			case 'themeSettings.themeSettings': return 'Theme Settings';
-			case 'themeSettings.autoTheme': return 'Auto Theme';
-			case 'themeSettings.manualTheme': return 'Manual Theme';
-			case 'themeSettings.autoThemeDescription': return 'Automatically changes theme based on current month';
-			case 'themeSettings.selectTheme': return 'Select Theme:';
-			case 'fontSettings.title': return 'Font Settings';
-			case 'fontSettings.change': return 'Change';
-			case 'fontSettings.remove': return 'Remove';
-			case 'fontSettings.noCustomFont': return 'No custom font selected';
-			case 'fontSettings.selectFontFile': return 'Select Font File (.ttf, .otf)\'';
-			case 'backupAndRestore.title': return 'Backup & Restore';
-			case 'backupAndRestore.backupData': return 'Backup Data';
-			case 'backupAndRestore.restoreData': return 'Restore Data';
-			case 'backupAndRestore.backupDescription': return 'Save your current lists to a local file.';
-			case 'backupAndRestore.restoreDescription': return 'Restore your lists from a previously saved backup file. This will overwrite current data.';
-			case 'backupAndRestore.backupSuccessful': return 'Backup successful!';
-			case 'backupAndRestore.backupFailed': return 'Backup failed: ';
-			case 'backupAndRestore.restoreSuccessful': return 'Restore successful!';
-			case 'backupAndRestore.restoreFailed': return 'Restore failed: ';
-			case 'backupAndRestore.noFileSelected': return 'No file selected.';
-			case 'backupAndRestore.invalidFileFormat': return 'Invalid backup file format or missing data.';
-			case 'backupAndRestore.selectBackupFile': return 'Select Backup File';
-			case 'backupAndRestore.saveBackupFile': return 'Save Backup File As';
-			case 'backupAndRestore.defaultBackupFileName': return 'noted_backup.json';
-			case 'backupAndRestore.yes': return 'Yes';
-			case 'backupAndRestore.no': return 'No';
-			case 'backupAndRestore.dataRestoredMessage': return 'Data restored successfully.';
-			case 'history.history': return 'History';
-			case 'history.item': return 'Item';
-			case 'history.items': return 'Items';
-			case 'history.noHistory': return 'No history yet';
-			case 'apiSettings.gamesApiTitle': return 'Games API';
-			case 'apiSettings.gamesApiDescription': return 'Get your API key from RAWG.io';
-			case 'apiSettings.moviesApiTitle': return 'Movies & TV Series API';
-			case 'apiSettings.moviesApiDescription': return 'Get your API key from The Movie Database';
-			case 'apiSettings.booksApiTitle': return 'Books API';
-			case 'apiSettings.booksApiDescription': return 'Get your API key from Google Cloud Console';
-			case 'apiSettings.getApiKey': return 'Get API Key';
-			case 'apiSettings.apiKey': return 'API Key';
-			case 'apiSettings.save': return 'Save';
-			case 'apiSettings.delete': return 'Delete';
-			case 'statistics.thisMonth': return 'This Month';
-			case 'statistics.allTime': return 'All Time';
-			case 'statistics.totalItems': return 'Total Items';
-			case 'statistics.category': return 'Category';
-			case 'statistics.noData': return 'No data yet';
-			case 'about.aboutThisApp': return 'About This App';
-			case 'about.appDescription': return 'This app has been made for practice, so if you encounter any issue tell the developer on GitHub.';
-			case 'about.reportIssue': return 'Report Issue';
-			case 'about.viewProject': return 'View Project';
-			case 'about.apisUsed': return 'APIs Used';
-			case 'about.gamesDescription': return 'Games data came from RAWG site';
-			case 'about.moviesAndTvSeries': return 'Movies and TV Series';
-			case 'about.moviesAndTvSeriesDescription': return 'All data about movies and TV series came from TMDB site';
-			case 'about.booksDescription': return 'All data about books came from Google Books API';
-			case 'about.thanksMessage': return 'Thanks to their free plan, the app became usable as it is now.';
-			default: return null;
-		}
+		return switch (path) {
+			'appName' => 'Noted',
+			'months.0' => 'January',
+			'months.1' => 'February',
+			'months.2' => 'March',
+			'months.3' => 'April',
+			'months.4' => 'May',
+			'months.5' => 'June',
+			'months.6' => 'July',
+			'months.7' => 'August',
+			'months.8' => 'September',
+			'months.9' => 'October',
+			'months.10' => 'November',
+			'months.11' => 'December',
+			'routes.noRouteFound' => 'No Route Found',
+			'errorHandler.defaultError' => 'Something went wrong, try again later',
+			'errorHandler.success' => 'Success',
+			'errorHandler.noContent' => 'No Content',
+			'errorHandler.badRequest' => 'Bad Request',
+			'errorHandler.unauthorized' => 'Unauthorized',
+			'errorHandler.forbidden' => 'Forbidden',
+			'errorHandler.internalServerError' => 'Internal Server Error',
+			'errorHandler.notFound' => 'Not Found',
+			'errorHandler.timeOut' => 'Time Out',
+			'errorHandler.cancel' => 'Cancel',
+			'errorHandler.cacheError' => 'Cache Error',
+			'errorHandler.noInternetConnection' => 'No Internet Connection',
+			'errorHandler.errorOccurred' => 'An error occurred',
+			'errorHandler.connectionIssuesTitle' => 'Connection Issues',
+			'errorHandler.connectionIssuesSubtitle' => 'There might be several reasons for this issue:',
+			'errorHandler.internetNotWorking' => 'Internet might be not working.',
+			'errorHandler.apiCapacityHit' => 'Default API might have hit the capacity.',
+			'errorHandler.customApiError' => 'Your custom API might be written incorrectly.',
+			'errorHandler.siteDownError' => 'Site might be down at the moment, wait a few minutes and try later.',
+			'stateRenderer.content' => 'Content',
+			'stateRenderer.error' => 'Error',
+			'stateRenderer.loading' => 'Loading',
+			'stateRenderer.retry' => 'Retry',
+			'stateRenderer.ok' => 'Ok',
+			'home.home' => 'Home',
+			'home.titleSection' => 'Entertainment list for ',
+			'home.emptySection' => 'This list is empty',
+			'home.finishedList' => 'Finished List',
+			'home.movies' => 'Movies',
+			'home.series' => 'Series',
+			'home.games' => 'Games',
+			'home.books' => 'Books',
+			'home.all' => 'All',
+			'home.deleted' => 'Deleted',
+			'home.undo' => 'Undo',
+			'home.newMonthStarted' => 'New Month Started! 🎉',
+			'home.description' => ({required Object month}) => 'Welcome to ${month}!',
+			'home.description2' => 'Your finished items have been moved to history. Here are your unfinished items from last month:',
+			'home.pending' => '📝 Pending: ',
+			'home.completed' => '🎯 Completed: ',
+			'home.selectAll' => 'Select All',
+			'home.deselectAll' => 'Deselect All',
+			'home.deleteAll' => 'Delete All',
+			'home.addAll' => 'Add All',
+			'home.keepSelected' => 'Keep Selected',
+			'home.noCompleted' => 'No completed items yet',
+			'home.congratulations' => 'Congratulations!',
+			'home.todosDone' => 'You have completed everything last month!',
+			'home.close' => 'Close',
+			'home.timeWrong' => 'Either you\'re a time traveler or you messed with your date settings! 🕰️',
+			'home.timeWrongDescription' => 'The app detected that your current date may be wrong. This could mess with your lists.',
+			'home.continueAnyway' => 'Continue',
+			'home.itemActions' => 'Item Actions',
+			'home.moveToTodo' => 'Move to todo',
+			'home.moveToFinished' => 'Move to finished',
+			'home.moveToHistory' => 'Move to history',
+			'home.editNotes' => 'Edit/View Notes',
+			'home.yourRating' => 'Your Rating',
+			'home.yourNotes' => 'Your Notes',
+			'home.notesHint' => 'Add your thoughts here...',
+			'home.noNotes' => 'No note yet.',
+			'home.notesSaved' => 'Note saved.',
+			'home.save' => 'Save',
+			'home.delete' => 'Delete',
+			'sort.sort' => 'Sort',
+			'sort.sortBy' => 'Sort by',
+			'sort.titleAsc' => 'Title (A-Z)',
+			'sort.titleDesc' => 'Title (Z-A)',
+			'sort.releaseDateNewest' => 'Release Date (Newest)',
+			'sort.releaseDateOldest' => 'Release Date (Oldest)',
+			'sort.ratingHighest' => 'Rating (Highest)',
+			'sort.ratingLowest' => 'Rating (Lowest)',
+			'sort.dateAddedNewest' => 'Date Added (Newest)',
+			'sort.dateAddedOldest' => 'Date Added (Oldest)',
+			'search.search' => 'Search',
+			'search.searchPlaceholder' => 'Search...',
+			'search.searchForSomething' => 'Search for anything',
+			'search.noResultsFound' => 'No results found',
+			'search.cantSearch' => 'Can\'t search now',
+			'details.title' => 'Details',
+			'details.movies' => 'Movies',
+			'details.series' => 'Series',
+			'details.games' => 'Games',
+			'details.books' => 'Books',
+			'details.description' => 'Description',
+			'details.genres' => 'Genre',
+			'details.progressTracker' => 'Progress Tracker',
+			'details.season' => 'Season',
+			'details.episode' => 'Episode',
+			'details.releaseDate' => 'Release Date',
+			'details.platforms' => 'Platforms',
+			'details.rating' => 'Rating',
+			'details.publisher' => 'Publisher',
+			'details.studio' => 'Studio',
+			'details.network' => 'Network',
+			'details.moreLikeThis' => 'More like this',
+			'details.noRecommendations' => 'No Recommendations',
+			'settings.backupAndRestore' => 'Backup & Restore',
+			'settings.settings' => 'Settings',
+			'settings.language' => 'Language',
+			'settings.theme' => 'Theme',
+			'settings.font' => 'Font',
+			'settings.appDefaultFont' => 'App Default',
+			'settings.systemFont' => 'System Default',
+			'settings.customFont' => 'Custom Font',
+			'settings.customFontDetails' => 'Custom Font Details',
+			'settings.history' => 'History',
+			'settings.apiChange' => 'Change API',
+			'settings.statistics' => 'Statistics',
+			'settings.about' => 'About',
+			'settings.monthRolloverBehavior' => 'Month Rollover Behavior',
+			'settings.monthRolloverBehaviorDescription' => 'Choose what happens at the start of a new month.',
+			'settings.rolloverFull' => 'Full Rollover (Default)',
+			'settings.rolloverFullDescription' => 'Move finished items to history and ask which to-do items to keep.',
+			'settings.rolloverPartial' => 'Partial Rollover',
+			'settings.rolloverPartialDescription' => 'Only move finished items to history. Keep all to-do items.',
+			'settings.rolloverManual' => 'Manual',
+			'settings.rolloverManualDescription' => 'Do nothing. I will manage my lists myself.',
+			'settings.showSeriesTracker' => 'Show Series Tracker',
+			'settings.showSeriesTrackerDescription' => 'Display current season and episode for TV series on the main lists.',
+			'languageSettings.selectLanguage' => 'Select Language',
+			'languageSettings.en' => 'English',
+			'languageSettings.ar' => 'العربية',
+			'themeSettings.themeSettings' => 'Theme Settings',
+			'themeSettings.autoTheme' => 'Auto Theme',
+			'themeSettings.manualTheme' => 'Manual Theme',
+			'themeSettings.autoThemeDescription' => 'Automatically changes theme based on current month',
+			'themeSettings.selectTheme' => 'Select Theme:',
+			'fontSettings.title' => 'Font Settings',
+			'fontSettings.change' => 'Change',
+			'fontSettings.remove' => 'Remove',
+			'fontSettings.noCustomFont' => 'No custom font selected',
+			'fontSettings.selectFontFile' => 'Select Font File (.ttf, .otf)\'',
+			'backupAndRestore.title' => 'Backup & Restore',
+			'backupAndRestore.backupData' => 'Backup Data',
+			'backupAndRestore.restoreData' => 'Restore Data',
+			'backupAndRestore.backupDescription' => 'Save your current lists to a local file.',
+			'backupAndRestore.restoreDescription' => 'Restore your lists from a previously saved backup file. This will overwrite current data.',
+			'backupAndRestore.backupSuccessful' => 'Backup successful!',
+			'backupAndRestore.backupFailed' => 'Backup failed: ',
+			'backupAndRestore.restoreSuccessful' => 'Restore successful!',
+			'backupAndRestore.restoreFailed' => 'Restore failed: ',
+			'backupAndRestore.noFileSelected' => 'No file selected.',
+			'backupAndRestore.invalidFileFormat' => 'Invalid backup file format or missing data.',
+			'backupAndRestore.selectBackupFile' => 'Select Backup File',
+			'backupAndRestore.saveBackupFile' => 'Save Backup File As',
+			'backupAndRestore.defaultBackupFileName' => 'noted_backup.json',
+			'backupAndRestore.yes' => 'Yes',
+			'backupAndRestore.no' => 'No',
+			'backupAndRestore.dataRestoredMessage' => 'Data restored successfully.',
+			'history.history' => 'History',
+			'history.item' => 'Item',
+			'history.items' => 'Items',
+			'history.noHistory' => 'No history yet',
+			'apiSettings.gamesApiTitle' => 'Games API',
+			'apiSettings.gamesApiDescription' => 'Get your API key from RAWG.io',
+			'apiSettings.moviesApiTitle' => 'Movies & TV Series API',
+			'apiSettings.moviesApiDescription' => 'Get your API key from The Movie Database',
+			'apiSettings.booksApiTitle' => 'Books API',
+			'apiSettings.booksApiDescription' => 'Get your API key from Google Cloud Console',
+			'apiSettings.getApiKey' => 'Get API Key',
+			'apiSettings.apiKey' => 'API Key',
+			'apiSettings.save' => 'Save',
+			'apiSettings.delete' => 'Delete',
+			'statistics.thisMonth' => 'This Month',
+			'statistics.allTime' => 'All Time',
+			'statistics.totalItems' => 'Total Items',
+			'statistics.category' => 'Category',
+			'statistics.noData' => 'No data yet',
+			'about.aboutThisApp' => 'About This App',
+			'about.appDescription' => 'This app has been made for practice, so if you encounter any issue tell the developer on GitHub.',
+			'about.reportIssue' => 'Report Issue',
+			'about.viewProject' => 'View Project',
+			'about.apisUsed' => 'APIs Used',
+			'about.gamesDescription' => 'Games data came from RAWG site',
+			'about.moviesAndTvSeries' => 'Movies and TV Series',
+			'about.moviesAndTvSeriesDescription' => 'All data about movies and TV series came from TMDB site',
+			'about.booksDescription' => 'All data about books came from Google Books API',
+			'about.thanksMessage' => 'Thanks to their free plan, the app became usable as it is now.',
+			_ => null,
+		};
 	}
 }
-

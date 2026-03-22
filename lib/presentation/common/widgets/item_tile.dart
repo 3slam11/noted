@@ -159,12 +159,32 @@ class ItemTile extends StatelessWidget {
                   ),
               ],
             ),
-            subtitle: Text(
-              item.category?.localizedCategory() ?? 'Uncategorized',
-              style: TextStyle(
-                fontSize: 12,
-                color: theme.colorScheme.secondary,
-              ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.category?.localizedCategory() ?? 'Uncategorized',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: theme.colorScheme.secondary,
+                  ),
+                ),
+                if (viewModel.showSeriesTracker &&
+                    item.category == Category.series &&
+                    item.currentSeason != null &&
+                    item.currentEpisode != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2.0),
+                    child: Text(
+                      '${t.details.season} ${item.currentSeason} • ${t.details.episode} ${item.currentEpisode}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             trailing: IconButton(
               icon: Icon(

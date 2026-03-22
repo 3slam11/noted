@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:noted/app/app_events.dart';
+import 'package:noted/app/app_prefs.dart';
 import 'package:noted/data/network/failure.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/domain/usecases/main_usecase.dart';
@@ -13,6 +14,7 @@ class MainViewModel extends BaseViewModel
     implements MainViewModelInputs, MainViewModelOutputs {
   final MainUsecase _mainUsecase;
   final DataGlobalNotifier _dataGlobalNotifier;
+  final AppPrefs _appPrefs;
 
   final BehaviorSubject<MainObject?> _mainDataController =
       BehaviorSubject<MainObject?>();
@@ -22,12 +24,16 @@ class MainViewModel extends BaseViewModel
       BehaviorSubject<SortOption>.seeded(SortOption.dateAddedNewest);
 
   MainObject? _currentObject;
+  bool _showSeriesTracker = true;
 
-  MainViewModel(this._mainUsecase, this._dataGlobalNotifier) {
+  MainViewModel(this._mainUsecase, this._dataGlobalNotifier, this._appPrefs) {
     _dataGlobalNotifier.addListener(_silentRefresh);
   }
 
   bool get hasData => _currentObject?.mainData != null;
+
+  @override
+  bool get showSeriesTracker => _showSeriesTracker;
 
   @override
   void start() {
@@ -51,6 +57,7 @@ class MainViewModel extends BaseViewModel
 
   /// Private method to handle the actual data fetching and processing.
   Future<void> _fetchAndProcessData({required bool isInitialLoad}) async {
+    _showSeriesTracker = await _appPrefs.getShowSeriesTracker();
     final result = await _mainUsecase.execute(null);
     result.fold(
       (failure) {
@@ -433,4 +440,5 @@ abstract class MainViewModelOutputs {
   Stream<MainObject?> get outputMainData;
   Stream<Category> get outputSelectedCategory;
   Stream<SortOption> get outputSortOption;
+  bool get showSeriesTracker;
 }

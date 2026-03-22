@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:noted/app/app_events.dart';
 import 'package:noted/app/app_prefs.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/base/base_view_model.dart';
@@ -19,6 +20,7 @@ class SettingsViewModel extends BaseViewModel
     implements SettingsViewModelInputs, SettingsViewModelOutputs {
   final AppPrefs appPrefs;
   final ThemeManager themeManager;
+  final DataGlobalNotifier dataGlobalNotifier;
 
   final _currentLanguageStreamController = BehaviorSubject<String>();
   final _currentThemeModeStreamController = BehaviorSubject<ThemeType>();
@@ -30,8 +32,9 @@ class SettingsViewModel extends BaseViewModel
   final _customFontInfoController = BehaviorSubject<String>();
   final _monthRolloverBehaviorController =
       BehaviorSubject<MonthRolloverBehavior>();
+  final _showSeriesTrackerController = BehaviorSubject<bool>();
 
-  SettingsViewModel(this.appPrefs, this.themeManager);
+  SettingsViewModel(this.appPrefs, this.themeManager, this.dataGlobalNotifier);
 
   @override
   void start() {
@@ -52,6 +55,7 @@ class SettingsViewModel extends BaseViewModel
     _currentFontTypeController.close();
     _customFontInfoController.close();
     _monthRolloverBehaviorController.close();
+    _showSeriesTrackerController.close();
     super.dispose();
   }
 
@@ -93,6 +97,10 @@ class SettingsViewModel extends BaseViewModel
     // Month Rollover
     final behaviorIndex = await appPrefs.getMonthRolloverBehavior();
     inputMonthRolloverBehavior.add(MonthRolloverBehavior.values[behaviorIndex]);
+
+    // Show Series Tracker
+    final showTracker = await appPrefs.getShowSeriesTracker();
+    inputShowSeriesTracker.add(showTracker);
   }
 
   @override
@@ -116,6 +124,9 @@ class SettingsViewModel extends BaseViewModel
   @override
   Sink<MonthRolloverBehavior> get inputMonthRolloverBehavior =>
       _monthRolloverBehaviorController.sink;
+
+  @override
+  Sink<bool> get inputShowSeriesTracker => _showSeriesTrackerController.sink;
 
   @override
   Future<void> setLanguage(String languageCode) async {
@@ -197,6 +208,13 @@ class SettingsViewModel extends BaseViewModel
   }
 
   @override
+  Future<void> setShowSeriesTracker(bool show) async {
+    await appPrefs.setShowSeriesTracker(show);
+    inputShowSeriesTracker.add(show);
+    dataGlobalNotifier.notifyDataImported();
+  }
+
+  @override
   Stream<String> get outputCurrentLanguage =>
       _currentLanguageStreamController.stream;
 
@@ -226,6 +244,10 @@ class SettingsViewModel extends BaseViewModel
   @override
   Stream<MonthRolloverBehavior> get outputMonthRolloverBehavior =>
       _monthRolloverBehaviorController.stream;
+
+  @override
+  Stream<bool> get outputShowSeriesTracker =>
+      _showSeriesTrackerController.stream;
 }
 
 abstract class SettingsViewModelInputs {
@@ -235,6 +257,7 @@ abstract class SettingsViewModelInputs {
   Sink<FontType> get inputCurrentFontType;
   Sink<String> get inputCustomFontInfo;
   Sink<MonthRolloverBehavior> get inputMonthRolloverBehavior;
+  Sink<bool> get inputShowSeriesTracker;
 
   Future<void> setLanguage(String languageCode);
   Future<void> setThemeMode(ThemeType mode);
@@ -243,6 +266,7 @@ abstract class SettingsViewModelInputs {
   Future<void> setCustomFont(String filePath, String fontFamilyName);
   Future<void> clearCustomFont();
   Future<void> setMonthRolloverBehavior(MonthRolloverBehavior behavior);
+  Future<void> setShowSeriesTracker(bool show);
 }
 
 abstract class SettingsViewModelOutputs {
@@ -254,4 +278,5 @@ abstract class SettingsViewModelOutputs {
   Stream<FontType> get outputCurrentFontType;
   Stream<String> get outputCustomFontInfo;
   Stream<MonthRolloverBehavior> get outputMonthRolloverBehavior;
+  Stream<bool> get outputShowSeriesTracker;
 }

@@ -83,7 +83,7 @@ void initMainModule() {
   if (!GetIt.I.isRegistered<MainUsecase>()) {
     instance.registerFactory<MainUsecase>(() => MainUsecase(instance()));
     instance.registerFactory<MainViewModel>(
-      () => MainViewModel(instance(), instance()),
+      () => MainViewModel(instance(), instance(), instance()),
     );
   }
 }
@@ -112,7 +112,7 @@ void initDetailsModule() {
 void initSettingsModule() {
   if (!GetIt.I.isRegistered<SettingsViewModel>()) {
     instance.registerFactory<SettingsViewModel>(
-      () => SettingsViewModel(instance(), instance()),
+      () => SettingsViewModel(instance(), instance(), instance()),
     );
   }
 }
@@ -121,7 +121,7 @@ void initHistoryModule() {
   if (!GetIt.I.isRegistered<HistoryViewModel>()) {
     instance.registerFactory<HistoryUsecase>(() => HistoryUsecase(instance()));
     instance.registerFactory<HistoryViewModel>(
-      () => HistoryViewModel(instance(), instance()),
+      () => HistoryViewModel(instance(), instance(), instance()),
     );
   }
 }

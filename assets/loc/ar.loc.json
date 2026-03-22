@@ -46,6 +46,7 @@
     "ok": "موافق"
   },
   "home": {
+    "home": "الرئيسية",
     "titleSection": "قائمة الترفيه لشهر ",
     "emptySection": "القائمة فارغة",
     "finishedList": "القائمة المكتملة",
@@ -146,20 +147,11 @@
     "rolloverPartial": "ترحيل جزئي",
     "rolloverPartialDescription": "نقل العناصر المكتملة فقط إلى السجل. الاحتفاظ بجميع عناصر قائمة المهام.",
     "rolloverManual": "يدوي",
-    "rolloverManualDescription": "لا تفعل شيئًا. سأدير قوائمي بنفسي."
+    "rolloverManualDescription": "لا تفعل شيئًا. سأدير قوائمي بنفسي.",
+    "showSeriesTracker": "إظهار متتبع المسلسلات",
+    "showSeriesTrackerDescription": "عرض الموسم والحلقة الحالية للمسلسلات التلفزيونية في القوائم الرئيسية."
   },
-  "qrSettings": {
-    "title": "مزامنة بالـQR",
-    "desktop": "الخاصية غير متوفرة على الكمبيوتر",
-    "desktopDescription": "قارئ الـQR متوفرة فقط على الهواتف.",
-    "subtitle": "مزامنة بين الأجهزة عن طريق الـQR",
-    "description": "يمكنك مزامنة بياناتك واعدادتك على جهاز اخر.",
-    "alert": "المزامنة ستستبدل بياناتك الحالية بالجديدة.",
-    "scan": "امسح",
-    "generate": "انشئ",
-    "generating": "جاري انشاء الـQR...",
-    "generated": "تم انشاء الـQR"
-  },
+ 
   "languageSettings": {
     "selectLanguage": "اختر اللغة",
     "en": "English",

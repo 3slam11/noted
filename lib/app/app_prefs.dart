@@ -15,6 +15,7 @@ const String fontTypePref = 'FONT_TYPE_PREF';
 const String customFontPathPref = 'CUSTOM_FONT_PATH_PREF';
 const String customFontFamilyNamePref = 'CUSTOM_FONT_FAMILY_NAME_PREF';
 const String monthRolloverBehaviorPref = 'MONTH_ROLLOVER_BEHAVIOR_PREF';
+const String showSeriesTrackerPref = 'SHOW_SERIES_TRACKER_PREF';
 
 class AppPrefs {
   final SharedPreferences sharedPreferences;
@@ -140,5 +141,13 @@ class AppPrefs {
   Future<int> getMonthRolloverBehavior() async {
     return sharedPreferences.getInt(monthRolloverBehaviorPref) ??
         MonthRolloverBehavior.full.index;
+  }
+
+  Future<void> setShowSeriesTracker(bool show) async {
+    await sharedPreferences.setBool(showSeriesTrackerPref, show);
+  }
+
+  Future<bool> getShowSeriesTracker() async {
+    return sharedPreferences.getBool(showSeriesTrackerPref) ?? true;
   }
 }

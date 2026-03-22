@@ -8,7 +8,7 @@ part of 'app_api.dart';
 // RetrofitGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter,avoid_unused_constructor_parameters,unreachable_from_main
 
 class _AppServiceClient implements AppServiceClient {
   _AppServiceClient(this._dio, {this.baseUrl, this.errorLogger});
@@ -40,7 +40,7 @@ class _AppServiceClient implements AppServiceClient {
     try {
       _value = MainResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -74,7 +74,7 @@ class _AppServiceClient implements AppServiceClient {
   }
 }
 
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter,avoid_unused_constructor_parameters,unreachable_from_main
 
 class _BooksApiClient implements BooksApiClient {
   _BooksApiClient(this._dio, {this.baseUrl, this.errorLogger}) {
@@ -108,7 +108,7 @@ class _BooksApiClient implements BooksApiClient {
     try {
       _value = BooksSearchResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -135,7 +135,7 @@ class _BooksApiClient implements BooksApiClient {
     try {
       _value = BookDetailsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -169,7 +169,7 @@ class _BooksApiClient implements BooksApiClient {
   }
 }
 
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter,avoid_unused_constructor_parameters,unreachable_from_main
 
 class _GamesApiClient implements GamesApiClient {
   _GamesApiClient(this._dio, {this.baseUrl, this.errorLogger}) {
@@ -214,7 +214,7 @@ class _GamesApiClient implements GamesApiClient {
     try {
       _value = GamesSearchResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -241,7 +241,7 @@ class _GamesApiClient implements GamesApiClient {
     try {
       _value = GameDetailsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -275,7 +275,7 @@ class _GamesApiClient implements GamesApiClient {
   }
 }
 
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter,avoid_unused_constructor_parameters,unreachable_from_main
 
 class _TmdbApiClient implements TmdbApiClient {
   _TmdbApiClient(this._dio, {this.baseUrl, this.errorLogger}) {
@@ -312,7 +312,7 @@ class _TmdbApiClient implements TmdbApiClient {
     try {
       _value = MoviesSearchResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -344,7 +344,7 @@ class _TmdbApiClient implements TmdbApiClient {
     try {
       _value = MovieDetailsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -374,7 +374,7 @@ class _TmdbApiClient implements TmdbApiClient {
     try {
       _value = MoviesSearchResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -401,7 +401,7 @@ class _TmdbApiClient implements TmdbApiClient {
     try {
       _value = TvSearchResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -433,7 +433,7 @@ class _TmdbApiClient implements TmdbApiClient {
     try {
       _value = TvDetailsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -463,7 +463,7 @@ class _TmdbApiClient implements TmdbApiClient {
     try {
       _value = TvSearchResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;

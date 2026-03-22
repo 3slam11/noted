@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:noted/app/app_events.dart';
+import 'package:noted/app/app_prefs.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/domain/usecases/history_usecase.dart';
 import 'package:noted/presentation/base/base_view_model.dart';
@@ -20,12 +21,21 @@ class HistoryViewModel extends BaseViewModel
 
   final HistoryUsecase _historyUsecase;
   final DataGlobalNotifier _dataGlobalNotifier;
+  final AppPrefs _appPrefs;
 
   List<Item> _rawHistoryItems = [];
+  bool _showSeriesTracker = true;
 
-  HistoryViewModel(this._historyUsecase, this._dataGlobalNotifier) {
+  HistoryViewModel(
+    this._historyUsecase,
+    this._dataGlobalNotifier,
+    this._appPrefs,
+  ) {
     _dataGlobalNotifier.addListener(_silentRefresh);
   }
+
+  @override
+  bool get showSeriesTracker => _showSeriesTracker;
 
   @override
   void start() {
@@ -45,6 +55,7 @@ class HistoryViewModel extends BaseViewModel
   }
 
   Future<void> _fetchAndProcessData({required bool isInitialLoad}) async {
+    _showSeriesTracker = await _appPrefs.getShowSeriesTracker();
     (await _historyUsecase.execute(null)).fold(
       (failure) {
         if (isInitialLoad) {
@@ -295,4 +306,5 @@ abstract class HistoryViewModelOutputs {
   Stream<List<Item>> get outputHistoryItems;
   Stream<Category> get outputSelectedCategory;
   Stream<SortOption> get outputSortOption;
+  bool get showSeriesTracker;
 }

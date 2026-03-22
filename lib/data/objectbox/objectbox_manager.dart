@@ -185,7 +185,7 @@ class ObjectBoxManager {
     _cacheBox.removeAll();
   }
 
-  // Enhanced cache operations for backup/restore
+  // Cache operations for backup/restore
   List<CacheEntity> getAllValidCache({int? maxAgeMs}) {
     final allCache = _cacheBox.getAll();
     if (maxAgeMs == null) return allCache;

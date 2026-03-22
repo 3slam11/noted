@@ -3,6 +3,7 @@
 ///
 // coverage:ignore-file
 // ignore_for_file: type=lint, unused_import
+// dart format off
 
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +11,7 @@ import 'package:slang/generated.dart';
 import 'strings.g.dart';
 
 // Path: <root>
-class TranslationsAr implements Translations {
+class TranslationsAr with BaseTranslations<AppLocale, Translations> implements Translations {
 	/// You can call this constructor and build your own translation instance of this locale.
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	TranslationsAr({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
@@ -59,7 +60,6 @@ class TranslationsAr implements Translations {
 	@override late final _TranslationsSearchAr search = _TranslationsSearchAr._(_root);
 	@override late final _TranslationsDetailsAr details = _TranslationsDetailsAr._(_root);
 	@override late final _TranslationsSettingsAr settings = _TranslationsSettingsAr._(_root);
-	@override late final _TranslationsQrSettingsAr qrSettings = _TranslationsQrSettingsAr._(_root);
 	@override late final _TranslationsLanguageSettingsAr languageSettings = _TranslationsLanguageSettingsAr._(_root);
 	@override late final _TranslationsThemeSettingsAr themeSettings = _TranslationsThemeSettingsAr._(_root);
 	@override late final _TranslationsFontSettingsAr fontSettings = _TranslationsFontSettingsAr._(_root);
@@ -129,6 +129,7 @@ class _TranslationsHomeAr implements TranslationsHomeEn {
 	final TranslationsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get home => 'الرئيسية';
 	@override String get titleSection => 'قائمة الترفيه لشهر ';
 	@override String get emptySection => 'القائمة فارغة';
 	@override String get finishedList => 'القائمة المكتملة';
@@ -258,25 +259,8 @@ class _TranslationsSettingsAr implements TranslationsSettingsEn {
 	@override String get rolloverPartialDescription => 'نقل العناصر المكتملة فقط إلى السجل. الاحتفاظ بجميع عناصر قائمة المهام.';
 	@override String get rolloverManual => 'يدوي';
 	@override String get rolloverManualDescription => 'لا تفعل شيئًا. سأدير قوائمي بنفسي.';
-}
-
-// Path: qrSettings
-class _TranslationsQrSettingsAr implements TranslationsQrSettingsEn {
-	_TranslationsQrSettingsAr._(this._root);
-
-	final TranslationsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'مزامنة بالـQR';
-	@override String get desktop => 'الخاصية غير متوفرة على الكمبيوتر';
-	@override String get desktopDescription => 'قارئ الـQR متوفرة فقط على الهواتف.';
-	@override String get subtitle => 'مزامنة بين الأجهزة عن طريق الـQR';
-	@override String get description => 'يمكنك مزامنة بياناتك واعدادتك على جهاز اخر.';
-	@override String get alert => 'المزامنة ستستبدل بياناتك الحالية بالجديدة.';
-	@override String get scan => 'امسح';
-	@override String get generate => 'انشئ';
-	@override String get generating => 'جاري انشاء الـQR...';
-	@override String get generated => 'تم انشاء الـQR';
+	@override String get showSeriesTracker => 'إظهار متتبع المسلسلات';
+	@override String get showSeriesTrackerDescription => 'عرض الموسم والحلقة الحالية للمسلسلات التلفزيونية في القوائم الرئيسية.';
 }
 
 // Path: languageSettings
@@ -410,213 +394,208 @@ class _TranslationsAboutAr implements TranslationsAboutEn {
 	@override String get thanksMessage => 'بفضل خطتهم المجانية، أصبح التطبيق قابلًا للاستخدام كما هو الآن.';
 }
 
-/// Flat map(s) containing all translations.
+/// The flat map containing all translations for locale <ar>.
 /// Only for edge cases! For simple maps, use the map function of this library.
+///
+/// The Dart AOT compiler has issues with very large switch statements,
+/// so the map is split into smaller functions (512 entries each).
 extension on TranslationsAr {
 	dynamic _flatMapFunction(String path) {
-		switch (path) {
-			case 'appName': return 'نوتد';
-			case 'months.0': return 'يناير';
-			case 'months.1': return 'فبراير';
-			case 'months.2': return 'مارس';
-			case 'months.3': return 'أبريل';
-			case 'months.4': return 'مايو';
-			case 'months.5': return 'يونيو';
-			case 'months.6': return 'يوليو';
-			case 'months.7': return 'اغسطس';
-			case 'months.8': return 'سبتمبر';
-			case 'months.9': return 'أكتوبر';
-			case 'months.10': return 'نوفمبر';
-			case 'months.11': return 'ديسمبر';
-			case 'routes.noRouteFound': return 'المسار غير موجود';
-			case 'errorHandler.defaultError': return 'حدث خطأ ما، حاول مرة أخرى لاحقاً';
-			case 'errorHandler.success': return 'نجاح';
-			case 'errorHandler.noContent': return 'لا يوجد محتوى';
-			case 'errorHandler.badRequest': return 'طلب سيء';
-			case 'errorHandler.unauthorized': return 'غير مصرح به';
-			case 'errorHandler.forbidden': return 'ممنوع';
-			case 'errorHandler.internalServerError': return 'خطأ في الخادم الداخلي';
-			case 'errorHandler.notFound': return 'غير موجود';
-			case 'errorHandler.timeOut': return 'انقضى الوقت';
-			case 'errorHandler.cancel': return 'إلغاء';
-			case 'errorHandler.cacheError': return 'خطأ في الكاش';
-			case 'errorHandler.noInternetConnection': return 'لا يوجد اتصال بالإنترنت';
-			case 'errorHandler.errorOccurred': return 'حدث خطأ';
-			case 'errorHandler.connectionIssuesTitle': return 'مشاكل الاتصال';
-			case 'errorHandler.connectionIssuesSubtitle': return 'قد تكون هناك عدة أسباب لهذه المشكلة:';
-			case 'errorHandler.internetNotWorking': return 'ربما الإنترنت لا يعمل.';
-			case 'errorHandler.apiCapacityHit': return 'قد تكون سعة واجهة برمجة التطبيقات الافتراضية قد وصلت إلى الحد الأقصى.';
-			case 'errorHandler.customApiError': return 'قد تكون واجهة برمجة التطبيقات المخصصة الخاصة بك مكتوبة بشكل غير صحيح.';
-			case 'errorHandler.siteDownError': return 'قد يكون الموقع معطلاً في الوقت الحالي، انتظر بضع دقائق وحاول لاحقًا.';
-			case 'stateRenderer.content': return 'المحتوى';
-			case 'stateRenderer.error': return 'خطأ';
-			case 'stateRenderer.loading': return 'تحميل';
-			case 'stateRenderer.retry': return 'إعادة المحاولة';
-			case 'stateRenderer.ok': return 'موافق';
-			case 'home.titleSection': return 'قائمة الترفيه لشهر ';
-			case 'home.emptySection': return 'القائمة فارغة';
-			case 'home.finishedList': return 'القائمة المكتملة';
-			case 'home.movies': return 'الأفلام';
-			case 'home.series': return 'المسلسلات';
-			case 'home.games': return 'الألعاب';
-			case 'home.books': return 'الكتب';
-			case 'home.all': return 'الكل';
-			case 'home.deleted': return 'حذفت';
-			case 'home.undo': return 'تراجع';
-			case 'home.newMonthStarted': return 'بدأ شهر جديد! 🎉';
-			case 'home.description': return ({required Object month}) => 'مرحبا بـ ${month}!';
-			case 'home.description2': return 'تم نقل العناصر المكتملة للسجل. هذه هي العناصر المتبقية من الشهر الماضي:';
-			case 'home.pending': return '📝 في الانتظار: ';
-			case 'home.completed': return '🎯 المكتمل: ';
-			case 'home.selectAll': return 'تحديد الكل';
-			case 'home.deselectAll': return 'إلغاء تحديد الكل';
-			case 'home.deleteAll': return 'حذف الكل';
-			case 'home.addAll': return 'اضف الكل';
-			case 'home.keepSelected': return 'الاحتفاظ بالمحدد';
-			case 'home.noCompleted': return 'لا يوجد عناصر مكتملة حتى الآن';
-			case 'home.congratulations': return 'تهانينا!';
-			case 'home.todosDone': return 'لقد اكملت كل عناصر الشهر الماضي!';
-			case 'home.close': return 'اغلاق';
-			case 'home.timeWrong': return 'إما انك مسافر بالزمن أو قمت بتغيير التاريخ! 🕰️';
-			case 'home.timeWrongDescription': return 'التطبيق لاحظ ان تاريخ هاتفك ربما لا يكون صحيحاً. هذا قد يعبث بالقوائم.';
-			case 'home.continueAnyway': return 'استمر';
-			case 'home.itemActions': return 'اختيارات العنصر';
-			case 'home.moveToTodo': return 'نقل لقائمة المهام';
-			case 'home.moveToFinished': return 'نقل للقائمة المكتملة';
-			case 'home.moveToHistory': return 'نقل للسجل';
-			case 'home.editNotes': return 'تعديل/عرض الملاحظات';
-			case 'home.yourRating': return 'تقييمك';
-			case 'home.yourNotes': return 'ملاحظاتك';
-			case 'home.notesHint': return 'أضف أفكارك هنا...';
-			case 'home.noNotes': return 'لا توجد ملاحظات بعد.';
-			case 'home.notesSaved': return 'تم حفظ الملاحظات والتقييم.';
-			case 'home.save': return 'حفظ';
-			case 'home.delete': return 'حذف';
-			case 'sort.sort': return 'رتب';
-			case 'sort.sortBy': return 'ترتيب حسب';
-			case 'sort.titleAsc': return 'العنوان (أ-ي)';
-			case 'sort.titleDesc': return 'العنوان (ي-أ)';
-			case 'sort.releaseDateNewest': return 'تاريخ الإصدار (الأحدث)';
-			case 'sort.releaseDateOldest': return 'تاريخ الإصدار (الأقدم)';
-			case 'sort.ratingHighest': return 'التقييم (الأعلى)';
-			case 'sort.ratingLowest': return 'التقييم (الأدنى)';
-			case 'sort.dateAddedNewest': return 'تاريخ الإضافة (الأحدث)';
-			case 'sort.dateAddedOldest': return 'تاريخ الإضافة (الأقدم)';
-			case 'search.search': return 'بحث';
-			case 'search.searchPlaceholder': return 'ابحث...';
-			case 'search.searchForSomething': return 'ابحث عن اي شيء';
-			case 'search.noResultsFound': return 'لم يتم العثور على نتائج';
-			case 'search.cantSearch': return 'لا يمكن البحث الآن';
-			case 'details.title': return 'تفاصيل';
-			case 'details.movies': return 'الأفلام';
-			case 'details.series': return 'المسلسلات';
-			case 'details.games': return 'الألعاب';
-			case 'details.books': return 'الكتب';
-			case 'details.description': return 'الوصف';
-			case 'details.genres': return 'التصنيف';
-			case 'details.progressTracker': return 'تتبع التقدم';
-			case 'details.season': return 'الموسم';
-			case 'details.episode': return 'الحلقة';
-			case 'details.releaseDate': return 'تاريخ الإصدار';
-			case 'details.platforms': return 'المنصات';
-			case 'details.rating': return 'التقييم';
-			case 'details.publisher': return 'الناشر';
-			case 'details.studio': return 'الشركة';
-			case 'details.network': return 'الشبكة';
-			case 'details.moreLikeThis': return 'مثل هذا';
-			case 'details.noRecommendations': return 'لا توجد اقتراحات';
-			case 'settings.backupAndRestore': return 'النسخ والاستعادة';
-			case 'settings.settings': return 'الإعدادات';
-			case 'settings.language': return 'اللغة';
-			case 'settings.theme': return 'السمة';
-			case 'settings.font': return 'الخط';
-			case 'settings.appDefaultFont': return 'الخط الافتراضي';
-			case 'settings.systemFont': return 'خط النظام';
-			case 'settings.customFont': return 'خط مخصص';
-			case 'settings.customFontDetails': return 'تفاصيل الخط المخصص';
-			case 'settings.history': return 'السجل';
-			case 'settings.apiChange': return 'تغيير الـAPI';
-			case 'settings.statistics': return 'الإحصائيات';
-			case 'settings.about': return 'حول التطبيق';
-			case 'settings.monthRolloverBehavior': return 'سلوك ترحيل الشهر';
-			case 'settings.monthRolloverBehaviorDescription': return 'اختر ما يحدث في بداية شهر جديد.';
-			case 'settings.rolloverFull': return 'ترحيل كامل (افتراضي)';
-			case 'settings.rolloverFullDescription': return 'نقل العناصر المكتملة إلى السجل والسؤال عن العناصر التي يجب الاحتفاظ بها في قائمة المهام.';
-			case 'settings.rolloverPartial': return 'ترحيل جزئي';
-			case 'settings.rolloverPartialDescription': return 'نقل العناصر المكتملة فقط إلى السجل. الاحتفاظ بجميع عناصر قائمة المهام.';
-			case 'settings.rolloverManual': return 'يدوي';
-			case 'settings.rolloverManualDescription': return 'لا تفعل شيئًا. سأدير قوائمي بنفسي.';
-			case 'qrSettings.title': return 'مزامنة بالـQR';
-			case 'qrSettings.desktop': return 'الخاصية غير متوفرة على الكمبيوتر';
-			case 'qrSettings.desktopDescription': return 'قارئ الـQR متوفرة فقط على الهواتف.';
-			case 'qrSettings.subtitle': return 'مزامنة بين الأجهزة عن طريق الـQR';
-			case 'qrSettings.description': return 'يمكنك مزامنة بياناتك واعدادتك على جهاز اخر.';
-			case 'qrSettings.alert': return 'المزامنة ستستبدل بياناتك الحالية بالجديدة.';
-			case 'qrSettings.scan': return 'امسح';
-			case 'qrSettings.generate': return 'انشئ';
-			case 'qrSettings.generating': return 'جاري انشاء الـQR...';
-			case 'qrSettings.generated': return 'تم انشاء الـQR';
-			case 'languageSettings.selectLanguage': return 'اختر اللغة';
-			case 'languageSettings.en': return 'English';
-			case 'languageSettings.ar': return 'العربية';
-			case 'themeSettings.themeSettings': return 'إعدادات السمة';
-			case 'themeSettings.autoTheme': return 'السمة التلقائية';
-			case 'themeSettings.manualTheme': return 'السمة اليدوية';
-			case 'themeSettings.autoThemeDescription': return 'تتغير السمة تلقائياً بناءً على الشهر الحالي';
-			case 'themeSettings.selectTheme': return 'اختر السمة:';
-			case 'fontSettings.title': return 'إعدادات الخط';
-			case 'fontSettings.change': return 'تغيير';
-			case 'fontSettings.remove': return 'إزالة';
-			case 'fontSettings.noCustomFont': return 'لم يتم تحديد خط مخصص';
-			case 'fontSettings.selectFontFile': return 'اختر ملف الخط (.ttf, .otf)\'';
-			case 'backupAndRestore.title': return 'النسخ الإحتياطي والاستعادة';
-			case 'backupAndRestore.backupData': return 'النسخ الإحتياطي للبيانات';
-			case 'backupAndRestore.restoreData': return 'إستعادة البيانات';
-			case 'backupAndRestore.backupDescription': return 'حفظ القوائم الحالية في ملف.';
-			case 'backupAndRestore.restoreDescription': return ' استعادة القوائم من الملف المحفوظ.';
-			case 'backupAndRestore.backupSuccessful': return 'تم النسخ الإحتياطي بنجاح!';
-			case 'backupAndRestore.backupFailed': return 'فشل النسخ الإحتياطي: ';
-			case 'backupAndRestore.restoreSuccessful': return 'تم استعادة البيانات بنجاح!';
-			case 'backupAndRestore.restoreFailed': return 'فشل استعادة البيانات: ';
-			case 'backupAndRestore.noFileSelected': return 'لم يتم اختيار ملف.';
-			case 'backupAndRestore.invalidFileFormat': return 'الملف غير صحيح او لا يوجد بيانات.';
-			case 'backupAndRestore.selectBackupFile': return 'اختر ملف النسخ الإحتياطي';
-			case 'backupAndRestore.saveBackupFile': return 'حفظ ملف النسخ الإحتياطي';
-			case 'backupAndRestore.defaultBackupFileName': return 'noted_backup.json';
-			case 'backupAndRestore.yes': return 'نعم';
-			case 'backupAndRestore.no': return 'لا';
-			case 'backupAndRestore.dataRestoredMessage': return 'تم استعادة البيانات بنجاح.';
-			case 'history.history': return 'السجل';
-			case 'history.item': return 'عنصر';
-			case 'history.items': return 'عناصر';
-			case 'history.noHistory': return 'لا يوجد سجل حتى الان';
-			case 'apiSettings.gamesApiTitle': return 'الـAPI الخاص بالإلعاب';
-			case 'apiSettings.gamesApiDescription': return 'احصل على الـAPI الخاص بك من RAWG.io';
-			case 'apiSettings.moviesApiTitle': return 'الـAPI الخاص بالأفلام والمسلسلات';
-			case 'apiSettings.moviesApiDescription': return 'احصل على الـAPI الخاص بك من The Movie Database';
-			case 'apiSettings.booksApiTitle': return 'الـAPI الخاص بالكتب';
-			case 'apiSettings.booksApiDescription': return 'احصل على الـAPI الخاص بك من Google Cloud Console';
-			case 'apiSettings.getApiKey': return 'احصل على الـ API';
-			case 'apiSettings.apiKey': return 'مفتاح API';
-			case 'apiSettings.save': return 'حفظ';
-			case 'apiSettings.delete': return 'حذف';
-			case 'statistics.thisMonth': return 'هذا الشهر';
-			case 'statistics.allTime': return 'كل الأوقات';
-			case 'statistics.totalItems': return 'إجمالي العناصر';
-			case 'statistics.category': return 'الفئات';
-			case 'statistics.noData': return 'لا يوجد بيانات حتى الان';
-			case 'about.aboutThisApp': return 'حول هذا التطبيق';
-			case 'about.appDescription': return 'هذا التطبيق اٌنشئ بغرض التدريب فإذا واجهت مشكلة، ابلغ المطور على Github.';
-			case 'about.reportIssue': return 'أبلغ عن مشكلة';
-			case 'about.viewProject': return 'صفحة التطبيق';
-			case 'about.apisUsed': return 'الـAPIs المستخدمة';
-			case 'about.gamesDescription': return 'بيانات الألعاب جاءت من موقع RAWG';
-			case 'about.moviesAndTvSeries': return 'الأفلام والمسلسلات التلفزيونية';
-			case 'about.moviesAndTvSeriesDescription': return 'جميع البيانات حول الأفلام والمسلسلات التلفزيونية جاءت من موقع TMDB';
-			case 'about.booksDescription': return 'جميع البيانات حول الكتب جاءت من موقع Google Books API';
-			case 'about.thanksMessage': return 'بفضل خطتهم المجانية، أصبح التطبيق قابلًا للاستخدام كما هو الآن.';
-			default: return null;
-		}
+		return switch (path) {
+			'appName' => 'نوتد',
+			'months.0' => 'يناير',
+			'months.1' => 'فبراير',
+			'months.2' => 'مارس',
+			'months.3' => 'أبريل',
+			'months.4' => 'مايو',
+			'months.5' => 'يونيو',
+			'months.6' => 'يوليو',
+			'months.7' => 'اغسطس',
+			'months.8' => 'سبتمبر',
+			'months.9' => 'أكتوبر',
+			'months.10' => 'نوفمبر',
+			'months.11' => 'ديسمبر',
+			'routes.noRouteFound' => 'المسار غير موجود',
+			'errorHandler.defaultError' => 'حدث خطأ ما، حاول مرة أخرى لاحقاً',
+			'errorHandler.success' => 'نجاح',
+			'errorHandler.noContent' => 'لا يوجد محتوى',
+			'errorHandler.badRequest' => 'طلب سيء',
+			'errorHandler.unauthorized' => 'غير مصرح به',
+			'errorHandler.forbidden' => 'ممنوع',
+			'errorHandler.internalServerError' => 'خطأ في الخادم الداخلي',
+			'errorHandler.notFound' => 'غير موجود',
+			'errorHandler.timeOut' => 'انقضى الوقت',
+			'errorHandler.cancel' => 'إلغاء',
+			'errorHandler.cacheError' => 'خطأ في الكاش',
+			'errorHandler.noInternetConnection' => 'لا يوجد اتصال بالإنترنت',
+			'errorHandler.errorOccurred' => 'حدث خطأ',
+			'errorHandler.connectionIssuesTitle' => 'مشاكل الاتصال',
+			'errorHandler.connectionIssuesSubtitle' => 'قد تكون هناك عدة أسباب لهذه المشكلة:',
+			'errorHandler.internetNotWorking' => 'ربما الإنترنت لا يعمل.',
+			'errorHandler.apiCapacityHit' => 'قد تكون سعة واجهة برمجة التطبيقات الافتراضية قد وصلت إلى الحد الأقصى.',
+			'errorHandler.customApiError' => 'قد تكون واجهة برمجة التطبيقات المخصصة الخاصة بك مكتوبة بشكل غير صحيح.',
+			'errorHandler.siteDownError' => 'قد يكون الموقع معطلاً في الوقت الحالي، انتظر بضع دقائق وحاول لاحقًا.',
+			'stateRenderer.content' => 'المحتوى',
+			'stateRenderer.error' => 'خطأ',
+			'stateRenderer.loading' => 'تحميل',
+			'stateRenderer.retry' => 'إعادة المحاولة',
+			'stateRenderer.ok' => 'موافق',
+			'home.home' => 'الرئيسية',
+			'home.titleSection' => 'قائمة الترفيه لشهر ',
+			'home.emptySection' => 'القائمة فارغة',
+			'home.finishedList' => 'القائمة المكتملة',
+			'home.movies' => 'الأفلام',
+			'home.series' => 'المسلسلات',
+			'home.games' => 'الألعاب',
+			'home.books' => 'الكتب',
+			'home.all' => 'الكل',
+			'home.deleted' => 'حذفت',
+			'home.undo' => 'تراجع',
+			'home.newMonthStarted' => 'بدأ شهر جديد! 🎉',
+			'home.description' => ({required Object month}) => 'مرحبا بـ ${month}!',
+			'home.description2' => 'تم نقل العناصر المكتملة للسجل. هذه هي العناصر المتبقية من الشهر الماضي:',
+			'home.pending' => '📝 في الانتظار: ',
+			'home.completed' => '🎯 المكتمل: ',
+			'home.selectAll' => 'تحديد الكل',
+			'home.deselectAll' => 'إلغاء تحديد الكل',
+			'home.deleteAll' => 'حذف الكل',
+			'home.addAll' => 'اضف الكل',
+			'home.keepSelected' => 'الاحتفاظ بالمحدد',
+			'home.noCompleted' => 'لا يوجد عناصر مكتملة حتى الآن',
+			'home.congratulations' => 'تهانينا!',
+			'home.todosDone' => 'لقد اكملت كل عناصر الشهر الماضي!',
+			'home.close' => 'اغلاق',
+			'home.timeWrong' => 'إما انك مسافر بالزمن أو قمت بتغيير التاريخ! 🕰️',
+			'home.timeWrongDescription' => 'التطبيق لاحظ ان تاريخ هاتفك ربما لا يكون صحيحاً. هذا قد يعبث بالقوائم.',
+			'home.continueAnyway' => 'استمر',
+			'home.itemActions' => 'اختيارات العنصر',
+			'home.moveToTodo' => 'نقل لقائمة المهام',
+			'home.moveToFinished' => 'نقل للقائمة المكتملة',
+			'home.moveToHistory' => 'نقل للسجل',
+			'home.editNotes' => 'تعديل/عرض الملاحظات',
+			'home.yourRating' => 'تقييمك',
+			'home.yourNotes' => 'ملاحظاتك',
+			'home.notesHint' => 'أضف أفكارك هنا...',
+			'home.noNotes' => 'لا توجد ملاحظات بعد.',
+			'home.notesSaved' => 'تم حفظ الملاحظات والتقييم.',
+			'home.save' => 'حفظ',
+			'home.delete' => 'حذف',
+			'sort.sort' => 'رتب',
+			'sort.sortBy' => 'ترتيب حسب',
+			'sort.titleAsc' => 'العنوان (أ-ي)',
+			'sort.titleDesc' => 'العنوان (ي-أ)',
+			'sort.releaseDateNewest' => 'تاريخ الإصدار (الأحدث)',
+			'sort.releaseDateOldest' => 'تاريخ الإصدار (الأقدم)',
+			'sort.ratingHighest' => 'التقييم (الأعلى)',
+			'sort.ratingLowest' => 'التقييم (الأدنى)',
+			'sort.dateAddedNewest' => 'تاريخ الإضافة (الأحدث)',
+			'sort.dateAddedOldest' => 'تاريخ الإضافة (الأقدم)',
+			'search.search' => 'بحث',
+			'search.searchPlaceholder' => 'ابحث...',
+			'search.searchForSomething' => 'ابحث عن اي شيء',
+			'search.noResultsFound' => 'لم يتم العثور على نتائج',
+			'search.cantSearch' => 'لا يمكن البحث الآن',
+			'details.title' => 'تفاصيل',
+			'details.movies' => 'الأفلام',
+			'details.series' => 'المسلسلات',
+			'details.games' => 'الألعاب',
+			'details.books' => 'الكتب',
+			'details.description' => 'الوصف',
+			'details.genres' => 'التصنيف',
+			'details.progressTracker' => 'تتبع التقدم',
+			'details.season' => 'الموسم',
+			'details.episode' => 'الحلقة',
+			'details.releaseDate' => 'تاريخ الإصدار',
+			'details.platforms' => 'المنصات',
+			'details.rating' => 'التقييم',
+			'details.publisher' => 'الناشر',
+			'details.studio' => 'الشركة',
+			'details.network' => 'الشبكة',
+			'details.moreLikeThis' => 'مثل هذا',
+			'details.noRecommendations' => 'لا توجد اقتراحات',
+			'settings.backupAndRestore' => 'النسخ والاستعادة',
+			'settings.settings' => 'الإعدادات',
+			'settings.language' => 'اللغة',
+			'settings.theme' => 'السمة',
+			'settings.font' => 'الخط',
+			'settings.appDefaultFont' => 'الخط الافتراضي',
+			'settings.systemFont' => 'خط النظام',
+			'settings.customFont' => 'خط مخصص',
+			'settings.customFontDetails' => 'تفاصيل الخط المخصص',
+			'settings.history' => 'السجل',
+			'settings.apiChange' => 'تغيير الـAPI',
+			'settings.statistics' => 'الإحصائيات',
+			'settings.about' => 'حول التطبيق',
+			'settings.monthRolloverBehavior' => 'سلوك ترحيل الشهر',
+			'settings.monthRolloverBehaviorDescription' => 'اختر ما يحدث في بداية شهر جديد.',
+			'settings.rolloverFull' => 'ترحيل كامل (افتراضي)',
+			'settings.rolloverFullDescription' => 'نقل العناصر المكتملة إلى السجل والسؤال عن العناصر التي يجب الاحتفاظ بها في قائمة المهام.',
+			'settings.rolloverPartial' => 'ترحيل جزئي',
+			'settings.rolloverPartialDescription' => 'نقل العناصر المكتملة فقط إلى السجل. الاحتفاظ بجميع عناصر قائمة المهام.',
+			'settings.rolloverManual' => 'يدوي',
+			'settings.rolloverManualDescription' => 'لا تفعل شيئًا. سأدير قوائمي بنفسي.',
+			'settings.showSeriesTracker' => 'إظهار متتبع المسلسلات',
+			'settings.showSeriesTrackerDescription' => 'عرض الموسم والحلقة الحالية للمسلسلات التلفزيونية في القوائم الرئيسية.',
+			'languageSettings.selectLanguage' => 'اختر اللغة',
+			'languageSettings.en' => 'English',
+			'languageSettings.ar' => 'العربية',
+			'themeSettings.themeSettings' => 'إعدادات السمة',
+			'themeSettings.autoTheme' => 'السمة التلقائية',
+			'themeSettings.manualTheme' => 'السمة اليدوية',
+			'themeSettings.autoThemeDescription' => 'تتغير السمة تلقائياً بناءً على الشهر الحالي',
+			'themeSettings.selectTheme' => 'اختر السمة:',
+			'fontSettings.title' => 'إعدادات الخط',
+			'fontSettings.change' => 'تغيير',
+			'fontSettings.remove' => 'إزالة',
+			'fontSettings.noCustomFont' => 'لم يتم تحديد خط مخصص',
+			'fontSettings.selectFontFile' => 'اختر ملف الخط (.ttf, .otf)\'',
+			'backupAndRestore.title' => 'النسخ الإحتياطي والاستعادة',
+			'backupAndRestore.backupData' => 'النسخ الإحتياطي للبيانات',
+			'backupAndRestore.restoreData' => 'إستعادة البيانات',
+			'backupAndRestore.backupDescription' => 'حفظ القوائم الحالية في ملف.',
+			'backupAndRestore.restoreDescription' => ' استعادة القوائم من الملف المحفوظ.',
+			'backupAndRestore.backupSuccessful' => 'تم النسخ الإحتياطي بنجاح!',
+			'backupAndRestore.backupFailed' => 'فشل النسخ الإحتياطي: ',
+			'backupAndRestore.restoreSuccessful' => 'تم استعادة البيانات بنجاح!',
+			'backupAndRestore.restoreFailed' => 'فشل استعادة البيانات: ',
+			'backupAndRestore.noFileSelected' => 'لم يتم اختيار ملف.',
+			'backupAndRestore.invalidFileFormat' => 'الملف غير صحيح او لا يوجد بيانات.',
+			'backupAndRestore.selectBackupFile' => 'اختر ملف النسخ الإحتياطي',
+			'backupAndRestore.saveBackupFile' => 'حفظ ملف النسخ الإحتياطي',
+			'backupAndRestore.defaultBackupFileName' => 'noted_backup.json',
+			'backupAndRestore.yes' => 'نعم',
+			'backupAndRestore.no' => 'لا',
+			'backupAndRestore.dataRestoredMessage' => 'تم استعادة البيانات بنجاح.',
+			'history.history' => 'السجل',
+			'history.item' => 'عنصر',
+			'history.items' => 'عناصر',
+			'history.noHistory' => 'لا يوجد سجل حتى الان',
+			'apiSettings.gamesApiTitle' => 'الـAPI الخاص بالإلعاب',
+			'apiSettings.gamesApiDescription' => 'احصل على الـAPI الخاص بك من RAWG.io',
+			'apiSettings.moviesApiTitle' => 'الـAPI الخاص بالأفلام والمسلسلات',
+			'apiSettings.moviesApiDescription' => 'احصل على الـAPI الخاص بك من The Movie Database',
+			'apiSettings.booksApiTitle' => 'الـAPI الخاص بالكتب',
+			'apiSettings.booksApiDescription' => 'احصل على الـAPI الخاص بك من Google Cloud Console',
+			'apiSettings.getApiKey' => 'احصل على الـ API',
+			'apiSettings.apiKey' => 'مفتاح API',
+			'apiSettings.save' => 'حفظ',
+			'apiSettings.delete' => 'حذف',
+			'statistics.thisMonth' => 'هذا الشهر',
+			'statistics.allTime' => 'كل الأوقات',
+			'statistics.totalItems' => 'إجمالي العناصر',
+			'statistics.category' => 'الفئات',
+			'statistics.noData' => 'لا يوجد بيانات حتى الان',
+			'about.aboutThisApp' => 'حول هذا التطبيق',
+			'about.appDescription' => 'هذا التطبيق اٌنشئ بغرض التدريب فإذا واجهت مشكلة، ابلغ المطور على Github.',
+			'about.reportIssue' => 'أبلغ عن مشكلة',
+			'about.viewProject' => 'صفحة التطبيق',
+			'about.apisUsed' => 'الـAPIs المستخدمة',
+			'about.gamesDescription' => 'بيانات الألعاب جاءت من موقع RAWG',
+			'about.moviesAndTvSeries' => 'الأفلام والمسلسلات التلفزيونية',
+			'about.moviesAndTvSeriesDescription' => 'جميع البيانات حول الأفلام والمسلسلات التلفزيونية جاءت من موقع TMDB',
+			'about.booksDescription' => 'جميع البيانات حول الكتب جاءت من موقع Google Books API',
+			'about.thanksMessage' => 'بفضل خطتهم المجانية، أصبح التطبيق قابلًا للاستخدام كما هو الآن.',
+			_ => null,
+		};
 	}
 }
-

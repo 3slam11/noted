@@ -99,7 +99,7 @@ class _HomeViewState extends State<HomeView>
     final colorScheme = Theme.of(context).colorScheme;
 
     final pageTitles = [
-      t.appName,
+      t.home.home,
       t.search.search,
       t.history.history,
       t.settings.settings,
