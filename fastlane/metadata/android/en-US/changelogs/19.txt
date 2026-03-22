@@ -1,0 +1,3 @@
+- Added a series tracker on home
+- Added a save for later page
+- Fixed a real time update problem
