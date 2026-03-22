@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/gen/strings.g.dart';
-import 'package:noted/presentation/backupAndRestore/viewModel/backup_and_restore_viewmodel.dart';
+import 'package:noted/presentation/backupAndRestore/backup_and_restore_viewmodel.dart';
 import 'package:noted/presentation/common/state_renderer/state_flow_handler.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
 

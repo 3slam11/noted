@@ -51,10 +51,17 @@ MainDataResponse _$MainDataResponseFromJson(Map<String, dynamic> json) =>
       (json['finished'] as List<dynamic>?)
           ?.map((e) => ItemResponse.fromJson(e as Map<String, dynamic>))
           .toList(),
+      (json['saved'] as List<dynamic>?)
+          ?.map((e) => ItemResponse.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$MainDataResponseToJson(MainDataResponse instance) =>
-    <String, dynamic>{'todos': instance.todos, 'finished': instance.finished};
+    <String, dynamic>{
+      'todos': instance.todos,
+      'finished': instance.finished,
+      'saved': instance.saved,
+    };
 
 MainResponse _$MainResponseFromJson(Map<String, dynamic> json) =>
     MainResponse(

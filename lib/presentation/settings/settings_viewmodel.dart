@@ -11,7 +11,7 @@ import 'package:noted/presentation/base/base_view_model.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer_impl.dart';
 import 'package:noted/presentation/resources/theme_manager.dart';
-import 'package:noted/presentation/settings/view/settings_view.dart';
+import 'package:noted/presentation/settings/settings_view.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';

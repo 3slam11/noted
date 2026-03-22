@@ -5,9 +5,9 @@ import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
-import 'package:noted/presentation/search/viewModel/search_viewmodel.dart';
+import 'package:noted/presentation/search/search_viewmodel.dart';
 import 'package:noted/presentation/common/state_renderer/state_flow_handler.dart';
-import 'package:noted/presentation/details/view/details_view.dart';
+import 'package:noted/presentation/details/details_view.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -323,16 +323,25 @@ class SearchViewState extends State<SearchView> {
                   ],
                 ),
               ),
-              IconButton(
+              PopupMenuButton<ItemListType>(
                 icon: Icon(
                   isAdded ? Icons.check_circle_outline : Icons.add_rounded,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                onPressed: isAdded
-                    ? null
-                    : () {
-                        viewModel.addItemToTodo(item);
-                      },
+                enabled: !isAdded,
+                onSelected: (listType) {
+                  viewModel.addItemToList(item, listType);
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: ItemListType.todo,
+                    child: Text(t.home.addToTodo),
+                  ),
+                  PopupMenuItem(
+                    value: ItemListType.saved,
+                    child: Text(t.home.addToSaved),
+                  ),
+                ],
               ),
             ],
           ),

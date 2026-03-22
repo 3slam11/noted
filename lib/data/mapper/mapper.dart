@@ -44,8 +44,10 @@ extension HomeResponseMapper on MainResponse? {
     List<Item> finished =
         (this?.data?.finished?.map((finish) => finish.toDomain()) ?? [])
             .toList();
+    List<Item> saved = (this?.data?.saved?.map((s) => s.toDomain()) ?? [])
+        .toList();
 
-    var data = TaskData(todos, finished);
+    var data = TaskData(todos, finished, saved);
 
     return MainObject(data);
   }

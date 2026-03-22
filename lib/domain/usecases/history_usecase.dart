@@ -27,4 +27,8 @@ class HistoryUsecase implements BaseUsecase<void, List<Item>> {
   Future<Either<Failure, void>> moveToFinished(Item item) {
     return repository.moveToFinished(item);
   }
+
+  Future<Either<Failure, void>> moveToSaved(Item item) {
+    return repository.moveToSaved(item);
+  }
 }

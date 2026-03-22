@@ -409,6 +409,7 @@ class ObjectBoxManager {
       'todoItems': getItemCountByType('todo'),
       'finishedItems': getItemCountByType('finished'),
       'historyItems': getItemCountByType('history'),
+      'savedItems': getItemCountByType('saved'),
       'preferences': _preferenceBox.count(),
       'cacheEntries': _cacheBox.count(),
     };

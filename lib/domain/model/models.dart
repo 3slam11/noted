@@ -2,7 +2,7 @@ import 'package:noted/gen/strings.g.dart';
 
 // main models
 
-enum ItemListType { todo, finished, history }
+enum ItemListType { todo, finished, history, saved }
 
 enum Category {
   all,
@@ -114,7 +114,8 @@ class Item {
 class TaskData {
   final List<Item> todos;
   final List<Item> finished;
-  TaskData(this.todos, this.finished);
+  final List<Item> saved;
+  TaskData(this.todos, this.finished, this.saved);
 }
 
 class MainObject {

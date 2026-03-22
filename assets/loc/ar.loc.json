@@ -1,6 +1,6 @@
 {
   "appName": "نوتد",
-  "months": [
+  "months":[
     "يناير",
     "فبراير",
     "مارس",
@@ -50,6 +50,7 @@
     "titleSection": "قائمة الترفيه لشهر ",
     "emptySection": "القائمة فارغة",
     "finishedList": "القائمة المكتملة",
+    "savedList": "قائمة الحفظ لوقت لاحق",
     "movies": "الأفلام",
     "series": "المسلسلات",
     "games": "الألعاب",
@@ -68,6 +69,7 @@
     "addAll": "اضف الكل",
     "keepSelected": "الاحتفاظ بالمحدد",
     "noCompleted": "لا يوجد عناصر مكتملة حتى الآن",
+    "noSaved": "لا توجد عناصر محفوظة حتى الآن",
     "congratulations": "تهانينا!",
     "todosDone": "لقد اكملت كل عناصر الشهر الماضي!",
     "close": "اغلاق",
@@ -78,6 +80,9 @@
     "moveToTodo": "نقل لقائمة المهام",
     "moveToFinished": "نقل للقائمة المكتملة",
     "moveToHistory": "نقل للسجل",
+    "moveToSaved": "نقل لقائمة الحفظ",
+    "addToTodo": "أضف لقائمة المهام",
+    "addToSaved": "أضف لقائمة الحفظ",
     "editNotes": "تعديل/عرض الملاحظات",
     "yourRating": "تقييمك",
     "yourNotes": "ملاحظاتك",

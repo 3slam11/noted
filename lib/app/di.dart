@@ -15,15 +15,17 @@ import 'package:noted/domain/usecases/history_usecase.dart';
 import 'package:noted/domain/usecases/main_usecase.dart';
 import 'package:noted/domain/usecases/recommendations_usecase.dart';
 import 'package:noted/domain/usecases/search_usecase.dart';
-import 'package:noted/presentation/backupAndRestore/viewModel/backup_and_restore_viewmodel.dart';
-import 'package:noted/presentation/changeApi/viewModel/change_api_viewmodel.dart';
-import 'package:noted/presentation/details/viewModel/details_viewmodel.dart';
-import 'package:noted/presentation/history/viewModel/history_view_model.dart';
-import 'package:noted/presentation/main/viewModel/main_view_model.dart';
+import 'package:noted/domain/usecases/saved_usecase.dart';
+import 'package:noted/presentation/backupAndRestore/backup_and_restore_viewmodel.dart';
+import 'package:noted/presentation/changeApi/change_api_viewmodel.dart';
+import 'package:noted/presentation/details/details_viewmodel.dart';
+import 'package:noted/presentation/history/history_view_model.dart';
+import 'package:noted/presentation/main/main_view_model.dart';
 import 'package:noted/presentation/resources/theme_manager.dart';
-import 'package:noted/presentation/search/viewModel/search_viewmodel.dart';
-import 'package:noted/presentation/settings/viewModel/settings_viewmodel.dart';
-import 'package:noted/presentation/statistics/viewModel/statistics_viewmodel.dart';
+import 'package:noted/presentation/search/search_viewmodel.dart';
+import 'package:noted/presentation/settings/settings_viewmodel.dart';
+import 'package:noted/presentation/statistics/statistics_viewmodel.dart';
+import 'package:noted/presentation/saved/saved_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final instance = GetIt.instance;
@@ -76,6 +78,7 @@ void initHomeModule() {
   initMainModule();
   initSearchModule();
   initHistoryModule();
+  initSavedModule();
   initSettingsModule();
 }
 
@@ -122,6 +125,15 @@ void initHistoryModule() {
     instance.registerFactory<HistoryUsecase>(() => HistoryUsecase(instance()));
     instance.registerFactory<HistoryViewModel>(
       () => HistoryViewModel(instance(), instance(), instance()),
+    );
+  }
+}
+
+void initSavedModule() {
+  if (!GetIt.I.isRegistered<SavedViewModel>()) {
+    instance.registerFactory<SavedUsecase>(() => SavedUsecase(instance()));
+    instance.registerFactory<SavedViewModel>(
+      () => SavedViewModel(instance(), instance(), instance()),
     );
   }
 }

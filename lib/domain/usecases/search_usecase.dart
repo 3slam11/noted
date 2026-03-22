@@ -31,6 +31,7 @@ class SearchUsecase implements BaseUsecase<SearchInput, SearchResults> {
       homeDataEither.fold((failure) {}, (mainObject) {
         allLocalItems.addAll(mainObject.mainData!.todos);
         allLocalItems.addAll(mainObject.mainData!.finished);
+        allLocalItems.addAll(mainObject.mainData!.saved);
       });
 
       final historyDataEither = await repository.getHistory();
@@ -53,6 +54,10 @@ class SearchUsecase implements BaseUsecase<SearchInput, SearchResults> {
 
   Future<Either<Failure, void>> addToTodo(ItemResponse item) {
     return repository.addTodo(item);
+  }
+
+  Future<Either<Failure, void>> addToSaved(ItemResponse item) {
+    return repository.addSaved(item);
   }
 }
 

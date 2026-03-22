@@ -107,8 +107,12 @@ class MainViewModel extends BaseViewModel
       _currentObject!.mainData!.finished,
       currentSortOption,
     );
+    final sortedSaved = _sortItems(
+      _currentObject!.mainData!.saved,
+      currentSortOption,
+    );
 
-    final newMainData = TaskData(sortedTodos, sortedFinished);
+    final newMainData = TaskData(sortedTodos, sortedFinished, sortedSaved);
     _mainDataController.add(MainObject(newMainData));
   }
 
@@ -222,6 +226,14 @@ class MainViewModel extends BaseViewModel
         _currentObject!.mainData!.finished[finishedIndex] = updatedItem;
       }
 
+      // Update item in 'saved' list
+      final savedIndex = _currentObject!.mainData!.saved.indexWhere(
+        (i) => _isSameItem(i, updatedItem),
+      );
+      if (savedIndex != -1) {
+        _currentObject!.mainData!.saved[savedIndex] = updatedItem;
+      }
+
       _applySortersAndFilters();
     });
   }
@@ -239,6 +251,14 @@ class MainViewModel extends BaseViewModel
     await _performItemOperation(
       () => _mainUsecase.moveToTodo(item),
       onSuccess: () => _moveItemToTodo(item),
+    );
+  }
+
+  @override
+  Future<void> moveToSaved(Item item) async {
+    await _performItemOperation(
+      () => _mainUsecase.moveToSaved(item),
+      onSuccess: () => _moveItemToSaved(item),
     );
   }
 
@@ -317,12 +337,50 @@ class MainViewModel extends BaseViewModel
   }
 
   @override
+  int? deleteSavedTemporarily(Item item) {
+    if (!hasData) return null;
+    final index = _currentObject!.mainData!.saved.indexWhere(
+      (i) => _isSameItem(i, item),
+    );
+    if (index != -1) {
+      _currentObject!.mainData!.saved.removeAt(index);
+      _applySortersAndFilters();
+      return index;
+    }
+    return null;
+  }
+
+  @override
+  void undoDeleteSaved(Item item, int index) {
+    if (!hasData) return;
+    if (index >= 0 && index <= _currentObject!.mainData!.saved.length) {
+      _currentObject!.mainData!.saved.insert(index, item);
+      _applySortersAndFilters();
+    }
+  }
+
+  @override
+  Future<void> confirmDeleteSaved(Item item) async {
+    final result = await _mainUsecase.deleteSaved(item);
+    result.fold(
+      (failure) {
+        _handlePopupError(failure);
+        loadMainData(); // On failure, restore state by reloading
+      },
+      (_) {
+        // On success, do nothing. The UI and ViewModel state are already correct.
+      },
+    );
+  }
+
+  @override
   Future<void> moveToHistory(Item item) async {
     await _performItemOperation(
       () => _mainUsecase.moveToHistory(item),
       onSuccess: () {
         _removeFromTodoList(item);
         _removeFromFinishedList(item);
+        _removeFromSavedList(item);
         _dataGlobalNotifier.notifyDataImported();
       },
     );
@@ -332,15 +390,19 @@ class MainViewModel extends BaseViewModel
   Future<void> deleteItemPermanently(Item item, ItemListType listType) async {
     final operation = listType == ItemListType.todo
         ? () => _mainUsecase.deleteTodo(item)
-        : () => _mainUsecase.deleteFinished(item);
+        : listType == ItemListType.finished
+        ? () => _mainUsecase.deleteFinished(item)
+        : () => _mainUsecase.deleteSaved(item);
 
     await _performItemOperation(
       operation,
       onSuccess: () {
         if (listType == ItemListType.todo) {
           _removeFromTodoList(item);
-        } else {
+        } else if (listType == ItemListType.finished) {
           _removeFromFinishedList(item);
+        } else {
+          _removeFromSavedList(item);
         }
       },
     );
@@ -349,13 +411,22 @@ class MainViewModel extends BaseViewModel
   void _moveItemToFinished(Item item) {
     if (!hasData) return;
     _removeFromTodoList(item);
+    _removeFromSavedList(item);
     _currentObject!.mainData!.finished.add(item);
   }
 
   void _moveItemToTodo(Item item) {
     if (!hasData) return;
     _removeFromFinishedList(item);
+    _removeFromSavedList(item);
     _currentObject!.mainData!.todos.add(item);
+  }
+
+  void _moveItemToSaved(Item item) {
+    if (!hasData) return;
+    _removeFromTodoList(item);
+    _removeFromFinishedList(item);
+    _currentObject!.mainData!.saved.add(item);
   }
 
   void _removeFromTodoList(Item item) {
@@ -366,6 +437,11 @@ class MainViewModel extends BaseViewModel
   void _removeFromFinishedList(Item item) {
     if (!hasData) return;
     _currentObject!.mainData!.finished.removeWhere((i) => _isSameItem(i, item));
+  }
+
+  void _removeFromSavedList(Item item) {
+    if (!hasData) return;
+    _currentObject!.mainData!.saved.removeWhere((i) => _isSameItem(i, item));
   }
 
   bool _isSameItem(Item a, Item b) {
@@ -419,6 +495,7 @@ abstract class MainViewModelInputs {
   Future<void> moveToFinished(Item item);
   Future<void> moveToTodo(Item item);
   Future<void> moveToHistory(Item item);
+  Future<void> moveToSaved(Item item);
 
   MainObject? getCurrentMainData();
 
@@ -431,6 +508,11 @@ abstract class MainViewModelInputs {
   int? deleteFinishedTemporarily(Item item);
   void undoDeleteFinished(Item item, int index);
   Future<void> confirmDeleteFinished(Item item);
+
+  // Deletion with Undo flow for Saved list
+  int? deleteSavedTemporarily(Item item);
+  void undoDeleteSaved(Item item, int index);
+  Future<void> confirmDeleteSaved(Item item);
 
   // Permanent deletion from dialog
   Future<void> deleteItemPermanently(Item item, ItemListType listType);

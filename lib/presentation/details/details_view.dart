@@ -5,7 +5,7 @@ import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer_impl.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
-import 'package:noted/presentation/details/viewModel/details_viewmodel.dart';
+import 'package:noted/presentation/details/details_viewmodel.dart';
 import 'package:noted/presentation/common/state_renderer/state_flow_handler.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';

@@ -18,14 +18,18 @@ abstract class Repository {
 
   Future<Either<Failure, Item?>> getLocalItem(String id, Category category);
   Future<Either<Failure, void>> addTodo(ItemResponse todo);
+  Future<Either<Failure, void>> addSaved(ItemResponse savedItem);
   Future<Either<Failure, void>> updateItem(Item item);
   Future<Either<Failure, void>> deleteTodo(Item item);
-  Future<Either<Failure, void>> moveToFinished(Item item);
-
   Future<Either<Failure, void>> deleteFinished(Item item);
+  Future<Either<Failure, void>> deleteSaved(Item item);
+  Future<Either<Failure, void>> deleteHistoryItem(Item item);
+
+  Future<Either<Failure, void>> moveToFinished(Item item);
   Future<Either<Failure, void>> moveToTodo(Item item);
   Future<Either<Failure, void>> moveToHistory(Item item);
+  Future<Either<Failure, void>> moveToSaved(Item item);
 
   Future<Either<Failure, List<Item>>> getHistory();
-  Future<Either<Failure, void>> deleteHistoryItem(Item item);
+  Future<Either<Failure, List<Item>>> getSaved();
 }

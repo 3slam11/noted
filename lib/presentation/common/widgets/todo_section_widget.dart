@@ -4,8 +4,7 @@ import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/common/widgets/empty_state_widget.dart';
 import 'package:noted/presentation/common/widgets/item_tile.dart';
-import 'package:noted/presentation/main/viewModel/main_view_model.dart';
-
+import 'package:noted/presentation/main/main_view_model.dart';
 
 class TodoSectionWidget extends StatelessWidget {
   final MainViewModel viewModel;
@@ -112,7 +111,7 @@ class TodoSectionWidget extends StatelessWidget {
                       final todo = entry.value;
                       return ItemTile(
                             item: todo,
-                            isTodo: true,
+                            currentList: ItemListType.todo,
                             viewModel: viewModel,
                           )
                           .animate()

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/gen/strings.g.dart';
-import 'package:noted/presentation/changeApi/viewModel/change_api_viewmodel.dart';
+import 'package:noted/presentation/changeApi/change_api_viewmodel.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
 import 'dart:async';
 

@@ -44,6 +44,7 @@ class BackupAndRestoreViewModel extends BaseViewModel
         _localDataSource.getTodo(),
         _localDataSource.getFinished(),
         _localDataSource.getHistory(),
+        _localDataSource.getSaved(),
         _appPrefs.getLanguage(),
         _appPrefs.getThemeMode(),
         _appPrefs.getManualTheme(),
@@ -58,15 +59,16 @@ class BackupAndRestoreViewModel extends BaseViewModel
       final todos = results[0] as List<ItemResponse>;
       final finished = results[1] as List<ItemResponse>;
       final history = results[2] as List<ItemResponse>;
-      final language = results[3] as String;
-      final themeMode = results[4] as int;
-      final manualTheme = results[5] as int;
-      final rawgKey = results[6] as String;
-      final tmdbKey = results[7] as String;
-      final booksKey = results[8] as String;
-      final fontType = results[9] as int;
-      final fontPath = results[10] as String;
-      final fontFamilyName = results[11] as String?;
+      final saved = results[3] as List<ItemResponse>;
+      final language = results[4] as String;
+      final themeMode = results[5] as int;
+      final manualTheme = results[6] as int;
+      final rawgKey = results[7] as String;
+      final tmdbKey = results[8] as String;
+      final booksKey = results[9] as String;
+      final fontType = results[10] as int;
+      final fontPath = results[11] as String;
+      final fontFamilyName = results[12] as String?;
 
       String? customFontBase64;
       if (fontType == FontType.custom.index &&
@@ -83,6 +85,7 @@ class BackupAndRestoreViewModel extends BaseViewModel
           'todos': todos.map((e) => e.toJson()).toList(),
           'finished': finished.map((e) => e.toJson()).toList(),
           'history': history.map((e) => e.toJson()).toList(),
+          'saved': saved.map((e) => e.toJson()).toList(),
         },
         'settings': {
           'language': language,
@@ -172,6 +175,7 @@ class BackupAndRestoreViewModel extends BaseViewModel
     await _localDataSource.clearTodo();
     await _localDataSource.clearFinished();
     await _localDataSource.clearHistory();
+    await _localDataSource.clearSaved();
 
     final Map<String, dynamic>? listsData =
         backupData['lists'] as Map<String, dynamic>?;
@@ -189,6 +193,11 @@ class BackupAndRestoreViewModel extends BaseViewModel
       final historyData = listsData['history'] as List<dynamic>? ?? [];
       for (var itemData in historyData) {
         await _localDataSource.addHistory(ItemResponse.fromJson(itemData));
+      }
+
+      final savedData = listsData['saved'] as List<dynamic>? ?? [];
+      for (var itemData in savedData) {
+        await _localDataSource.addSaved(ItemResponse.fromJson(itemData));
       }
     }
 

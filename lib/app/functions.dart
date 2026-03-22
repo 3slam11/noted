@@ -1,6 +1,6 @@
 import 'package:noted/app/app_prefs.dart';
 import 'package:noted/app/di.dart';
-import 'package:noted/presentation/settings/view/settings_view.dart';
+import 'package:noted/presentation/settings/settings_view.dart';
 
 bool isEmailValidFunc(String email) => RegExp(
   r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",

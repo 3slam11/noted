@@ -4,7 +4,7 @@ import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/common/state_renderer/state_flow_handler.dart';
-import 'package:noted/presentation/statistics/viewModel/statistics_viewmodel.dart';
+import 'package:noted/presentation/statistics/statistics_viewmodel.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class StatisticsView extends StatefulWidget {

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:noted/gen/strings.g.dart';
-import 'package:noted/presentation/history/view/history_view.dart';
-import 'package:noted/presentation/main/view/main_view.dart';
-import 'package:noted/presentation/search/view/search_view.dart';
-import 'package:noted/presentation/settings/view/settings_view.dart';
+import 'package:noted/presentation/history/history_view.dart';
+import 'package:noted/presentation/main/main_view.dart';
+import 'package:noted/presentation/search/search_view.dart';
+import 'package:noted/presentation/saved/saved_view.dart';
+import 'package:noted/presentation/settings/settings_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -25,6 +26,7 @@ class _HomeViewState extends State<HomeView>
   static const List<Widget> _pages = [
     MainView(),
     SearchView(),
+    SavedView(),
     HistoryView(),
     SettingsView(),
   ];
@@ -32,6 +34,7 @@ class _HomeViewState extends State<HomeView>
   static const List<IconData> _pageIcons = [
     Icons.home_filled,
     Icons.search_rounded,
+    Icons.bookmark_rounded,
     Icons.history_rounded,
     Icons.settings_rounded,
   ];
@@ -101,6 +104,7 @@ class _HomeViewState extends State<HomeView>
     final pageTitles = [
       t.home.home,
       t.search.search,
+      t.home.savedList,
       t.history.history,
       t.settings.settings,
     ];

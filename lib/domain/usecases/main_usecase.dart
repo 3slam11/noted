@@ -40,4 +40,12 @@ class MainUsecase implements BaseUsecase<void, MainObject> {
   Future<Either<Failure, void>> moveToHistory(Item item) {
     return repository.moveToHistory(item);
   }
+
+  Future<Either<Failure, void>> moveToSaved(Item item) {
+    return repository.moveToSaved(item);
+  }
+
+  Future<Either<Failure, void>> deleteSaved(Item item) {
+    return repository.deleteSaved(item);
+  }
 }

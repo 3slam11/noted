@@ -1,6 +1,6 @@
 import 'package:noted/app/constants.dart';
 import 'package:noted/presentation/resources/theme_manager.dart';
-import 'package:noted/presentation/settings/view/settings_view.dart';
+import 'package:noted/presentation/settings/settings_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String languagePref = 'LANGUAGE_PREF';

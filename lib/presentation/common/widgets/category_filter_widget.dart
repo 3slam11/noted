@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/domain/model/models.dart';
-import 'package:noted/presentation/main/viewModel/main_view_model.dart';
+import 'package:noted/presentation/main/main_view_model.dart';
 
 class CategoryFilterWidget extends StatelessWidget {
   final MainViewModel viewModel;

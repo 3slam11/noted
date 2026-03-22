@@ -6,9 +6,8 @@ import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/common/state_renderer/state_flow_handler.dart';
 import 'package:noted/presentation/common/widgets/item_actions_dialog.dart';
-import 'package:noted/presentation/common/widgets/item_tile.dart';
-import 'package:noted/presentation/details/view/details_view.dart';
-import 'package:noted/presentation/history/viewModel/history_view_model.dart';
+import 'package:noted/presentation/details/details_view.dart';
+import 'package:noted/presentation/history/history_view_model.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
 
@@ -272,6 +271,7 @@ class HistoryViewState extends State<HistoryView> {
         currentList: ItemListType.history,
         onMoveToTodo: () => _viewModel.moveToTodo(item),
         onMoveToFinished: () => _viewModel.moveToFinished(item),
+        onMoveToSaved: () => _viewModel.moveToSaved(item),
         onDelete: () => _viewModel.deleteHistoryItem(item),
         onEdit: () => _showEditNotesDialog(context, item),
       ),
@@ -510,6 +510,95 @@ class HistoryViewState extends State<HistoryView> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class EditItemDialog extends StatefulWidget {
+  final Item item;
+  final Function(Item updatedItem) onSave;
+
+  const EditItemDialog({super.key, required this.item, required this.onSave});
+
+  @override
+  State<EditItemDialog> createState() => _EditItemDialogState();
+}
+
+class _EditItemDialogState extends State<EditItemDialog> {
+  late double _currentRating;
+  late TextEditingController _notesController;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentRating = widget.item.personalRating ?? 0.0;
+    _notesController = TextEditingController(text: widget.item.personalNotes);
+  }
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  void _handleSave() {
+    final updatedItem = widget.item.copyWith(
+      personalRating: _currentRating,
+      personalNotes: _notesController.text.trim(),
+    );
+    widget.onSave(updatedItem);
+    Navigator.of(context).pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return AlertDialog(
+      title: Text(t.home.editNotes),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(t.home.yourRating, style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Center(
+              child: RatingBar.builder(
+                initialRating: _currentRating,
+                minRating: 0,
+                glow: false,
+                direction: Axis.horizontal,
+                itemCount: 5,
+                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                itemBuilder: (context, _) => const Icon(Icons.star),
+                onRatingUpdate: (rating) {
+                  setState(() {
+                    _currentRating = rating;
+                  });
+                },
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(t.home.yourNotes, style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _notesController,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: t.home.notesHint,
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(t.errorHandler.cancel),
+        ),
+        ElevatedButton(onPressed: _handleSave, child: Text(t.apiSettings.save)),
+      ],
     );
   }
 }

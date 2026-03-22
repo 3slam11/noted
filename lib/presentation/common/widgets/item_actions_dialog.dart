@@ -8,6 +8,7 @@ class ItemActionsDialog extends StatelessWidget {
   final VoidCallback? onMoveToTodo;
   final VoidCallback? onMoveToFinished;
   final VoidCallback? onMoveToHistory;
+  final VoidCallback? onMoveToSaved;
   final VoidCallback? onDelete;
   final VoidCallback? onEdit;
 
@@ -18,6 +19,7 @@ class ItemActionsDialog extends StatelessWidget {
     this.onMoveToTodo,
     this.onMoveToFinished,
     this.onMoveToHistory,
+    this.onMoveToSaved,
     this.onDelete,
     this.onEdit,
   });
@@ -60,43 +62,56 @@ class ItemActionsDialog extends StatelessWidget {
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildAction(t.home.editNotes, Icons.edit_note_rounded, onEdit, true),
-          buildAction(
-            t.home.moveToTodo,
-            Icons.list_alt_rounded,
-            onMoveToTodo,
-            currentList != ItemListType.todo,
-          ),
-          buildAction(
-            t.home.moveToFinished,
-            Icons.check_circle_outline_rounded,
-            onMoveToFinished,
-            currentList != ItemListType.finished,
-          ),
-          buildAction(
-            t.home.moveToHistory,
-            Icons.history_rounded,
-            onMoveToHistory,
-            currentList != ItemListType.history,
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.delete_forever_rounded,
-              color: colorScheme.error,
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildAction(
+              t.home.editNotes,
+              Icons.edit_note_rounded,
+              onEdit,
+              true,
             ),
-            title: Text(
-              t.home.delete,
-              style: TextStyle(color: colorScheme.error),
+            buildAction(
+              t.home.moveToTodo,
+              Icons.list_alt_rounded,
+              onMoveToTodo,
+              currentList != ItemListType.todo,
             ),
-            onTap: () {
-              Navigator.of(context).pop();
-              onDelete?.call();
-            },
-          ),
-        ],
+            buildAction(
+              t.home.moveToSaved,
+              Icons.bookmark_border_rounded,
+              onMoveToSaved,
+              currentList != ItemListType.saved,
+            ),
+            buildAction(
+              t.home.moveToFinished,
+              Icons.check_circle_outline_rounded,
+              onMoveToFinished,
+              currentList != ItemListType.finished,
+            ),
+            buildAction(
+              t.home.moveToHistory,
+              Icons.history_rounded,
+              onMoveToHistory,
+              currentList != ItemListType.history,
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.delete_forever_rounded,
+                color: colorScheme.error,
+              ),
+              title: Text(
+                t.home.delete,
+                style: TextStyle(color: colorScheme.error),
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+                onDelete?.call();
+              },
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(

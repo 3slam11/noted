@@ -41,14 +41,16 @@ class RepositoryImpl implements Repository {
       final results = await Future.wait([
         _localDataSource.getTodo(),
         _localDataSource.getFinished(),
+        _localDataSource.getSaved(),
       ]);
 
       final todos = results[0].map((response) => response.toDomain()).toList();
       final finished = results[1]
           .map((response) => response.toDomain())
           .toList();
+      final saved = results[2].map((response) => response.toDomain()).toList();
 
-      return Right(MainObject(TaskData(todos, finished)));
+      return Right(MainObject(TaskData(todos, finished, saved)));
     } catch (error) {
       return Left(_createCacheFailure("Failed to load list data", error));
     }
@@ -341,6 +343,14 @@ class RepositoryImpl implements Repository {
   }
 
   @override
+  Future<Either<Failure, void>> addSaved(ItemResponse savedItem) {
+    return _performLocalOperation(
+      () => _localDataSource.addSaved(savedItem),
+      'Failed to save item locally',
+    );
+  }
+
+  @override
   Future<Either<Failure, void>> updateItem(Item item) {
     return _performItemValidationAndOperation(
       item,
@@ -354,6 +364,7 @@ class RepositoryImpl implements Repository {
     return _performItemValidationAndOperation(item, () async {
       await _localDataSource.removeTodo(item.id!, item.category!);
       await _localDataSource.removeHistory(item.id!, item.category!);
+      await _localDataSource.removeSaved(item.id!, item.category!);
       await _localDataSource.addFinished(item.toResponse());
     }, 'Failed to move item to finished');
   }
@@ -363,6 +374,7 @@ class RepositoryImpl implements Repository {
     return _performItemValidationAndOperation(item, () async {
       await _localDataSource.removeFinished(item.id!, item.category!);
       await _localDataSource.removeHistory(item.id!, item.category!);
+      await _localDataSource.removeSaved(item.id!, item.category!);
       await _localDataSource.addTodo(item.toResponse());
     }, 'Failed to move item to todo');
   }
@@ -372,8 +384,19 @@ class RepositoryImpl implements Repository {
     return _performItemValidationAndOperation(item, () async {
       await _localDataSource.removeFinished(item.id!, item.category!);
       await _localDataSource.removeTodo(item.id!, item.category!);
+      await _localDataSource.removeSaved(item.id!, item.category!);
       await _localDataSource.addHistory(item.toResponse());
     }, 'Failed to move item to history');
+  }
+
+  @override
+  Future<Either<Failure, void>> moveToSaved(Item item) {
+    return _performItemValidationAndOperation(item, () async {
+      await _localDataSource.removeFinished(item.id!, item.category!);
+      await _localDataSource.removeTodo(item.id!, item.category!);
+      await _localDataSource.removeHistory(item.id!, item.category!);
+      await _localDataSource.addSaved(item.toResponse());
+    }, 'Failed to move item to saved');
   }
 
   @override
@@ -391,6 +414,15 @@ class RepositoryImpl implements Repository {
       item,
       () => _localDataSource.removeFinished(item.id!, item.category!),
       'Failed to delete finished item',
+    );
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteSaved(Item item) {
+    return _performItemValidationAndOperation(
+      item,
+      () => _localDataSource.removeSaved(item.id!, item.category!),
+      'Failed to delete saved item',
     );
   }
 
@@ -413,6 +445,19 @@ class RepositoryImpl implements Repository {
       return Right(historyItems);
     } catch (error) {
       return Left(_createCacheFailure('Failed to load history items', error));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Item>>> getSaved() async {
+    try {
+      final savedResponses = await _localDataSource.getSaved();
+      final savedItems = savedResponses
+          .map((response) => response.toDomain())
+          .toList();
+      return Right(savedItems);
+    } catch (error) {
+      return Left(_createCacheFailure('Failed to load saved items', error));
     }
   }
 

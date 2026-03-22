@@ -3,19 +3,19 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/common/widgets/item_actions_dialog.dart';
-import 'package:noted/presentation/details/view/details_view.dart';
-import 'package:noted/presentation/main/viewModel/main_view_model.dart';
+import 'package:noted/presentation/details/details_view.dart';
+import 'package:noted/presentation/main/main_view_model.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
 
 class ItemTile extends StatelessWidget {
   final Item item;
-  final bool isTodo;
+  final ItemListType currentList;
   final MainViewModel viewModel;
 
   const ItemTile({
     super.key,
     required this.item,
-    required this.isTodo,
+    required this.currentList,
     required this.viewModel,
   });
 
@@ -24,14 +24,12 @@ class ItemTile extends StatelessWidget {
       context: context,
       builder: (_) => ItemActionsDialog(
         item: item,
-        currentList: isTodo ? ItemListType.todo : ItemListType.finished,
+        currentList: currentList,
         onMoveToTodo: () => viewModel.moveToTodo(item),
         onMoveToFinished: () => viewModel.moveToFinished(item),
         onMoveToHistory: () => viewModel.moveToHistory(item),
-        onDelete: () => viewModel.deleteItemPermanently(
-          item,
-          isTodo ? ItemListType.todo : ItemListType.finished,
-        ),
+        onMoveToSaved: () => viewModel.moveToSaved(item),
+        onDelete: () => viewModel.deleteItemPermanently(item, currentList),
         onEdit: () {
           showDialog(
             context: context,
@@ -51,7 +49,7 @@ class ItemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final valueKey =
-        'item-${isTodo ? 'todo' : 'finished'}-${item.id}-${item.category?.name}';
+        'item-${currentList.name}-${item.id}-${item.category?.name}';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
@@ -59,9 +57,14 @@ class ItemTile extends StatelessWidget {
         key: ValueKey(valueKey),
         direction: DismissDirection.startToEnd,
         onDismissed: (direction) {
-          int? index = isTodo
-              ? viewModel.deleteTodoTemporarily(item)
-              : viewModel.deleteFinishedTemporarily(item);
+          int? index;
+          if (currentList == ItemListType.todo) {
+            index = viewModel.deleteTodoTemporarily(item);
+          } else if (currentList == ItemListType.finished) {
+            index = viewModel.deleteFinishedTemporarily(item);
+          } else if (currentList == ItemListType.saved) {
+            index = viewModel.deleteSavedTemporarily(item);
+          }
 
           if (index == null) return;
 
@@ -75,10 +78,12 @@ class ItemTile extends StatelessWidget {
                   action: SnackBarAction(
                     label: t.home.undo,
                     onPressed: () {
-                      if (isTodo) {
-                        viewModel.undoDeleteTodo(item, index);
-                      } else {
-                        viewModel.undoDeleteFinished(item, index);
+                      if (currentList == ItemListType.todo) {
+                        viewModel.undoDeleteTodo(item, index!);
+                      } else if (currentList == ItemListType.finished) {
+                        viewModel.undoDeleteFinished(item, index!);
+                      } else if (currentList == ItemListType.saved) {
+                        viewModel.undoDeleteSaved(item, index!);
                       }
                     },
                   ),
@@ -87,10 +92,12 @@ class ItemTile extends StatelessWidget {
               .closed
               .then((reason) {
                 if (reason != SnackBarClosedReason.action) {
-                  if (isTodo) {
+                  if (currentList == ItemListType.todo) {
                     viewModel.confirmDeleteTodo(item);
-                  } else {
+                  } else if (currentList == ItemListType.finished) {
                     viewModel.confirmDeleteFinished(item);
+                  } else if (currentList == ItemListType.saved) {
+                    viewModel.confirmDeleteSaved(item);
                   }
                 }
               });
@@ -188,12 +195,22 @@ class ItemTile extends StatelessWidget {
             ),
             trailing: IconButton(
               icon: Icon(
-                isTodo ? Icons.check_rounded : Icons.undo_rounded,
+                currentList == ItemListType.todo
+                    ? Icons.check_rounded
+                    : currentList == ItemListType.finished
+                    ? Icons.undo_rounded
+                    : Icons.playlist_add_rounded,
                 color: theme.colorScheme.primary,
               ),
-              onPressed: () => isTodo
-                  ? viewModel.moveToFinished(item)
-                  : viewModel.moveToTodo(item),
+              onPressed: () {
+                if (currentList == ItemListType.todo) {
+                  viewModel.moveToFinished(item);
+                } else if (currentList == ItemListType.finished) {
+                  viewModel.moveToTodo(item);
+                } else if (currentList == ItemListType.saved) {
+                  viewModel.moveToTodo(item);
+                }
+              },
             ),
             onTap: () {
               Navigator.pushNamed(

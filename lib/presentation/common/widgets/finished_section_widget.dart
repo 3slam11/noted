@@ -4,8 +4,7 @@ import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/common/widgets/empty_state_widget.dart';
 import 'package:noted/presentation/common/widgets/item_tile.dart';
-import 'package:noted/presentation/main/viewModel/main_view_model.dart';
-
+import 'package:noted/presentation/main/main_view_model.dart';
 
 class FinishedSectionWidget extends StatelessWidget {
   final MainViewModel viewModel;
@@ -60,7 +59,7 @@ class FinishedSectionWidget extends StatelessWidget {
                     children: filteredFinished.map((finished) {
                       return ItemTile(
                             item: finished,
-                            isTodo: false,
+                            currentList: ItemListType.finished,
                             viewModel: viewModel,
                           )
                           .animate()

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/gen/strings.g.dart';
-import 'package:noted/presentation/about/view/about_view.dart';
-import 'package:noted/presentation/backupAndRestore/view/backup_and_restore_view.dart';
-import 'package:noted/presentation/changeApi/view/change_api_view.dart';
-import 'package:noted/presentation/details/view/details_view.dart';
+import 'package:noted/presentation/about/about_view.dart';
+import 'package:noted/presentation/backupAndRestore/backup_and_restore_view.dart';
+import 'package:noted/presentation/changeApi/change_api_view.dart';
+import 'package:noted/presentation/details/details_view.dart';
 import 'package:noted/presentation/home/home_view.dart';
-import 'package:noted/presentation/statistics/view/statistics_view.dart';
+import 'package:noted/presentation/statistics/statistics_view.dart';
 
 class RoutesManager {
   static const String mainRoute = '/';

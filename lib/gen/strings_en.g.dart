@@ -66,6 +66,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsSearchEn search = TranslationsSearchEn._(_root);
 	late final TranslationsDetailsEn details = TranslationsDetailsEn._(_root);
 	late final TranslationsSettingsEn settings = TranslationsSettingsEn._(_root);
+	late final TranslationsQrSettingsEn qrSettings = TranslationsQrSettingsEn._(_root);
 	late final TranslationsLanguageSettingsEn languageSettings = TranslationsLanguageSettingsEn._(_root);
 	late final TranslationsThemeSettingsEn themeSettings = TranslationsThemeSettingsEn._(_root);
 	late final TranslationsFontSettingsEn fontSettings = TranslationsFontSettingsEn._(_root);
@@ -198,6 +199,9 @@ class TranslationsHomeEn {
 	/// en: 'Finished List'
 	String get finishedList => 'Finished List';
 
+	/// en: 'Saved for Later'
+	String get savedList => 'Saved for Later';
+
 	/// en: 'Movies'
 	String get movies => 'Movies';
 
@@ -252,6 +256,9 @@ class TranslationsHomeEn {
 	/// en: 'No completed items yet'
 	String get noCompleted => 'No completed items yet';
 
+	/// en: 'No saved items yet'
+	String get noSaved => 'No saved items yet';
+
 	/// en: 'Congratulations!'
 	String get congratulations => 'Congratulations!';
 
@@ -281,6 +288,15 @@ class TranslationsHomeEn {
 
 	/// en: 'Move to history'
 	String get moveToHistory => 'Move to history';
+
+	/// en: 'Move to saved'
+	String get moveToSaved => 'Move to saved';
+
+	/// en: 'Add to To-Do'
+	String get addToTodo => 'Add to To-Do';
+
+	/// en: 'Add to Saved'
+	String get addToSaved => 'Add to Saved';
 
 	/// en: 'Edit/View Notes'
 	String get editNotes => 'Edit/View Notes';
@@ -509,6 +525,45 @@ class TranslationsSettingsEn {
 
 	/// en: 'Display current season and episode for TV series on the main lists.'
 	String get showSeriesTrackerDescription => 'Display current season and episode for TV series on the main lists.';
+}
+
+// Path: qrSettings
+class TranslationsQrSettingsEn {
+	TranslationsQrSettingsEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'QR Code Sync'
+	String get title => 'QR Code Sync';
+
+	/// en: 'Feature Not Available on Desktop'
+	String get desktop => 'Feature Not Available on Desktop';
+
+	/// en: 'QR code scanning is only available on the mobile version of the app.'
+	String get desktopDescription => 'QR code scanning is only available on the mobile version of the app.';
+
+	/// en: 'Sync between devices with a QR code'
+	String get subtitle => 'Sync between devices with a QR code';
+
+	/// en: 'You can export and import your data and settings with QR code to another device.'
+	String get description => 'You can export and import your data and settings with QR code to another device.';
+
+	/// en: 'Importing will overwrite all current settings and lists.'
+	String get alert => 'Importing will overwrite all current settings and lists.';
+
+	/// en: 'Scan'
+	String get scan => 'Scan';
+
+	/// en: 'Generate'
+	String get generate => 'Generate';
+
+	/// en: 'Generating QR Code...'
+	String get generating => 'Generating QR Code...';
+
+	/// en: 'QR Code Generated'
+	String get generated => 'QR Code Generated';
 }
 
 // Path: languageSettings
@@ -810,6 +865,7 @@ extension on Translations {
 			'home.titleSection' => 'Entertainment list for ',
 			'home.emptySection' => 'This list is empty',
 			'home.finishedList' => 'Finished List',
+			'home.savedList' => 'Saved for Later',
 			'home.movies' => 'Movies',
 			'home.series' => 'Series',
 			'home.games' => 'Games',
@@ -828,6 +884,7 @@ extension on Translations {
 			'home.addAll' => 'Add All',
 			'home.keepSelected' => 'Keep Selected',
 			'home.noCompleted' => 'No completed items yet',
+			'home.noSaved' => 'No saved items yet',
 			'home.congratulations' => 'Congratulations!',
 			'home.todosDone' => 'You have completed everything last month!',
 			'home.close' => 'Close',
@@ -838,6 +895,9 @@ extension on Translations {
 			'home.moveToTodo' => 'Move to todo',
 			'home.moveToFinished' => 'Move to finished',
 			'home.moveToHistory' => 'Move to history',
+			'home.moveToSaved' => 'Move to saved',
+			'home.addToTodo' => 'Add to To-Do',
+			'home.addToSaved' => 'Add to Saved',
 			'home.editNotes' => 'Edit/View Notes',
 			'home.yourRating' => 'Your Rating',
 			'home.yourNotes' => 'Your Notes',
@@ -902,6 +962,16 @@ extension on Translations {
 			'settings.rolloverManualDescription' => 'Do nothing. I will manage my lists myself.',
 			'settings.showSeriesTracker' => 'Show Series Tracker',
 			'settings.showSeriesTrackerDescription' => 'Display current season and episode for TV series on the main lists.',
+			'qrSettings.title' => 'QR Code Sync',
+			'qrSettings.desktop' => 'Feature Not Available on Desktop',
+			'qrSettings.desktopDescription' => 'QR code scanning is only available on the mobile version of the app.',
+			'qrSettings.subtitle' => 'Sync between devices with a QR code',
+			'qrSettings.description' => 'You can export and import your data and settings with QR code to another device.',
+			'qrSettings.alert' => 'Importing will overwrite all current settings and lists.',
+			'qrSettings.scan' => 'Scan',
+			'qrSettings.generate' => 'Generate',
+			'qrSettings.generating' => 'Generating QR Code...',
+			'qrSettings.generated' => 'QR Code Generated',
 			'languageSettings.selectLanguage' => 'Select Language',
 			'languageSettings.en' => 'English',
 			'languageSettings.ar' => 'العربية',

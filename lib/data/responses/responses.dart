@@ -73,7 +73,10 @@ class MainDataResponse {
   @JsonKey(name: 'finished')
   List<ItemResponse>? finished;
 
-  MainDataResponse(this.todos, this.finished);
+  @JsonKey(name: 'saved')
+  List<ItemResponse>? saved;
+
+  MainDataResponse(this.todos, this.finished, this.saved);
 
   // from json
   factory MainDataResponse.fromJson(Map<String, dynamic> json) =>

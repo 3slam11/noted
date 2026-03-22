@@ -79,8 +79,8 @@ class SearchViewModel extends BaseViewModel
   }
 
   @override
-  void addItemToTodo(SearchItem item) async {
-    ItemResponse todoItem = ItemResponse(
+  void addItemToList(SearchItem item, ItemListType listType) async {
+    ItemResponse itemResponse = ItemResponse(
       item.id,
       item.title,
       item.category,
@@ -88,7 +88,11 @@ class SearchViewModel extends BaseViewModel
       item.releaseDate,
     );
 
-    (await _searchUsecase.addToTodo(todoItem)).fold(
+    final result = listType == ItemListType.todo
+        ? await _searchUsecase.addToTodo(itemResponse)
+        : await _searchUsecase.addToSaved(itemResponse);
+
+    result.fold(
       (failure) {
         _itemAddedSuccessfullyStreamController.add(false);
         inputState.add(
@@ -141,7 +145,7 @@ abstract class SearchViewModelInputs {
   Sink<Category> get inputSelectedCategory;
   Future<void> search(String query);
   void updateCategory(Category category);
-  void addItemToTodo(SearchItem item);
+  void addItemToList(SearchItem item, ItemListType listType);
 }
 
 abstract class SearchViewModelOutputs {

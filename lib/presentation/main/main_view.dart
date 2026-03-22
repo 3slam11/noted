@@ -12,8 +12,8 @@ import 'package:noted/presentation/common/widgets/category_filter_widget.dart';
 import 'package:noted/presentation/common/widgets/finished_section_widget.dart';
 import 'package:noted/presentation/common/widgets/new_month_dialog.dart';
 import 'package:noted/presentation/common/widgets/todo_section_widget.dart';
-import 'package:noted/presentation/main/viewModel/main_view_model.dart';
-import 'package:noted/presentation/settings/view/settings_view.dart';
+import 'package:noted/presentation/main/main_view_model.dart';
+import 'package:noted/presentation/settings/settings_view.dart';
 
 class MainView extends StatefulWidget {
   const MainView({super.key});

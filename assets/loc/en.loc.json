@@ -1,6 +1,6 @@
 {
   "appName": "Noted",
-  "months": [
+  "months":[
     "January",
     "February",
     "March",
@@ -50,6 +50,7 @@
     "titleSection": "Entertainment list for ",
     "emptySection": "This list is empty",
     "finishedList": "Finished List",
+    "savedList": "Saved for Later",
     "movies": "Movies",
     "series": "Series",
     "games": "Games",
@@ -68,6 +69,7 @@
     "addAll": "Add All",
     "keepSelected": "Keep Selected",
     "noCompleted": "No completed items yet",
+    "noSaved": "No saved items yet",
     "congratulations": "Congratulations!",
     "todosDone": "You have completed everything last month!",
     "close": "Close",
@@ -78,6 +80,9 @@
     "moveToTodo": "Move to todo",
     "moveToFinished": "Move to finished",
     "moveToHistory": "Move to history",
+    "moveToSaved": "Move to saved",
+    "addToTodo": "Add to To-Do",
+    "addToSaved": "Add to Saved",
     "editNotes": "Edit/View Notes",
     "yourRating": "Your Rating",
     "yourNotes": "Your Notes",

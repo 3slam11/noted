@@ -6,7 +6,7 @@ import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
 import 'package:noted/presentation/resources/theme_manager.dart';
 import 'package:noted/presentation/resources/values_manager.dart';
-import 'package:noted/presentation/settings/viewModel/settings_viewmodel.dart';
+import 'package:noted/presentation/settings/settings_viewmodel.dart';
 
 enum MonthRolloverBehavior { full, partial, manual }
 

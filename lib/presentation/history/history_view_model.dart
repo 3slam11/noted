@@ -254,6 +254,15 @@ class HistoryViewModel extends BaseViewModel
   }
 
   @override
+  Future<void> moveToSaved(Item item) async {
+    final result = await _historyUsecase.moveToSaved(item);
+    result.fold((failure) => _handlePopupError(failure.message), (_) {
+      _removeItemFromUI(item);
+      _dataGlobalNotifier.notifyDataImported();
+    });
+  }
+
+  @override
   void dispose() {
     _historyController.close();
     _selectedCategoryController.close();
@@ -300,6 +309,7 @@ abstract class HistoryViewModelInputs {
   // Move actions
   Future<void> moveToTodo(Item item);
   Future<void> moveToFinished(Item item);
+  Future<void> moveToSaved(Item item);
 }
 
 abstract class HistoryViewModelOutputs {

@@ -12,6 +12,7 @@ const int cacheTime = 60000;
 const String todoListType = "todo";
 const String finishedListType = "finished";
 const String historyListType = "history";
+const String savedListType = "saved";
 
 abstract class LocalDataSource {
   // Cache operations
@@ -39,10 +40,16 @@ abstract class LocalDataSource {
   Future<void> addHistory(ItemResponse historyResponse);
   Future<void> removeHistory(String id, Category category);
 
+  // Saved operations
+  Future<List<ItemResponse>> getSaved();
+  Future<void> addSaved(ItemResponse savedResponse);
+  Future<void> removeSaved(String id, Category category);
+
   // Methods to clear lists
   Future<void> clearTodo();
   Future<void> clearFinished();
   Future<void> clearHistory();
+  Future<void> clearSaved();
 }
 
 class LocalDataSourceImpl implements LocalDataSource {
@@ -141,6 +148,20 @@ class LocalDataSourceImpl implements LocalDataSource {
   @override
   Future<void> removeHistory(String id, Category category) async {
     await _removeItemFromList(id, category, historyListType);
+  }
+
+  // Saved operations
+  @override
+  Future<List<ItemResponse>> getSaved() => _getItemList(savedListType);
+
+  @override
+  Future<void> addSaved(ItemResponse savedResponse) async {
+    await _addItemToList(savedResponse, savedListType);
+  }
+
+  @override
+  Future<void> removeSaved(String id, Category category) async {
+    await _removeItemFromList(id, category, savedListType);
   }
 
   // Private helper methods
@@ -249,6 +270,11 @@ class LocalDataSourceImpl implements LocalDataSource {
   @override
   Future<void> clearHistory() async {
     _objectBoxManager.clearItemsByType(historyListType);
+  }
+
+  @override
+  Future<void> clearSaved() async {
+    _objectBoxManager.clearItemsByType(savedListType);
   }
 }
 
