@@ -40,14 +40,10 @@ class MainViewModel extends BaseViewModel
     loadMainData();
   }
 
-  /// Fetches data and updates the list silently without showing a full-screen loader.
-  /// Intended for background updates from notifiers.
   void _silentRefresh() {
     _fetchAndProcessData(isInitialLoad: false);
   }
 
-  /// Fetches data and updates the list, showing a full-screen loader.
-  /// Intended for initial load or manual retries from the UI.
   Future<void> loadMainData() async {
     inputState.add(
       LoadingState(stateRendererType: StateRendererType.fullScreenLoadingState),
@@ -55,7 +51,6 @@ class MainViewModel extends BaseViewModel
     await _fetchAndProcessData(isInitialLoad: true);
   }
 
-  /// Private method to handle the actual data fetching and processing.
   Future<void> _fetchAndProcessData({required bool isInitialLoad}) async {
     _showSeriesTracker = await _appPrefs.getShowSeriesTracker();
     final result = await _mainUsecase.execute(null);
@@ -69,7 +64,6 @@ class MainViewModel extends BaseViewModel
             ),
           );
         } else {
-          // For silent refresh, show a non-blocking popup error
           inputState.add(
             ErrorState(
               stateRendererType: StateRendererType.popupErrorState,
@@ -86,7 +80,6 @@ class MainViewModel extends BaseViewModel
         if (isInitialLoad) {
           inputState.add(ContentState());
         }
-        // For silent refresh, no state change is needed, the StreamBuilder will update the UI.
       },
     );
   }
@@ -125,8 +118,8 @@ class MainViewModel extends BaseViewModel
 
     int compareDates(DateTime? a, DateTime? b) {
       if (a == null && b == null) return 0;
-      if (a == null) return 1; // Nulls last
-      if (b == null) return -1; // Nulls last
+      if (a == null) return 1;
+      if (b == null) return -1;
       return a.compareTo(b);
     }
 
@@ -140,7 +133,7 @@ class MainViewModel extends BaseViewModel
     }
 
     int compareRatings(double? a, double? b) {
-      return (b ?? 0.0).compareTo(a ?? 0.0); // Descending (b vs a)
+      return (b ?? 0.0).compareTo(a ?? 0.0);
     }
 
     sortedList.sort((a, b) {
@@ -190,6 +183,8 @@ class MainViewModel extends BaseViewModel
     result.fold(_handlePopupError, (_) {
       onSuccess();
       _applySortersAndFilters();
+      _dataGlobalNotifier
+          .notifyDataImported(); // Notifies everyone on UI interactions seamlessly!
     });
   }
 
@@ -210,7 +205,6 @@ class MainViewModel extends BaseViewModel
     result.fold(_handlePopupError, (_) {
       if (!hasData) return;
 
-      // Update item in 'todos' list
       final todoIndex = _currentObject!.mainData!.todos.indexWhere(
         (i) => _isSameItem(i, updatedItem),
       );
@@ -218,7 +212,6 @@ class MainViewModel extends BaseViewModel
         _currentObject!.mainData!.todos[todoIndex] = updatedItem;
       }
 
-      // Update item in 'finished' list
       final finishedIndex = _currentObject!.mainData!.finished.indexWhere(
         (i) => _isSameItem(i, updatedItem),
       );
@@ -226,7 +219,6 @@ class MainViewModel extends BaseViewModel
         _currentObject!.mainData!.finished[finishedIndex] = updatedItem;
       }
 
-      // Update item in 'saved' list
       final savedIndex = _currentObject!.mainData!.saved.indexWhere(
         (i) => _isSameItem(i, updatedItem),
       );
@@ -235,6 +227,7 @@ class MainViewModel extends BaseViewModel
       }
 
       _applySortersAndFilters();
+      _dataGlobalNotifier.notifyDataImported();
     });
   }
 
@@ -291,10 +284,10 @@ class MainViewModel extends BaseViewModel
     result.fold(
       (failure) {
         _handlePopupError(failure);
-        loadMainData(); // On failure, restore state by reloading
+        loadMainData();
       },
       (_) {
-        // On success, do nothing. The UI and ViewModel state are already correct.
+        _dataGlobalNotifier.notifyDataImported();
       },
     );
   }
@@ -328,10 +321,10 @@ class MainViewModel extends BaseViewModel
     result.fold(
       (failure) {
         _handlePopupError(failure);
-        loadMainData(); // On failure, restore state by reloading
+        loadMainData();
       },
       (_) {
-        // On success, do nothing. The UI and ViewModel state are already correct.
+        _dataGlobalNotifier.notifyDataImported();
       },
     );
   }
@@ -365,10 +358,10 @@ class MainViewModel extends BaseViewModel
     result.fold(
       (failure) {
         _handlePopupError(failure);
-        loadMainData(); // On failure, restore state by reloading
+        loadMainData();
       },
       (_) {
-        // On success, do nothing. The UI and ViewModel state are already correct.
+        _dataGlobalNotifier.notifyDataImported();
       },
     );
   }
@@ -381,7 +374,6 @@ class MainViewModel extends BaseViewModel
         _removeFromTodoList(item);
         _removeFromFinishedList(item);
         _removeFromSavedList(item);
-        _dataGlobalNotifier.notifyDataImported();
       },
     );
   }
@@ -488,10 +480,8 @@ abstract class MainViewModelInputs {
   void setCategory(Category category);
   void setSortOption(SortOption sortOption);
 
-  // Item update action
   Future<void> updateItem(Item item);
 
-  // Item movement actions
   Future<void> moveToFinished(Item item);
   Future<void> moveToTodo(Item item);
   Future<void> moveToHistory(Item item);
@@ -499,22 +489,18 @@ abstract class MainViewModelInputs {
 
   MainObject? getCurrentMainData();
 
-  // Deletion with Undo flow for To-Do list
   int? deleteTodoTemporarily(Item item);
   void undoDeleteTodo(Item item, int index);
   Future<void> confirmDeleteTodo(Item item);
 
-  // Deletion with Undo flow for Finished list
   int? deleteFinishedTemporarily(Item item);
   void undoDeleteFinished(Item item, int index);
   Future<void> confirmDeleteFinished(Item item);
 
-  // Deletion with Undo flow for Saved list
   int? deleteSavedTemporarily(Item item);
   void undoDeleteSaved(Item item, int index);
   Future<void> confirmDeleteSaved(Item item);
 
-  // Permanent deletion from dialog
   Future<void> deleteItemPermanently(Item item, ItemListType listType);
 }
 

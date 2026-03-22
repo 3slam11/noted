@@ -204,10 +204,10 @@ class HistoryViewModel extends BaseViewModel
     result.fold(
       (failure) {
         _handlePopupError(failure.message);
-        loadHistoryItems(); // On failure, restore state by reloading
+        loadHistoryItems();
       },
       (_) {
-        // On success, UI is already updated. No action needed.
+        _dataGlobalNotifier.notifyDataImported();
       },
     );
   }
@@ -215,10 +215,10 @@ class HistoryViewModel extends BaseViewModel
   @override
   Future<void> deleteHistoryItem(Item item) async {
     final result = await _historyUsecase.deleteHistoryItem(item);
-    result.fold(
-      (failure) => _handlePopupError(failure.message),
-      (_) => _removeItemFromUI(item),
-    );
+    result.fold((failure) => _handlePopupError(failure.message), (_) {
+      _removeItemFromUI(item);
+      _dataGlobalNotifier.notifyDataImported();
+    });
   }
 
   @override
@@ -231,6 +231,7 @@ class HistoryViewModel extends BaseViewModel
       if (index != -1) {
         _rawHistoryItems[index] = updatedItem;
         _applySort();
+        _dataGlobalNotifier.notifyDataImported();
       }
     });
   }
@@ -295,18 +296,12 @@ abstract class HistoryViewModelInputs {
   void setSortOption(SortOption sortOption);
   Future<void> loadHistoryItems();
 
-  // Deletion with Undo
   int? deleteHistoryItemTemporarily(Item item);
   void undoDeleteHistoryItem(Item item, int index);
   Future<void> confirmDeleteHistoryItem(Item item);
 
-  // Permanent deletion from dialog
   Future<void> deleteHistoryItem(Item item);
-
-  // Update action
   Future<void> updateItem(Item item);
-
-  // Move actions
   Future<void> moveToTodo(Item item);
   Future<void> moveToFinished(Item item);
   Future<void> moveToSaved(Item item);

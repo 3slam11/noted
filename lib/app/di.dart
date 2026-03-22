@@ -107,7 +107,7 @@ void initDetailsModule() {
       () => RecommendationsUsecase(instance()),
     );
     instance.registerFactory<DetailsViewModel>(
-      () => DetailsViewModel(instance(), instance()),
+      () => DetailsViewModel(instance(), instance(), instance()),
     );
   }
 }
@@ -141,7 +141,7 @@ void initSavedModule() {
 void initStatisticsModule() {
   if (!GetIt.I.isRegistered<StatisticsViewModel>()) {
     instance.registerFactory<StatisticsViewModel>(
-      () => StatisticsViewModel(instance()),
+      () => StatisticsViewModel(instance(), instance()),
     );
   }
 }

@@ -194,19 +194,24 @@ class SavedViewModel extends BaseViewModel
   @override
   Future<void> confirmDeleteSavedItem(Item item) async {
     final result = await _savedUsecase.deleteSavedItem(item);
-    result.fold((failure) {
-      _handlePopupError(failure.message);
-      loadSavedItems();
-    }, (_) {});
+    result.fold(
+      (failure) {
+        _handlePopupError(failure.message);
+        loadSavedItems();
+      },
+      (_) {
+        _dataGlobalNotifier.notifyDataImported();
+      },
+    );
   }
 
   @override
   Future<void> deleteSavedItem(Item item) async {
     final result = await _savedUsecase.deleteSavedItem(item);
-    result.fold(
-      (failure) => _handlePopupError(failure.message),
-      (_) => _removeItemFromUI(item),
-    );
+    result.fold((failure) => _handlePopupError(failure.message), (_) {
+      _removeItemFromUI(item);
+      _dataGlobalNotifier.notifyDataImported();
+    });
   }
 
   @override
@@ -219,6 +224,7 @@ class SavedViewModel extends BaseViewModel
       if (index != -1) {
         _rawSavedItems[index] = updatedItem;
         _applySort();
+        _dataGlobalNotifier.notifyDataImported();
       }
     });
   }
@@ -283,18 +289,12 @@ abstract class SavedViewModelInputs {
   void setSortOption(SortOption sortOption);
   Future<void> loadSavedItems();
 
-  // Deletion with Undo
   int? deleteSavedItemTemporarily(Item item);
   void undoDeleteSavedItem(Item item, int index);
   Future<void> confirmDeleteSavedItem(Item item);
 
-  // Permanent deletion from dialog
   Future<void> deleteSavedItem(Item item);
-
-  // Update action
   Future<void> updateItem(Item item);
-
-  // Move actions
   Future<void> moveToTodo(Item item);
   Future<void> moveToFinished(Item item);
   Future<void> moveToHistory(Item item);

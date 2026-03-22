@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:noted/app/app_events.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/domain/repository/repository.dart';
 import 'package:noted/presentation/base/base_view_model.dart';
@@ -9,8 +10,11 @@ import 'package:rxdart/rxdart.dart';
 class StatisticsViewModel extends BaseViewModel
     implements StatisticsViewModelInputs, StatisticsViewModelOutputs {
   final Repository _repository;
+  final DataGlobalNotifier _dataGlobalNotifier;
 
-  StatisticsViewModel(this._repository);
+  StatisticsViewModel(this._repository, this._dataGlobalNotifier) {
+    _dataGlobalNotifier.addListener(_silentRefresh);
+  }
 
   final BehaviorSubject<bool> _isCurrentMonthViewSubject =
       BehaviorSubject<bool>.seeded(true);
@@ -22,9 +26,8 @@ class StatisticsViewModel extends BaseViewModel
 
   @override
   void start() {
-    _loadDataAndProcess();
+    _loadDataAndProcess(isInitialLoad: true);
     _isCurrentMonthViewSubject.stream.listen((_) {
-      // Ensure data is loaded before trying to re-process
       if (_currentMonthFinishedItems.isNotEmpty ||
           _allHistoryItems.isNotEmpty ||
           !_isCurrentMonthViewSubject.value) {
@@ -33,10 +36,18 @@ class StatisticsViewModel extends BaseViewModel
     });
   }
 
-  Future<void> _loadDataAndProcess() async {
-    inputState.add(
-      LoadingState(stateRendererType: StateRendererType.fullScreenLoadingState),
-    );
+  void _silentRefresh() {
+    _loadDataAndProcess(isInitialLoad: false);
+  }
+
+  Future<void> _loadDataAndProcess({required bool isInitialLoad}) async {
+    if (isInitialLoad) {
+      inputState.add(
+        LoadingState(
+          stateRendererType: StateRendererType.fullScreenLoadingState,
+        ),
+      );
+    }
 
     bool homeSuccess = false;
     bool historySuccess = false;
@@ -67,15 +78,26 @@ class StatisticsViewModel extends BaseViewModel
     );
 
     if (homeSuccess && historySuccess) {
-      inputState.add(ContentState());
+      if (isInitialLoad) {
+        inputState.add(ContentState());
+      }
       _processAndEmitStatistics();
     } else {
-      inputState.add(
-        ErrorState(
-          stateRendererType: StateRendererType.fullScreenErrorState,
-          message: errorMessage ?? "Failed to load statistics data",
-        ),
-      );
+      if (isInitialLoad) {
+        inputState.add(
+          ErrorState(
+            stateRendererType: StateRendererType.fullScreenErrorState,
+            message: errorMessage ?? "Failed to load statistics data",
+          ),
+        );
+      } else {
+        inputState.add(
+          ErrorState(
+            stateRendererType: StateRendererType.popupErrorState,
+            message: errorMessage ?? "Failed to load statistics data",
+          ),
+        );
+      }
     }
   }
 
@@ -113,12 +135,12 @@ class StatisticsViewModel extends BaseViewModel
 
   @override
   void dispose() {
+    _dataGlobalNotifier.removeListener(_silentRefresh);
     _isCurrentMonthViewSubject.close();
     _statisticsDataSubject.close();
     super.dispose();
   }
 
-  // Inputs
   @override
   void toggleTimePeriod() {
     if (!_isCurrentMonthViewSubject.isClosed) {
@@ -126,7 +148,6 @@ class StatisticsViewModel extends BaseViewModel
     }
   }
 
-  // Outputs
   @override
   Stream<bool> get outputIsCurrentMonthView =>
       _isCurrentMonthViewSubject.stream;

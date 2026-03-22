@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:noted/app/app_events.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/domain/usecases/details_usecase.dart';
 import 'package:noted/domain/usecases/recommendations_usecase.dart';
@@ -11,8 +12,13 @@ class DetailsViewModel extends BaseViewModel
     implements DetailsViewModelInputs, DetailsViewModelOutputs {
   final DetailsUsecase _itemDetailsUseCase;
   final RecommendationsUsecase _recommendationsUsecase;
+  final DataGlobalNotifier _dataGlobalNotifier;
 
-  DetailsViewModel(this._itemDetailsUseCase, this._recommendationsUsecase);
+  DetailsViewModel(
+    this._itemDetailsUseCase,
+    this._recommendationsUsecase,
+    this._dataGlobalNotifier,
+  );
 
   final _itemDetailsStreamController = BehaviorSubject<Details>();
   final _recommendationsStreamController = BehaviorSubject<List<SearchItem>>();
@@ -58,7 +64,6 @@ class DetailsViewModel extends BaseViewModel
   Future<void> _loadLocalItemDetails(String id, Category category) async {
     (await _itemDetailsUseCase.getLocalItem(DetailsInput(id, category))).fold(
       (failure) {
-        // Don't show an error, just means it's not in the list
         inputLocalItem.add(null);
       },
       (localItem) {
@@ -109,11 +114,11 @@ class DetailsViewModel extends BaseViewModel
       },
       (_) {
         inputLocalItem.add(updatedItem);
+        _dataGlobalNotifier.notifyDataImported();
       },
     );
   }
 
-  // Inputs
   @override
   Sink<Details> get inputItemDetails => _itemDetailsStreamController.sink;
 
@@ -128,7 +133,6 @@ class DetailsViewModel extends BaseViewModel
   @override
   Sink<Item?> get inputLocalItem => _localItemStreamController.sink;
 
-  // Outputs
   @override
   Stream<Details> get outputItemDetails => _itemDetailsStreamController.stream;
 
