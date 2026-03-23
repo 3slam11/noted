@@ -9,6 +9,7 @@ abstract class Repository {
   Future<Either<Failure, SearchResults>> searchItems(
     String query,
     Category category,
+    int page,
   );
   Future<Either<Failure, Details>> getDetails(String id, Category category);
   Future<Either<Failure, List<SearchItem>>> getRecommendations(

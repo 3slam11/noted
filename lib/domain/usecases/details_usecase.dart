@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:noted/data/mapper/mapper.dart';
 import 'package:noted/data/network/failure.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/domain/repository/repository.dart';
@@ -20,6 +21,14 @@ class DetailsUsecase implements BaseUsecase<DetailsInput, Details> {
 
   Future<Either<Failure, void>> updateItem(Item item) {
     return repository.updateItem(item);
+  }
+
+  Future<Either<Failure, void>> addToTodo(Item item) {
+    return repository.addTodo(item.toResponse());
+  }
+
+  Future<Either<Failure, void>> addToSaved(Item item) {
+    return repository.addSaved(item.toResponse());
   }
 }
 

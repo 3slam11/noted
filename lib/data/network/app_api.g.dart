@@ -88,9 +88,15 @@ class _BooksApiClient implements BooksApiClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<BooksSearchResponse> searchBooks(String query) async {
+  Future<BooksSearchResponse> searchBooks(
+    String query, {
+    int startIndex = 0,
+  }) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'q': query};
+    final queryParameters = <String, dynamic>{
+      r'q': query,
+      r'startIndex': startIndex,
+    };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<BooksSearchResponse>(

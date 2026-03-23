@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
@@ -349,29 +350,20 @@ class HistoryViewState extends State<HistoryView> {
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(AppSize.s8),
             child: item.posterUrl != null && item.posterUrl!.isNotEmpty
-                ? Image.network(
-                    item.posterUrl!,
+                ? CachedNetworkImage(
+                    imageUrl: item.posterUrl!,
                     width: 55,
                     height: 80,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
+                    placeholder: (context, url) => SizedBox(
+                      width: 55,
+                      height: 80,
+                      child: Center(
+                        child: CircularProgressIndicator(strokeWidth: 2.0),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) =>
                         _buildPlaceholderIcon(item.category, 55, 80),
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return SizedBox(
-                        width: 55,
-                        height: 80,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.0,
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                : null,
-                          ),
-                        ),
-                      );
-                    },
                   )
                 : _buildPlaceholderIcon(item.category, 55, 80),
           ),

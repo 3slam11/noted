@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
 
@@ -268,11 +269,11 @@ class _NewMonthDialogState extends State<NewMonthDialog> {
         width: 32,
         height: 48,
         child: item.posterUrl != null && item.posterUrl!.isNotEmpty
-            ? Image.network(
-                item.posterUrl!,
+            ? CachedNetworkImage(
+                imageUrl: item.posterUrl!,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    _buildPlaceholder(),
+                placeholder: (context, url) => _buildPlaceholder(),
+                errorWidget: (context, url, error) => _buildPlaceholder(),
               )
             : _buildPlaceholder(),
       ),

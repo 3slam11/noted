@@ -120,6 +120,40 @@ class DetailsViewModel extends BaseViewModel
   }
 
   @override
+  Future<void> addItemToList(ItemListType listType) async {
+    final details = _itemDetailsStreamController.valueOrNull;
+    if (details == null) return;
+
+    final item = Item(
+      details.id,
+      details.title,
+      details.category,
+      details.imageUrls.isNotEmpty ? details.imageUrls.first : null,
+      details.releaseDate,
+      dateAdded: DateTime.now(),
+    );
+
+    final result = listType == ItemListType.todo
+        ? await _itemDetailsUseCase.addToTodo(item)
+        : await _itemDetailsUseCase.addToSaved(item);
+
+    result.fold(
+      (failure) {
+        inputState.add(
+          ErrorState(
+            stateRendererType: StateRendererType.popupErrorState,
+            message: failure.message,
+          ),
+        );
+      },
+      (_) {
+        inputLocalItem.add(item);
+        _dataGlobalNotifier.notifyDataImported();
+      },
+    );
+  }
+
+  @override
   Sink<Details> get inputItemDetails => _itemDetailsStreamController.sink;
 
   @override
@@ -156,6 +190,7 @@ abstract class DetailsViewModelInputs {
 
   Future<void> loadItemDetails(String id, Category category);
   Future<void> updateTracking({int? season, int? episode});
+  Future<void> addItemToList(ItemListType listType);
 }
 
 abstract class DetailsViewModelOutputs {

@@ -61,9 +61,10 @@ class RepositoryImpl implements Repository {
   Future<Either<Failure, SearchResults>> searchItems(
     String query,
     Category category,
+    int page,
   ) {
     return _executeNetworkCall(() async {
-      final response = await _searchByCategory(query, category);
+      final response = await _searchByCategory(query, category, page);
       return SearchResults(items: response);
     });
   }
@@ -71,12 +72,16 @@ class RepositoryImpl implements Repository {
   Future<List<SearchItem>> _searchByCategory(
     String query,
     Category category,
+    int page,
   ) async {
     final response = await switch (category) {
-      Category.movies => _remoteDataSource.searchMovies(query),
-      Category.series => _remoteDataSource.searchTVSeries(query),
-      Category.books => _remoteDataSource.searchBooks(query),
-      Category.games => _remoteDataSource.searchGames(query),
+      Category.movies => _remoteDataSource.searchMovies(query, page: page),
+      Category.series => _remoteDataSource.searchTVSeries(query, page: page),
+      Category.books => _remoteDataSource.searchBooks(
+        query,
+        startIndex: (page - 1) * 20,
+      ),
+      Category.games => _remoteDataSource.searchGames(query, page: page),
       Category.all => throw UnsupportedError(
         'Search for "All" category is not implemented.',
       ),

@@ -3,10 +3,14 @@ import 'package:noted/data/responses/responses.dart';
 
 abstract class RemoteDataSource {
   Future<MainResponse> getHome();
-  Future<MoviesSearchResponse> searchMovies(String query);
-  Future<TvSearchResponse> searchTVSeries(String query);
-  Future<BooksSearchResponse> searchBooks(String query);
-  Future<GamesSearchResponse> searchGames(String query, {int? publishers});
+  Future<MoviesSearchResponse> searchMovies(String query, {int page = 1});
+  Future<TvSearchResponse> searchTVSeries(String query, {int page = 1});
+  Future<BooksSearchResponse> searchBooks(String query, {int startIndex = 0});
+  Future<GamesSearchResponse> searchGames(
+    String query, {
+    int page = 1,
+    int? publishers,
+  });
   Future<MovieDetailsResponse> getMovieDetails(int id);
   Future<TvDetailsResponse> getTVSeriesDetails(int id);
   Future<BookDetailsResponse> getBookDetails(String id);
@@ -32,8 +36,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<MoviesSearchResponse> searchMovies(String query) async {
-    return _tmdbApiClient.searchMovies(query);
+  Future<MoviesSearchResponse> searchMovies(
+    String query, {
+    int page = 1,
+  }) async {
+    return _tmdbApiClient.searchMovies(query, page: page);
   }
 
   @override
@@ -42,8 +49,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<TvSearchResponse> searchTVSeries(String query) async {
-    return _tmdbApiClient.searchTVSeries(query);
+  Future<TvSearchResponse> searchTVSeries(String query, {int page = 1}) async {
+    return _tmdbApiClient.searchTVSeries(query, page: page);
   }
 
   @override
@@ -52,8 +59,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<BooksSearchResponse> searchBooks(String query) async {
-    return _booksApiClient.searchBooks(query);
+  Future<BooksSearchResponse> searchBooks(
+    String query, {
+    int startIndex = 0,
+  }) async {
+    return _booksApiClient.searchBooks(query, startIndex: startIndex);
   }
 
   @override
@@ -64,9 +74,14 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<GamesSearchResponse> searchGames(
     String query, {
+    int page = 1,
     int? publishers,
   }) async {
-    return _gamesApiClient.searchGames(query, publishers: publishers);
+    return _gamesApiClient.searchGames(
+      query,
+      page: page,
+      publishers: publishers,
+    );
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
@@ -86,12 +87,81 @@ class DetailsViewState extends State<DetailsView> {
                     .fadeIn(duration: 300.ms)
                     .scale(begin: const Offset(0.9, 0.9)),
                 const SizedBox(height: AppSize.s16),
-                Text(
-                  details.title,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+
+                // Title and Add Buttons Row
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        details.title,
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    StreamBuilder<Item?>(
+                      stream: _viewModel.outputLocalItem,
+                      builder: (context, snapshot) {
+                        final localItem = snapshot.data;
+                        if (localItem == null) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(
+                                  left: 8,
+                                  bottom: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withAlpha(25),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(Icons.add_rounded),
+                                  color: Theme.of(context).colorScheme.primary,
+                                  tooltip: t.home.addToTodo,
+                                  onPressed: () => _viewModel.addItemToList(
+                                    ItemListType.todo,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(left: 8),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withAlpha(25),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.bookmark_border_rounded,
+                                  ),
+                                  color: Theme.of(context).colorScheme.primary,
+                                  tooltip: t.home.addToSaved,
+                                  onPressed: () => _viewModel.addItemToList(
+                                    ItemListType.saved,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 8.0),
+                          child: Icon(
+                            Icons.check_rounded,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 32,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ).animate(delay: 200.ms).fadeIn(duration: 400.ms),
+
                 const SizedBox(height: AppSize.s8),
                 Text(
                   details.category.localizedCategory(),
@@ -314,17 +384,14 @@ class DetailsViewState extends State<DetailsView> {
                 height: 160,
                 width: double.infinity,
                 child: (item.imageUrl != null && item.imageUrl!.isNotEmpty)
-                    ? Image.network(
-                        item.imageUrl!,
+                    ? CachedNetworkImage(
+                        imageUrl: item.imageUrl!,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2.0),
+                        ),
+                        errorWidget: (context, url, error) =>
                             const Icon(Icons.broken_image, size: 40),
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(
-                            child: CircularProgressIndicator(strokeWidth: 2.0),
-                          );
-                        },
                       )
                     : const Icon(Icons.image_not_supported, size: 40),
               ),
@@ -394,30 +461,19 @@ class DetailsViewState extends State<DetailsView> {
                   margin: const EdgeInsets.symmetric(horizontal: AppPadding.p8),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(AppSize.s12),
-                    child: Image.network(
-                      imageUrls[index],
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrls[index],
                       fit: deviceWidth > 500 ? BoxFit.contain : BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                : null,
-                          ),
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: theme.colorScheme.secondary.withAlpha(15),
-                          child: Icon(
-                            Icons.broken_image_outlined,
-                            size: AppSize.s50,
-                            color: theme.colorScheme.primary.withAlpha(128),
-                          ),
-                        );
-                      },
+                      placeholder: (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Container(
+                        color: theme.colorScheme.secondary.withAlpha(15),
+                        child: Icon(
+                          Icons.broken_image_outlined,
+                          size: AppSize.s50,
+                          color: theme.colorScheme.primary.withAlpha(128),
+                        ),
+                      ),
                     ),
                   ),
                 );

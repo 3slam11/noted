@@ -16,6 +16,7 @@ class SearchUsecase implements BaseUsecase<SearchInput, SearchResults> {
     final remoteResultsEither = await repository.searchItems(
       input.query,
       input.category,
+      input.page,
     );
 
     return remoteResultsEither.fold((failure) => Left(failure), (
@@ -64,6 +65,7 @@ class SearchUsecase implements BaseUsecase<SearchInput, SearchResults> {
 class SearchInput {
   String query;
   Category category;
+  int page;
 
-  SearchInput(this.query, this.category);
+  SearchInput(this.query, this.category, this.page);
 }

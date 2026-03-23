@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/common/widgets/item_actions_dialog.dart';
@@ -121,12 +122,20 @@ class ItemTile extends StatelessWidget {
             leading: ClipRRect(
               borderRadius: BorderRadius.circular(4.0),
               child: (item.posterUrl != null && item.posterUrl!.isNotEmpty)
-                  ? Image.network(
-                      item.posterUrl!,
+                  ? CachedNetworkImage(
+                      imageUrl: item.posterUrl!,
                       width: 50,
                       height: 75,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
+                      placeholder: (context, url) => Container(
+                        width: 50,
+                        height: 75,
+                        color: Colors.grey,
+                        child: const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
                         width: 50,
                         height: 75,
                         color: Colors.grey,

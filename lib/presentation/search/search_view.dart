@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
@@ -17,11 +18,18 @@ class SearchView extends StatefulWidget {
 
 class SearchViewState extends State<SearchView> {
   final TextEditingController searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   late final SearchViewModel viewModel = instance<SearchViewModel>();
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        viewModel.search(searchController.text, loadMore: true);
+      }
+    });
     _bind();
   }
 
@@ -33,6 +41,7 @@ class SearchViewState extends State<SearchView> {
   void dispose() {
     viewModel.dispose();
     searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -126,7 +135,8 @@ class SearchViewState extends State<SearchView> {
                   );
                 } else {
                   return ListView.builder(
-                    primary: true,
+                    controller: _scrollController,
+                    primary: false,
                     itemCount: results.length,
                     itemBuilder: (context, index) {
                       return Padding(
@@ -275,20 +285,26 @@ class SearchViewState extends State<SearchView> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(AppSize.s8),
-                child: item.imageUrl != null
-                    ? Image.network(
-                        item.imageUrl!,
+                child: item.imageUrl != null && item.imageUrl!.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: item.imageUrl!,
                         width: AppSize.s80,
                         height: AppSize.s120,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: AppSize.s80,
-                            height: AppSize.s120,
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.image_not_supported),
-                          );
-                        },
+                        placeholder: (context, url) => Container(
+                          width: AppSize.s80,
+                          height: AppSize.s120,
+                          color: Colors.grey[300],
+                          child: const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          width: AppSize.s80,
+                          height: AppSize.s120,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.image_not_supported),
+                        ),
                       )
                     : Container(
                         width: AppSize.s80,
@@ -323,26 +339,34 @@ class SearchViewState extends State<SearchView> {
                   ],
                 ),
               ),
-              PopupMenuButton<ItemListType>(
-                icon: Icon(
-                  isAdded ? Icons.check_circle_outline : Icons.add_rounded,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                enabled: !isAdded,
-                onSelected: (listType) {
-                  viewModel.addItemToList(item, listType);
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: ItemListType.todo,
-                    child: Text(t.home.addToTodo),
-                  ),
-                  PopupMenuItem(
-                    value: ItemListType.saved,
-                    child: Text(t.home.addToSaved),
-                  ),
-                ],
-              ),
+              isAdded
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Icon(
+                        Icons.check_rounded,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 28,
+                      ),
+                    )
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.add_rounded),
+                          color: Theme.of(context).colorScheme.primary,
+                          tooltip: t.home.addToTodo,
+                          onPressed: () =>
+                              viewModel.addItemToList(item, ItemListType.todo),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.bookmark_border_rounded),
+                          color: Theme.of(context).colorScheme.primary,
+                          tooltip: t.home.addToSaved,
+                          onPressed: () =>
+                              viewModel.addItemToList(item, ItemListType.saved),
+                        ),
+                      ],
+                    ),
             ],
           ),
         ),

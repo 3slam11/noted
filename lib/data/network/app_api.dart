@@ -18,7 +18,10 @@ abstract class BooksApiClient {
   factory BooksApiClient(Dio dio, {String baseUrl}) = _BooksApiClient;
 
   @GET('/volumes')
-  Future<BooksSearchResponse> searchBooks(@Query('q') String query);
+  Future<BooksSearchResponse> searchBooks(
+    @Query('q') String query, {
+    @Query('startIndex') int startIndex = 0,
+  });
 
   @GET('/volumes/{id}')
   Future<BookDetailsResponse> getBookDetails(@Path('id') String id);

@@ -24,6 +24,9 @@ class SearchViewModel extends BaseViewModel
 
   Category _currentCategory = Category.movies;
   String _lastQuery = "";
+  int _currentPage = 1;
+  bool _isFetchingNextPage = false;
+  bool _hasMorePages = true;
 
   @override
   void start() {
@@ -39,32 +42,58 @@ class SearchViewModel extends BaseViewModel
   }
 
   @override
-  Future<void> search(String query) async {
+  Future<void> search(String query, {bool loadMore = false}) async {
     String trimmedQuery = query.trim();
     if (trimmedQuery.isEmpty) {
       inputSearchResults.add([]);
       return;
     }
-    _lastQuery = trimmedQuery;
 
-    inputState.add(
-      LoadingState(stateRendererType: StateRendererType.fullScreenLoadingState),
-    );
+    if (loadMore) {
+      if (_isFetchingNextPage || !_hasMorePages) return;
+      _isFetchingNextPage = true;
+      _currentPage++;
+    } else {
+      _lastQuery = trimmedQuery;
+      _currentPage = 1;
+      _hasMorePages = true;
+      inputState.add(
+        LoadingState(
+          stateRendererType: StateRendererType.fullScreenLoadingState,
+        ),
+      );
+    }
 
     (await _searchUsecase.execute(
-      SearchInput(trimmedQuery, _currentCategory),
+      SearchInput(trimmedQuery, _currentCategory, _currentPage),
     )).fold(
       (failure) {
-        inputState.add(
-          ErrorState(
-            stateRendererType: StateRendererType.fullScreenErrorState,
-            message: failure.message,
-          ),
-        );
+        if (loadMore) {
+          _currentPage--;
+          _isFetchingNextPage = false;
+        } else {
+          inputState.add(
+            ErrorState(
+              stateRendererType: StateRendererType.fullScreenErrorState,
+              message: failure.message,
+            ),
+          );
+        }
       },
       (searchResults) {
-        inputState.add(ContentState());
-        inputSearchResults.add(searchResults.items ?? []);
+        final newItems = searchResults.items ?? [];
+        if (newItems.isEmpty) {
+          _hasMorePages = false;
+        }
+
+        if (loadMore) {
+          final currentItems = _searchResultsStreamController.valueOrNull ?? [];
+          inputSearchResults.add([...currentItems, ...newItems]);
+          _isFetchingNextPage = false;
+        } else {
+          inputState.add(ContentState());
+          inputSearchResults.add(newItems);
+        }
       },
     );
   }
@@ -143,7 +172,7 @@ class SearchViewModel extends BaseViewModel
 abstract class SearchViewModelInputs {
   Sink<List<SearchItem>> get inputSearchResults;
   Sink<Category> get inputSelectedCategory;
-  Future<void> search(String query);
+  Future<void> search(String query, {bool loadMore = false});
   void updateCategory(Category category);
   void addItemToList(SearchItem item, ItemListType listType);
 }

@@ -1,0 +1,3 @@
+- Added two buttons in search and details page to add items to todo or saved.
+- added pagination so users can actually  see more than one page of results.
+- added cache support for posters and images to save data and increase performance.
