@@ -112,7 +112,19 @@ class TodoSectionWidget extends StatelessWidget {
                       return ItemTile(
                             item: todo,
                             currentList: ItemListType.todo,
-                            viewModel: viewModel,
+                            showSeriesTracker: viewModel.showSeriesTracker,
+                            onSwipeDismiss: viewModel.deleteTodoTemporarily,
+                            onUndoSwipe: viewModel.undoDeleteTodo,
+                            onConfirmSwipe: viewModel.confirmDeleteTodo,
+                            onMoveToFinished: () =>
+                                viewModel.moveToFinished(todo),
+                            onMoveToHistory: () =>
+                                viewModel.moveToHistory(todo),
+                            onMoveToSaved: () => viewModel.moveToSaved(todo),
+                            onDeletePermanently: () => viewModel
+                                .deleteItemPermanently(todo, ItemListType.todo),
+                            onEdit: (updatedItem) =>
+                                viewModel.updateItem(updatedItem),
                           )
                           .animate()
                           .fadeIn(duration: 300.ms)

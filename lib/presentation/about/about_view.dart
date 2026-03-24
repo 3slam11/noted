@@ -151,6 +151,11 @@ class _ApisUsedCard extends StatelessWidget {
                   title: t.home.books,
                   description: t.about.booksDescription,
                 ),
+                const SizedBox(height: 8),
+                _ApiInfo(
+                  title: t.about.animeAndManga,
+                  description: t.about.animeAndMangaDescription,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   t.about.thanksMessage,

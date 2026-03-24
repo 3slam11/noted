@@ -29,7 +29,7 @@ import 'package:noted/presentation/saved/saved_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final instance = GetIt.instance;
-// module to store all generic dependency injections
+
 Future<void> initAppModule() async {
   await ObjectBoxManager.initialize();
 
@@ -43,34 +43,40 @@ Future<void> initAppModule() async {
 
   final sharedPreferences = await SharedPreferences.getInstance();
   instance.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-  // app preferences
+
   instance.registerLazySingleton<AppPrefs>(() => AppPrefs(instance()));
-  // network info
+
   instance.registerLazySingleton<NetworkInfo>(
     () => NetworkInfoImpl(InternetConnection()),
   );
-  // dio factory
+
   instance.registerLazySingleton<DioFactory>(() => DioFactory(instance()));
-  // app service client
+
   final dio = await instance<DioFactory>().getDio();
   instance.registerLazySingleton<AppServiceClient>(() => AppServiceClient(dio));
   instance.registerLazySingleton<BooksApiClient>(() => BooksApiClient(dio));
   instance.registerLazySingleton<GamesApiClient>(() => GamesApiClient(dio));
   instance.registerLazySingleton<TmdbApiClient>(() => TmdbApiClient(dio));
+  instance.registerLazySingleton<JikanApiClient>(() => JikanApiClient(dio));
 
-  // local data source
   instance.registerLazySingleton<LocalDataSource>(
     () => LocalDataSourceImpl(instance()),
-  ); // remote data source
-  instance.registerLazySingleton<RemoteDataSource>(
-    () => RemoteDataSourceImpl(instance(), instance(), instance(), instance()),
   );
-  // repository
+
+  instance.registerLazySingleton<RemoteDataSource>(
+    () => RemoteDataSourceImpl(
+      instance(),
+      instance(),
+      instance(),
+      instance(),
+      instance(),
+    ),
+  );
+
   instance.registerLazySingleton<Repository>(
     () => RepositoryImpl(instance(), instance(), instance()),
   );
 
-  // theme manager
   instance.registerLazySingleton<ThemeManager>(() => ThemeManager(instance()));
 }
 

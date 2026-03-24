@@ -60,7 +60,22 @@ class FinishedSectionWidget extends StatelessWidget {
                       return ItemTile(
                             item: finished,
                             currentList: ItemListType.finished,
-                            viewModel: viewModel,
+                            showSeriesTracker: viewModel.showSeriesTracker,
+                            onSwipeDismiss: viewModel.deleteFinishedTemporarily,
+                            onUndoSwipe: viewModel.undoDeleteFinished,
+                            onConfirmSwipe: viewModel.confirmDeleteFinished,
+                            onMoveToTodo: () => viewModel.moveToTodo(finished),
+                            onMoveToHistory: () =>
+                                viewModel.moveToHistory(finished),
+                            onMoveToSaved: () =>
+                                viewModel.moveToSaved(finished),
+                            onDeletePermanently: () =>
+                                viewModel.deleteItemPermanently(
+                                  finished,
+                                  ItemListType.finished,
+                                ),
+                            onEdit: (updatedItem) =>
+                                viewModel.updateItem(updatedItem),
                           )
                           .animate()
                           .fadeIn(duration: 300.ms)

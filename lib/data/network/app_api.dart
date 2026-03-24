@@ -87,3 +87,39 @@ abstract class TmdbApiClient {
     @Query('page') int page = 1,
   });
 }
+
+// Jikan API Client (Anime & Manga)
+@RestApi(baseUrl: Constants.jikanBaseUrl)
+abstract class JikanApiClient {
+  factory JikanApiClient(Dio dio, {String baseUrl}) = _JikanApiClient;
+
+  // Anime
+  @GET('/anime')
+  Future<JikanSearchResponse> searchAnime(
+    @Query('q') String query, {
+    @Query('page') int page = 1,
+  });
+
+  @GET('/anime/{id}/full')
+  Future<JikanDetailsResponse> getAnimeDetails(@Path('id') int id);
+
+  @GET('/anime/{id}/recommendations')
+  Future<JikanRecommendationsResponse> getAnimeRecommendations(
+    @Path('id') int id,
+  );
+
+  // Manga
+  @GET('/manga')
+  Future<JikanSearchResponse> searchManga(
+    @Query('q') String query, {
+    @Query('page') int page = 1,
+  });
+
+  @GET('/manga/{id}/full')
+  Future<JikanDetailsResponse> getMangaDetails(@Path('id') int id);
+
+  @GET('/manga/{id}/recommendations')
+  Future<JikanRecommendationsResponse> getMangaRecommendations(
+    @Path('id') int id,
+  );
+}

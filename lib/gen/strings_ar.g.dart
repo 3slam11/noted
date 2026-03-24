@@ -60,7 +60,6 @@ class TranslationsAr with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _TranslationsSearchAr search = _TranslationsSearchAr._(_root);
 	@override late final _TranslationsDetailsAr details = _TranslationsDetailsAr._(_root);
 	@override late final _TranslationsSettingsAr settings = _TranslationsSettingsAr._(_root);
-	@override late final _TranslationsQrSettingsAr qrSettings = _TranslationsQrSettingsAr._(_root);
 	@override late final _TranslationsLanguageSettingsAr languageSettings = _TranslationsLanguageSettingsAr._(_root);
 	@override late final _TranslationsThemeSettingsAr themeSettings = _TranslationsThemeSettingsAr._(_root);
 	@override late final _TranslationsFontSettingsAr fontSettings = _TranslationsFontSettingsAr._(_root);
@@ -134,11 +133,13 @@ class _TranslationsHomeAr implements TranslationsHomeEn {
 	@override String get titleSection => 'قائمة الترفيه لشهر ';
 	@override String get emptySection => 'القائمة فارغة';
 	@override String get finishedList => 'القائمة المكتملة';
-	@override String get savedList => 'قائمة الحفظ لوقت لاحق';
+	@override String get savedList => 'الحفظ لوقت لاحق';
 	@override String get movies => 'الأفلام';
 	@override String get series => 'المسلسلات';
 	@override String get games => 'الألعاب';
 	@override String get books => 'الكتب';
+	@override String get anime => 'الأنمي';
+	@override String get manga => 'المانجا';
 	@override String get all => 'الكل';
 	@override String get deleted => 'حذفت';
 	@override String get undo => 'تراجع';
@@ -222,11 +223,15 @@ class _TranslationsDetailsAr implements TranslationsDetailsEn {
 	@override String get series => 'المسلسلات';
 	@override String get games => 'الألعاب';
 	@override String get books => 'الكتب';
+	@override String get anime => 'الأنمي';
+	@override String get manga => 'المانجا';
 	@override String get description => 'الوصف';
 	@override String get genres => 'التصنيف';
 	@override String get progressTracker => 'تتبع التقدم';
 	@override String get season => 'الموسم';
 	@override String get episode => 'الحلقة';
+	@override String get chapter => 'الفصل';
+	@override String get volume => 'المجلد';
 	@override String get releaseDate => 'تاريخ الإصدار';
 	@override String get platforms => 'المنصات';
 	@override String get rating => 'التقييم';
@@ -267,25 +272,6 @@ class _TranslationsSettingsAr implements TranslationsSettingsEn {
 	@override String get rolloverManualDescription => 'لا تفعل شيئًا. سأدير قوائمي بنفسي.';
 	@override String get showSeriesTracker => 'إظهار متتبع المسلسلات';
 	@override String get showSeriesTrackerDescription => 'عرض الموسم والحلقة الحالية للمسلسلات التلفزيونية في القوائم الرئيسية.';
-}
-
-// Path: qrSettings
-class _TranslationsQrSettingsAr implements TranslationsQrSettingsEn {
-	_TranslationsQrSettingsAr._(this._root);
-
-	final TranslationsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'مزامنة بالـQR';
-	@override String get desktop => 'الخاصية غير متوفرة على الكمبيوتر';
-	@override String get desktopDescription => 'قارئ الـQR متوفرة فقط على الهواتف.';
-	@override String get subtitle => 'مزامنة بين الأجهزة عن طريق الـQR';
-	@override String get description => 'يمكنك مزامنة بياناتك واعدادتك على جهاز اخر.';
-	@override String get alert => 'المزامنة ستستبدل بياناتك الحالية بالجديدة.';
-	@override String get scan => 'امسح';
-	@override String get generate => 'انشئ';
-	@override String get generating => 'جاري انشاء الـQR...';
-	@override String get generated => 'تم انشاء الـQR';
 }
 
 // Path: languageSettings
@@ -409,13 +395,15 @@ class _TranslationsAboutAr implements TranslationsAboutEn {
 	// Translations
 	@override String get aboutThisApp => 'حول هذا التطبيق';
 	@override String get appDescription => 'هذا التطبيق اٌنشئ بغرض التدريب فإذا واجهت مشكلة، ابلغ المطور على Github.';
-	@override String get reportIssue => 'أبلغ عن مشكلة';
+	@override String get reportIssue => 'مشكلة؟';
 	@override String get viewProject => 'صفحة التطبيق';
 	@override String get apisUsed => 'الـAPIs المستخدمة';
 	@override String get gamesDescription => 'بيانات الألعاب جاءت من موقع RAWG';
 	@override String get moviesAndTvSeries => 'الأفلام والمسلسلات التلفزيونية';
 	@override String get moviesAndTvSeriesDescription => 'جميع البيانات حول الأفلام والمسلسلات التلفزيونية جاءت من موقع TMDB';
 	@override String get booksDescription => 'جميع البيانات حول الكتب جاءت من موقع Google Books API';
+	@override String get animeAndManga => 'الأنمي والمانجا';
+	@override String get animeAndMangaDescription => 'بيانات الأنمي والمانجا جاءت من Jikan, لا حاجة لـAPI';
 	@override String get thanksMessage => 'بفضل خطتهم المجانية، أصبح التطبيق قابلًا للاستخدام كما هو الآن.';
 }
 
@@ -469,11 +457,13 @@ extension on TranslationsAr {
 			'home.titleSection' => 'قائمة الترفيه لشهر ',
 			'home.emptySection' => 'القائمة فارغة',
 			'home.finishedList' => 'القائمة المكتملة',
-			'home.savedList' => 'قائمة الحفظ لوقت لاحق',
+			'home.savedList' => 'الحفظ لوقت لاحق',
 			'home.movies' => 'الأفلام',
 			'home.series' => 'المسلسلات',
 			'home.games' => 'الألعاب',
 			'home.books' => 'الكتب',
+			'home.anime' => 'الأنمي',
+			'home.manga' => 'المانجا',
 			'home.all' => 'الكل',
 			'home.deleted' => 'حذفت',
 			'home.undo' => 'تراجع',
@@ -530,11 +520,15 @@ extension on TranslationsAr {
 			'details.series' => 'المسلسلات',
 			'details.games' => 'الألعاب',
 			'details.books' => 'الكتب',
+			'details.anime' => 'الأنمي',
+			'details.manga' => 'المانجا',
 			'details.description' => 'الوصف',
 			'details.genres' => 'التصنيف',
 			'details.progressTracker' => 'تتبع التقدم',
 			'details.season' => 'الموسم',
 			'details.episode' => 'الحلقة',
+			'details.chapter' => 'الفصل',
+			'details.volume' => 'المجلد',
 			'details.releaseDate' => 'تاريخ الإصدار',
 			'details.platforms' => 'المنصات',
 			'details.rating' => 'التقييم',
@@ -566,16 +560,6 @@ extension on TranslationsAr {
 			'settings.rolloverManualDescription' => 'لا تفعل شيئًا. سأدير قوائمي بنفسي.',
 			'settings.showSeriesTracker' => 'إظهار متتبع المسلسلات',
 			'settings.showSeriesTrackerDescription' => 'عرض الموسم والحلقة الحالية للمسلسلات التلفزيونية في القوائم الرئيسية.',
-			'qrSettings.title' => 'مزامنة بالـQR',
-			'qrSettings.desktop' => 'الخاصية غير متوفرة على الكمبيوتر',
-			'qrSettings.desktopDescription' => 'قارئ الـQR متوفرة فقط على الهواتف.',
-			'qrSettings.subtitle' => 'مزامنة بين الأجهزة عن طريق الـQR',
-			'qrSettings.description' => 'يمكنك مزامنة بياناتك واعدادتك على جهاز اخر.',
-			'qrSettings.alert' => 'المزامنة ستستبدل بياناتك الحالية بالجديدة.',
-			'qrSettings.scan' => 'امسح',
-			'qrSettings.generate' => 'انشئ',
-			'qrSettings.generating' => 'جاري انشاء الـQR...',
-			'qrSettings.generated' => 'تم انشاء الـQR',
 			'languageSettings.selectLanguage' => 'اختر اللغة',
 			'languageSettings.en' => 'English',
 			'languageSettings.ar' => 'العربية',
@@ -627,13 +611,15 @@ extension on TranslationsAr {
 			'statistics.noData' => 'لا يوجد بيانات حتى الان',
 			'about.aboutThisApp' => 'حول هذا التطبيق',
 			'about.appDescription' => 'هذا التطبيق اٌنشئ بغرض التدريب فإذا واجهت مشكلة، ابلغ المطور على Github.',
-			'about.reportIssue' => 'أبلغ عن مشكلة',
+			'about.reportIssue' => 'مشكلة؟',
 			'about.viewProject' => 'صفحة التطبيق',
 			'about.apisUsed' => 'الـAPIs المستخدمة',
 			'about.gamesDescription' => 'بيانات الألعاب جاءت من موقع RAWG',
 			'about.moviesAndTvSeries' => 'الأفلام والمسلسلات التلفزيونية',
 			'about.moviesAndTvSeriesDescription' => 'جميع البيانات حول الأفلام والمسلسلات التلفزيونية جاءت من موقع TMDB',
 			'about.booksDescription' => 'جميع البيانات حول الكتب جاءت من موقع Google Books API',
+			'about.animeAndManga' => 'الأنمي والمانجا',
+			'about.animeAndMangaDescription' => 'بيانات الأنمي والمانجا جاءت من Jikan, لا حاجة لـAPI',
 			'about.thanksMessage' => 'بفضل خطتهم المجانية، أصبح التطبيق قابلًا للاستخدام كما هو الآن.',
 			_ => null,
 		};

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
-import 'package:noted/presentation/resources/routes_manager.dart';
-import 'package:noted/presentation/resources/values_manager.dart';
+import 'package:noted/presentation/common/widgets/empty_state_widget.dart';
+import 'package:noted/presentation/common/widgets/item_tile.dart'; // <-- Added import
 import 'package:noted/presentation/search/search_viewmodel.dart';
 import 'package:noted/presentation/common/state_renderer/state_flow_handler.dart';
-import 'package:noted/presentation/details/details_view.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -70,68 +68,14 @@ class SearchViewState extends State<SearchView> {
               builder: (context, snapshot) {
                 final results = snapshot.data;
                 if (results == null) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                              Icons.search,
-                              size: 48,
-                              color: Theme.of(context).colorScheme.primary,
-                            )
-                            .animate()
-                            .fadeIn(duration: 300.ms)
-                            .scale(begin: const Offset(0.5, 0.5))
-                            .then()
-                            .shake(duration: 500.ms, delay: 1000.ms),
-                        const SizedBox(height: 16),
-                        Text(
-                              t.search.searchForSomething,
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.6),
-                                  ),
-                            )
-                            .animate()
-                            .fadeIn(duration: 300.ms)
-                            .scale(begin: const Offset(0.5, 0.5)),
-                      ],
-                    ),
+                  return EmptyStateWidget(
+                    icon: Icons.search,
+                    message: t.search.searchForSomething,
                   );
                 } else if (results.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                              Icons.search_off,
-                              size: 48,
-                              color: Theme.of(context).colorScheme.primary,
-                            )
-                            .animate()
-                            .fadeIn(duration: 300.ms)
-                            .scale(begin: const Offset(0.5, 0.5))
-                            .then()
-                            .shake(duration: 500.ms, delay: 1000.ms),
-                        const SizedBox(height: 16),
-                        Text(
-                              t.search.noResultsFound,
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.6),
-                                  ),
-                            )
-                            .animate()
-                            .fadeIn(duration: 500.ms, delay: 200.ms)
-                            .slideY(begin: 0.3, end: 0),
-                      ],
-                    ),
+                  return EmptyStateWidget(
+                    icon: Icons.search_off,
+                    message: t.search.noResultsFound,
                   );
                 } else {
                   return ListView.builder(
@@ -161,9 +105,6 @@ class SearchViewState extends State<SearchView> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-        ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Row(
@@ -256,120 +197,54 @@ class SearchViewState extends State<SearchView> {
     ).animate().fadeIn(duration: 500.ms).slideY(begin: -1, end: 0);
   }
 
-  Widget _buildResultItem(SearchItem item) {
-    bool isAdded = item.isLocallyAdded;
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withAlpha(26),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(
-            context,
-            RoutesManager.detailsRoute,
-            arguments: DetailsView(id: item.id, category: item.category),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(AppPadding.p8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppSize.s8),
-                child: item.imageUrl != null && item.imageUrl!.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: item.imageUrl!,
-                        width: AppSize.s80,
-                        height: AppSize.s120,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          width: AppSize.s80,
-                          height: AppSize.s120,
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          width: AppSize.s80,
-                          height: AppSize.s120,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.image_not_supported),
-                        ),
-                      )
-                    : Container(
-                        width: AppSize.s80,
-                        height: AppSize.s120,
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.image_not_supported),
-                      ),
-              ),
-              const SizedBox(width: AppSize.s16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      item.title,
-                      style: const TextStyle(
-                        fontSize: AppSize.s16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    if (item.releaseDate != null &&
-                        item.releaseDate!.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: AppPadding.p8),
-                        child: Text(
-                          '${item.releaseDate}',
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                      ),
-                  ],
+  Widget _buildResultItem(SearchItem searchItem) {
+    final item = Item(
+      searchItem.id,
+      searchItem.title,
+      searchItem.category,
+      searchItem.imageUrl,
+      searchItem.releaseDate,
+    );
+
+    return ItemTile(
+      item: item,
+      currentList: null,
+      showSeriesTracker: false,
+      cardColor: Theme.of(context).colorScheme.surface,
+      margin: EdgeInsets.zero,
+      customTrailing: SizedBox(
+        height: 105,
+        child: searchItem.isLocallyAdded
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Icon(
+                    Icons.check_rounded,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 28,
+                  ),
                 ),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.add_rounded),
+                    color: Theme.of(context).colorScheme.primary,
+                    tooltip: t.home.addToTodo,
+                    onPressed: () =>
+                        viewModel.addItemToList(searchItem, ItemListType.todo),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.bookmark_border_rounded),
+                    color: Theme.of(context).colorScheme.primary,
+                    tooltip: t.home.addToSaved,
+                    onPressed: () =>
+                        viewModel.addItemToList(searchItem, ItemListType.saved),
+                  ),
+                ],
               ),
-              isAdded
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Icon(
-                        Icons.check_rounded,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 28,
-                      ),
-                    )
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.add_rounded),
-                          color: Theme.of(context).colorScheme.primary,
-                          tooltip: t.home.addToTodo,
-                          onPressed: () =>
-                              viewModel.addItemToList(item, ItemListType.todo),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.bookmark_border_rounded),
-                          color: Theme.of(context).colorScheme.primary,
-                          tooltip: t.home.addToSaved,
-                          onPressed: () =>
-                              viewModel.addItemToList(item, ItemListType.saved),
-                        ),
-                      ],
-                    ),
-            ],
-          ),
-        ),
       ),
     );
   }

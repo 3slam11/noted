@@ -9,7 +9,9 @@ enum Category {
   movies,
   series,
   books,
-  games;
+  games,
+  anime,
+  manga;
 
   String localizedCategory() {
     switch (this) {
@@ -23,6 +25,10 @@ enum Category {
         return t.home.books;
       case Category.games:
         return t.home.games;
+      case Category.anime:
+        return t.home.anime;
+      case Category.manga:
+        return t.home.manga;
     }
   }
 }

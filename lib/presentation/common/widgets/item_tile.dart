@@ -5,43 +5,309 @@ import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/common/widgets/item_actions_dialog.dart';
 import 'package:noted/presentation/details/details_view.dart';
-import 'package:noted/presentation/main/main_view_model.dart';
 import 'package:noted/presentation/resources/routes_manager.dart';
 
 class ItemTile extends StatelessWidget {
   final Item item;
-  final ItemListType currentList;
-  final MainViewModel viewModel;
+  final ItemListType? currentList;
+  final bool showSeriesTracker;
+
+  // UI Customization
+  final Color? cardColor;
+  final EdgeInsetsGeometry? margin;
+  final Widget? customTrailing;
+
+  // Swipe to dismiss callbacks (Nullable to disable swipe)
+  final int? Function(Item)? onSwipeDismiss;
+  final void Function(Item, int)? onUndoSwipe;
+  final void Function(Item)? onConfirmSwipe;
+
+  // Action callbacks
+  final VoidCallback? onMoveToTodo;
+  final VoidCallback? onMoveToFinished;
+  final VoidCallback? onMoveToHistory;
+  final VoidCallback? onMoveToSaved;
+  final VoidCallback? onDeletePermanently;
+  final Function(Item)? onEdit;
 
   const ItemTile({
     super.key,
     required this.item,
-    required this.currentList,
-    required this.viewModel,
+    this.currentList,
+    this.showSeriesTracker = false,
+    this.cardColor,
+    this.margin,
+    this.customTrailing,
+    this.onSwipeDismiss,
+    this.onUndoSwipe,
+    this.onConfirmSwipe,
+    this.onMoveToTodo,
+    this.onMoveToFinished,
+    this.onMoveToHistory,
+    this.onMoveToSaved,
+    this.onDeletePermanently,
+    this.onEdit,
   });
 
   void _showItemActions(BuildContext context) {
+    if (currentList == null) return;
+
     showDialog(
       context: context,
       builder: (_) => ItemActionsDialog(
         item: item,
-        currentList: currentList,
-        onMoveToTodo: () => viewModel.moveToTodo(item),
-        onMoveToFinished: () => viewModel.moveToFinished(item),
-        onMoveToHistory: () => viewModel.moveToHistory(item),
-        onMoveToSaved: () => viewModel.moveToSaved(item),
-        onDelete: () => viewModel.deleteItemPermanently(item, currentList),
-        onEdit: () {
-          showDialog(
-            context: context,
-            builder: (_) => EditItemDialog(
-              item: item,
-              onSave: (updatedItem) {
-                viewModel.updateItem(updatedItem);
-              },
+        currentList: currentList!,
+        onMoveToTodo: onMoveToTodo,
+        onMoveToFinished: onMoveToFinished,
+        onMoveToHistory: onMoveToHistory,
+        onMoveToSaved: onMoveToSaved,
+        onDelete: onDeletePermanently,
+        onEdit: onEdit != null
+            ? () {
+                showDialog(
+                  context: context,
+                  builder: (_) => EditItemDialog(item: item, onSave: onEdit!),
+                );
+              }
+            : null,
+      ),
+    );
+  }
+
+  IconData _getIconForCategory(Category? category) {
+    switch (category) {
+      case Category.movies:
+        return Icons.movie_creation_outlined;
+      case Category.series:
+        return Icons.tv_outlined;
+      case Category.books:
+        return Icons.book_outlined;
+      case Category.games:
+        return Icons.sports_esports_outlined;
+      case Category.anime:
+        return Icons.animation_rounded;
+      case Category.manga:
+        return Icons.menu_book_rounded;
+      default:
+        return Icons.list_alt_outlined;
+    }
+  }
+
+  Widget? _buildTrailingAction(BuildContext context) {
+    if (customTrailing != null) return customTrailing;
+    if (currentList == null || currentList == ItemListType.history) return null;
+
+    IconData? icon;
+    VoidCallback? action;
+
+    if (currentList == ItemListType.todo) {
+      icon = Icons.check_rounded;
+      action = onMoveToFinished;
+    } else if (currentList == ItemListType.finished) {
+      icon = Icons.undo_rounded;
+      action = onMoveToTodo;
+    } else if (currentList == ItemListType.saved) {
+      icon = Icons.playlist_add_rounded;
+      action = onMoveToTodo;
+    }
+
+    if (icon == null || action == null) return null;
+
+    return SizedBox(
+      height: 105,
+      child: Center(
+        child: IconButton(
+          icon: Icon(icon, color: Theme.of(context).colorScheme.primary),
+          onPressed: action,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      margin: margin ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 0,
+      color: cardColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            RoutesManager.detailsRoute,
+            arguments: DetailsView(
+              id: item.id ?? '',
+              category: item.category ?? Category.all,
             ),
           );
         },
+        onLongPress: currentList != null
+            ? () => _showItemActions(context)
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Enhanced Poster Image with subtle shadow
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: (item.posterUrl != null && item.posterUrl!.isNotEmpty)
+                      ? CachedNetworkImage(
+                          imageUrl: item.posterUrl!,
+                          width: 70,
+                          height: 105,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            width: 70,
+                            height: 105,
+                            color: theme.colorScheme.surfaceContainerHighest,
+                            child: const Center(
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            width: 70,
+                            height: 105,
+                            color: theme.colorScheme.surfaceContainerHighest,
+                            child: Icon(
+                              Icons.broken_image_rounded,
+                              size: 30,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          width: 70,
+                          height: 105,
+                          color: theme.colorScheme.surfaceContainerHighest,
+                          child: Icon(
+                            _getIconForCategory(item.category),
+                            size: 30,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                ),
+              ),
+              const SizedBox(width: 16),
+
+              // Text Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 4),
+                    Text(
+                      item.title ?? 'Untitled',
+                      style: const TextStyle(fontSize: 16),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+
+                    Text(
+                      item.category?.localizedCategory() ?? 'Uncategorized',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+
+                    // Series Tracker OR Release Date
+                    if (showSeriesTracker &&
+                        item.category == Category.series &&
+                        item.currentSeason != null &&
+                        item.currentEpisode != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2.0),
+                        child: Text(
+                          '${t.details.season} ${item.currentSeason} • ${t.details.episode} ${item.currentEpisode}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                      )
+                    else if (item.releaseDate != null &&
+                        item.releaseDate!.isNotEmpty &&
+                        currentList == null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2.0),
+                        child: Text(
+                          '${item.releaseDate}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+
+                    Builder(
+                      builder: (context) {
+                        final bool hasRating =
+                            item.personalRating != null &&
+                            item.personalRating! > 0;
+                        final bool hasNotes =
+                            item.personalNotes != null &&
+                            item.personalNotes!.trim().isNotEmpty;
+
+                        if (!hasRating && !hasNotes) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Row(
+                            children: [
+                              if (hasRating)
+                                RatingBarIndicator(
+                                  rating: item.personalRating!,
+                                  itemBuilder: (context, index) =>
+                                      const Icon(Icons.star_rounded),
+                                  itemCount: 5,
+                                  itemSize: 18.0,
+                                  direction: Axis.horizontal,
+                                ),
+                              if (hasRating && hasNotes)
+                                const SizedBox(width: 8),
+                              if (hasNotes)
+                                Tooltip(
+                                  message: t.home.yourNotes,
+                                  child: Icon(
+                                    Icons.notes_rounded,
+                                    size: 18.0,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              // Action Button
+              if (_buildTrailingAction(context) != null)
+                _buildTrailingAction(context)!,
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -50,191 +316,60 @@ class ItemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final valueKey =
-        'item-${currentList.name}-${item.id}-${item.category?.name}';
+        'item-${currentList?.name ?? 'search'}-${item.id}-${item.category?.name}';
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-      child: Dismissible(
-        key: ValueKey(valueKey),
-        direction: DismissDirection.startToEnd,
-        onDismissed: (direction) {
-          int? index;
-          if (currentList == ItemListType.todo) {
-            index = viewModel.deleteTodoTemporarily(item);
-          } else if (currentList == ItemListType.finished) {
-            index = viewModel.deleteFinishedTemporarily(item);
-          } else if (currentList == ItemListType.saved) {
-            index = viewModel.deleteSavedTemporarily(item);
-          }
+    if (onSwipeDismiss == null) {
+      return _buildCard(context);
+    }
 
-          if (index == null) return;
+    return Dismissible(
+      key: ValueKey(valueKey),
+      direction: DismissDirection.startToEnd,
+      onDismissed: (direction) {
+        final index = onSwipeDismiss!(item);
+        if (index == null) return;
 
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          ScaffoldMessenger.of(context)
-              .showSnackBar(
-                SnackBar(
-                  content: Text("'${item.title ?? 'Item'}' ${t.home.deleted}."),
-                  duration: const Duration(seconds: 3),
-                  behavior: SnackBarBehavior.floating,
-                  action: SnackBarAction(
-                    label: t.home.undo,
-                    onPressed: () {
-                      if (currentList == ItemListType.todo) {
-                        viewModel.undoDeleteTodo(item, index!);
-                      } else if (currentList == ItemListType.finished) {
-                        viewModel.undoDeleteFinished(item, index!);
-                      } else if (currentList == ItemListType.saved) {
-                        viewModel.undoDeleteSaved(item, index!);
-                      }
-                    },
-                  ),
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
+              SnackBar(
+                content: Text("'${item.title ?? 'Item'}' ${t.home.deleted}."),
+                duration: const Duration(seconds: 3),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-              )
-              .closed
-              .then((reason) {
-                if (reason != SnackBarClosedReason.action) {
-                  if (currentList == ItemListType.todo) {
-                    viewModel.confirmDeleteTodo(item);
-                  } else if (currentList == ItemListType.finished) {
-                    viewModel.confirmDeleteFinished(item);
-                  } else if (currentList == ItemListType.saved) {
-                    viewModel.confirmDeleteSaved(item);
-                  }
-                }
-              });
-        },
-        background: Container(
-          decoration: BoxDecoration(
-            color: Colors.red,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          alignment: Directionality.of(context) == TextDirection.rtl
-              ? Alignment.centerRight
-              : Alignment.centerLeft,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: const Icon(Icons.delete, color: Colors.white, size: 24),
-        ),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: ListTile(
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(4.0),
-              child: (item.posterUrl != null && item.posterUrl!.isNotEmpty)
-                  ? CachedNetworkImage(
-                      imageUrl: item.posterUrl!,
-                      width: 50,
-                      height: 75,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        width: 50,
-                        height: 75,
-                        color: Colors.grey,
-                        child: const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        width: 50,
-                        height: 75,
-                        color: Colors.grey,
-                        child: const Icon(Icons.broken_image, size: 30),
-                      ),
-                    )
-                  : Container(
-                      width: 50,
-                      height: 75,
-                      color: Colors.grey,
-                      child: const Icon(Icons.list_alt, size: 30),
-                    ),
-            ),
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  item.title ?? 'Untitled',
-                  style: const TextStyle(fontSize: 16),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                action: SnackBarAction(
+                  label: t.home.undo,
+                  onPressed: () => onUndoSwipe?.call(item, index),
                 ),
-                if (item.personalRating != null && item.personalRating! > 0)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4.0),
-                    child: RatingBarIndicator(
-                      rating: item.personalRating!,
-                      itemBuilder: (context, index) => Icon(
-                        Icons.star,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      itemCount: 5,
-                      itemSize: 16.0,
-                      direction: Axis.horizontal,
-                    ),
-                  ),
-              ],
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.category?.localizedCategory() ?? 'Uncategorized',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: theme.colorScheme.secondary,
-                  ),
-                ),
-                if (viewModel.showSeriesTracker &&
-                    item.category == Category.series &&
-                    item.currentSeason != null &&
-                    item.currentEpisode != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2.0),
-                    child: Text(
-                      '${t.details.season} ${item.currentSeason} • ${t.details.episode} ${item.currentEpisode}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            trailing: IconButton(
-              icon: Icon(
-                currentList == ItemListType.todo
-                    ? Icons.check_rounded
-                    : currentList == ItemListType.finished
-                    ? Icons.undo_rounded
-                    : Icons.playlist_add_rounded,
-                color: theme.colorScheme.primary,
               ),
-              onPressed: () {
-                if (currentList == ItemListType.todo) {
-                  viewModel.moveToFinished(item);
-                } else if (currentList == ItemListType.finished) {
-                  viewModel.moveToTodo(item);
-                } else if (currentList == ItemListType.saved) {
-                  viewModel.moveToTodo(item);
-                }
-              },
-            ),
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                RoutesManager.detailsRoute,
-                arguments: DetailsView(
-                  id: item.id ?? '',
-                  category: item.category ?? Category.all,
-                ),
-              );
-            },
-            onLongPress: () => _showItemActions(context),
-          ),
+            )
+            .closed
+            .then((reason) {
+              if (reason != SnackBarClosedReason.action) {
+                onConfirmSwipe?.call(item);
+              }
+            });
+      },
+      background: Container(
+        margin:
+            margin ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.error,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        alignment: Directionality.of(context) == TextDirection.rtl
+            ? Alignment.centerRight
+            : Alignment.centerLeft,
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Icon(
+          Icons.delete_outline_rounded,
+          color: theme.colorScheme.onError,
+          size: 28,
         ),
       ),
+      child: _buildCard(context),
     );
   }
 }
@@ -279,14 +414,18 @@ class _EditItemDialogState extends State<EditItemDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return AlertDialog(
-      title: Text(t.home.editNotes),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text(
+        t.home.editNotes,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(t.home.yourRating, style: theme.textTheme.titleMedium),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Center(
               child: RatingBar.builder(
                 initialRating: _currentRating,
@@ -305,13 +444,15 @@ class _EditItemDialogState extends State<EditItemDialog> {
             ),
             const SizedBox(height: 24),
             Text(t.home.yourNotes, style: theme.textTheme.titleMedium),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             TextField(
               controller: _notesController,
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: t.home.notesHint,
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ],
@@ -322,7 +463,15 @@ class _EditItemDialogState extends State<EditItemDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: Text(t.errorHandler.cancel),
         ),
-        ElevatedButton(onPressed: _handleSave, child: Text(t.apiSettings.save)),
+        FilledButton(
+          onPressed: _handleSave,
+          style: FilledButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(t.apiSettings.save),
+        ),
       ],
     );
   }

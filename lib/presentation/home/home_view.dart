@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:noted/gen/strings.g.dart';
@@ -111,7 +112,7 @@ class _HomeViewState extends State<HomeView>
 
     return Scaffold(
       backgroundColor: colorScheme.primaryContainer,
-      extendBody: true,
+      extendBody: true, // Crucial for the glass effect to show content behind
       appBar: AppBar(title: Text(pageTitles[_bottomNavIndex])),
       body: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
@@ -124,35 +125,51 @@ class _HomeViewState extends State<HomeView>
         animation: _hideBottomBarAnimationController,
         builder: (context, child) {
           return Transform.translate(
-            offset: Offset(0, _hideBottomBarAnimationController.value * 100),
+            offset: Offset(0, _hideBottomBarAnimationController.value * 120),
             child: child,
           );
         },
-        child: Container(
-          decoration: BoxDecoration(
-            color: colorScheme.surface,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(32),
-              topRight: Radius.circular(32),
-            ),
-          ),
-          child: SafeArea(
-            top: false,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List.generate(
-                  _pages.length,
-                  (index) => Expanded(
-                    child: _NavigationBarItem(
-                      icon: _pageIcons[index],
-                      label: pageTitles[index],
-                      isActive: _bottomNavIndex == index,
-                      onTap: () => setState(() => _bottomNavIndex = index),
-                      activeColor: colorScheme.primary,
-                      inactiveColor: colorScheme.onSurface.withValues(
-                        alpha: 0.6,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 24.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(32),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  // transparent surface color to let the blur show through
+                  color: colorScheme.surface.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(32),
+                  border: Border.all(
+                    color: colorScheme.outline.withValues(alpha: 0.1),
+                    width: 1.5,
+                  ),
+                ),
+                child: SafeArea(
+                  top: false,
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 8,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: List.generate(
+                        _pages.length,
+                        (index) => Expanded(
+                          child: _NavigationBarItem(
+                            icon: _pageIcons[index],
+                            label: pageTitles[index],
+                            isActive: _bottomNavIndex == index,
+                            onTap: () =>
+                                setState(() => _bottomNavIndex = index),
+                            activeColor: colorScheme.primary,
+                            inactiveColor: colorScheme.onSurface.withValues(
+                              alpha: 0.6,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -192,7 +209,9 @@ class _NavigationBarItem extends StatelessWidget {
       type: MaterialType.transparency,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
+        splashColor: activeColor.withValues(alpha: 0.1),
+        highlightColor: activeColor.withValues(alpha: 0.05),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Column(
@@ -200,8 +219,13 @@ class _NavigationBarItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                transform: Matrix4.diagonal3Values(
+                  isActive ? 1.15 : 1.0,
+                  isActive ? 1.15 : 1.0,
+                  isActive ? 1.15 : 1.0,
+                ),
                 child: Icon(icon, color: color, size: 24),
               ),
               const SizedBox(height: 4),
@@ -212,8 +236,9 @@ class _NavigationBarItem extends StatelessWidget {
                       theme.textTheme.bodySmall?.copyWith(
                         color: color,
                         fontWeight: isActive
-                            ? FontWeight.w600
-                            : FontWeight.normal,
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                        fontSize: isActive ? 12 : 11,
                       ) ??
                       TextStyle(color: color, fontSize: 12),
                   child: Text(

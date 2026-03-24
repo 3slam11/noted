@@ -8,6 +8,7 @@ import 'package:noted/domain/usecases/main_usecase.dart';
 import 'package:noted/presentation/base/base_view_model.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer.dart';
 import 'package:noted/presentation/common/state_renderer/state_renderer_impl.dart';
+import 'package:noted/presentation/resources/item_sort_extension.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MainViewModel extends BaseViewModel
@@ -92,78 +93,18 @@ class MainViewModel extends BaseViewModel
 
     final currentSortOption = _sortOptionController.value;
 
-    final sortedTodos = _sortItems(
-      _currentObject!.mainData!.todos,
+    final sortedTodos = _currentObject!.mainData!.todos.applySort(
       currentSortOption,
     );
-    final sortedFinished = _sortItems(
-      _currentObject!.mainData!.finished,
+    final sortedFinished = _currentObject!.mainData!.finished.applySort(
       currentSortOption,
     );
-    final sortedSaved = _sortItems(
-      _currentObject!.mainData!.saved,
+    final sortedSaved = _currentObject!.mainData!.saved.applySort(
       currentSortOption,
     );
 
     final newMainData = TaskData(sortedTodos, sortedFinished, sortedSaved);
     _mainDataController.add(MainObject(newMainData));
-  }
-
-  List<Item> _sortItems(List<Item> items, SortOption sortOption) {
-    List<Item> sortedList = List.from(items);
-
-    int compareStrings(String? a, String? b) {
-      return (a ?? '').toLowerCase().compareTo((b ?? '').toLowerCase());
-    }
-
-    int compareDates(DateTime? a, DateTime? b) {
-      if (a == null && b == null) return 0;
-      if (a == null) return 1;
-      if (b == null) return -1;
-      return a.compareTo(b);
-    }
-
-    DateTime? parseDate(String? dateStr) {
-      if (dateStr == null || dateStr.isEmpty) return null;
-      try {
-        return DateTime.parse(dateStr);
-      } catch (e) {
-        return null;
-      }
-    }
-
-    int compareRatings(double? a, double? b) {
-      return (b ?? 0.0).compareTo(a ?? 0.0);
-    }
-
-    sortedList.sort((a, b) {
-      switch (sortOption) {
-        case SortOption.titleAsc:
-          return compareStrings(a.title, b.title);
-        case SortOption.titleDesc:
-          return compareStrings(b.title, a.title);
-        case SortOption.releaseDateNewest:
-          return compareDates(
-            parseDate(b.releaseDate),
-            parseDate(a.releaseDate),
-          );
-        case SortOption.releaseDateOldest:
-          return compareDates(
-            parseDate(a.releaseDate),
-            parseDate(b.releaseDate),
-          );
-        case SortOption.ratingHighest:
-          return compareRatings(a.personalRating, b.personalRating);
-        case SortOption.ratingLowest:
-          return compareRatings(b.personalRating, a.personalRating);
-        case SortOption.dateAddedNewest:
-          return compareDates(b.dateAdded, a.dateAdded);
-        case SortOption.dateAddedOldest:
-          return compareDates(a.dateAdded, b.dateAdded);
-      }
-    });
-
-    return sortedList;
   }
 
   void _handlePopupError(Failure failure) {
@@ -183,8 +124,7 @@ class MainViewModel extends BaseViewModel
     result.fold(_handlePopupError, (_) {
       onSuccess();
       _applySortersAndFilters();
-      _dataGlobalNotifier
-          .notifyDataImported(); // Notifies everyone on UI interactions seamlessly!
+      _dataGlobalNotifier.notifyDataImported();
     });
   }
 

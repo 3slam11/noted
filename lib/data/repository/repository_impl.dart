@@ -82,6 +82,8 @@ class RepositoryImpl implements Repository {
         startIndex: (page - 1) * 20,
       ),
       Category.games => _remoteDataSource.searchGames(query, page: page),
+      Category.anime => _remoteDataSource.searchAnime(query, page: page),
+      Category.manga => _remoteDataSource.searchManga(query, page: page),
       Category.all => throw UnsupportedError(
         'Search for "All" category is not implemented.',
       ),
@@ -136,6 +138,19 @@ class RepositoryImpl implements Repository {
               ),
             )
             .toList(),
+      JikanSearchResponse(data: final r?) =>
+        r
+            .map(
+              (item) => SearchItem(
+                id: item.id.toString(),
+                title: item.title ?? '',
+                imageUrl: item.posterUrl,
+                releaseDate: item.releaseDate,
+                category:
+                    category, // Will be anime or manga depending on the request
+              ),
+            )
+            .toList(),
       _ => [],
     };
   }
@@ -152,6 +167,8 @@ class RepositoryImpl implements Repository {
         Category.series => _getTVSeriesDetails(id),
         Category.books => _getBookDetails(id),
         Category.games => _getGameDetails(id),
+        Category.anime => _getAnimeDetails(id),
+        Category.manga => _getMangaDetails(id),
         Category.all => throw UnsupportedError(
           'Get details for "All" category is not supported',
         ),
@@ -230,6 +247,46 @@ class RepositoryImpl implements Repository {
     );
   }
 
+  Future<Details> _getAnimeDetails(String id) async {
+    final response = await _remoteDataSource.getAnimeDetails(int.parse(id));
+    final anime = response.data;
+    return Details(
+      id: id,
+      title: anime?.title ?? '',
+      description: anime?.synopsis,
+      releaseDate: anime?.releaseDate,
+      rating: anime?.score,
+      publisher: anime?.studios?.isNotEmpty == true
+          ? anime!.studios!.first.name
+          : null,
+      imageUrls: anime?.posterUrl != null ? [anime!.posterUrl!] : [],
+      genres: anime?.genres?.map((g) => g.name ?? '').toList(),
+      category: Category.anime,
+      numberOfSeasons: null,
+      seasons: null,
+    );
+  }
+
+  Future<Details> _getMangaDetails(String id) async {
+    final response = await _remoteDataSource.getMangaDetails(int.parse(id));
+    final manga = response.data;
+    return Details(
+      id: id,
+      title: manga?.title ?? '',
+      description: manga?.synopsis,
+      releaseDate: manga?.releaseDate,
+      rating: manga?.score,
+      publisher: manga?.authors?.isNotEmpty == true
+          ? manga!.authors!.first.name
+          : null,
+      imageUrls: manga?.posterUrl != null ? [manga!.posterUrl!] : [],
+      genres: manga?.genres?.map((g) => g.name ?? '').toList(),
+      category: Category.manga,
+      numberOfSeasons: null,
+      seasons: null,
+    );
+  }
+
   @override
   Future<Either<Failure, List<SearchItem>>> getRecommendations(
     String id,
@@ -276,6 +333,38 @@ class RepositoryImpl implements Repository {
                     category: Category.series,
                   ),
                 )
+                .toList() ??
+            [];
+      case Category.anime:
+        final response = await _remoteDataSource.getAnimeRecommendations(
+          int.parse(id),
+        );
+        return response.data
+                ?.map(
+                  (rec) => SearchItem(
+                    id: rec.entry?.id.toString() ?? '',
+                    title: rec.entry?.title ?? '',
+                    imageUrl: rec.entry?.posterUrl,
+                    category: Category.anime,
+                  ),
+                )
+                .where((item) => item.id.isNotEmpty)
+                .toList() ??
+            [];
+      case Category.manga:
+        final response = await _remoteDataSource.getMangaRecommendations(
+          int.parse(id),
+        );
+        return response.data
+                ?.map(
+                  (rec) => SearchItem(
+                    id: rec.entry?.id.toString() ?? '',
+                    title: rec.entry?.title ?? '',
+                    imageUrl: rec.entry?.posterUrl,
+                    category: Category.manga,
+                  ),
+                )
+                .where((item) => item.id.isNotEmpty)
                 .toList() ??
             [];
       case Category.games:

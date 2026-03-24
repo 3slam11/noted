@@ -57,11 +57,8 @@ class ItemResponse {
     this.currentEpisode,
   });
 
-  // from json
   factory ItemResponse.fromJson(Map<String, dynamic> json) =>
       _$ItemResponseFromJson(json);
-
-  // to json
   Map<String, dynamic> toJson() => _$ItemResponseToJson(this);
 }
 
@@ -78,11 +75,8 @@ class MainDataResponse {
 
   MainDataResponse(this.todos, this.finished, this.saved);
 
-  // from json
   factory MainDataResponse.fromJson(Map<String, dynamic> json) =>
       _$MainDataResponseFromJson(json);
-
-  // to json
   Map<String, dynamic> toJson() => _$MainDataResponseToJson(this);
 }
 
@@ -93,11 +87,8 @@ class MainResponse extends BaseResponse {
 
   MainResponse(this.data);
 
-  // from json
   factory MainResponse.fromJson(Map<String, dynamic> json) =>
       _$MainResponseFromJson(json);
-
-  // to json
   Map<String, dynamic> toJson() => _$MainResponseToJson(this);
 }
 
@@ -672,4 +663,191 @@ class TmdbImageInfo {
   factory TmdbImageInfo.fromJson(Map<String, dynamic> json) =>
       _$TmdbImageInfoFromJson(json);
   Map<String, dynamic> toJson() => _$TmdbImageInfoToJson(this);
+}
+
+// Jikan API Responses (Anime & Manga)
+@JsonSerializable()
+class JikanSearchResponse {
+  @JsonKey(name: 'data')
+  List<JikanItem>? data;
+
+  JikanSearchResponse({this.data});
+  factory JikanSearchResponse.fromJson(Map<String, dynamic> json) =>
+      _$JikanSearchResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$JikanSearchResponseToJson(this);
+}
+
+@JsonSerializable()
+class JikanItem {
+  @JsonKey(name: 'mal_id')
+  int? id;
+
+  @JsonKey(name: 'title')
+  String? title;
+
+  @JsonKey(name: 'images')
+  JikanImages? images;
+
+  @JsonKey(name: 'aired')
+  JikanAired? aired; // Anime
+
+  @JsonKey(name: 'published')
+  JikanAired? published; // Manga
+
+  @JsonKey(name: 'synopsis')
+  String? synopsis;
+
+  @JsonKey(name: 'score')
+  double? score;
+
+  @JsonKey(name: 'episodes')
+  int? episodes; // Anime
+
+  @JsonKey(name: 'chapters')
+  int? chapters; // Manga
+
+  @JsonKey(name: 'volumes')
+  int? volumes; // Manga
+
+  @JsonKey(name: 'studios')
+  List<JikanStudio>? studios; // Anime
+
+  @JsonKey(name: 'authors')
+  List<JikanStudio>? authors; // Manga
+
+  @JsonKey(name: 'genres')
+  List<JikanGenre>? genres;
+
+  String? get posterUrl => images?.jpg?.largeImageUrl ?? images?.jpg?.imageUrl;
+  String? get releaseDate => aired?.stringDate ?? published?.stringDate;
+
+  JikanItem({
+    this.id,
+    this.title,
+    this.images,
+    this.aired,
+    this.published,
+    this.synopsis,
+    this.score,
+    this.episodes,
+    this.chapters,
+    this.volumes,
+    this.studios,
+    this.authors,
+    this.genres,
+  });
+
+  factory JikanItem.fromJson(Map<String, dynamic> json) =>
+      _$JikanItemFromJson(json);
+  Map<String, dynamic> toJson() => _$JikanItemToJson(this);
+}
+
+@JsonSerializable()
+class JikanImages {
+  @JsonKey(name: 'jpg')
+  JikanImageTypes? jpg;
+
+  JikanImages({this.jpg});
+  factory JikanImages.fromJson(Map<String, dynamic> json) =>
+      _$JikanImagesFromJson(json);
+  Map<String, dynamic> toJson() => _$JikanImagesToJson(this);
+}
+
+@JsonSerializable()
+class JikanImageTypes {
+  @JsonKey(name: 'image_url')
+  String? imageUrl;
+
+  @JsonKey(name: 'large_image_url')
+  String? largeImageUrl;
+
+  JikanImageTypes({this.imageUrl, this.largeImageUrl});
+  factory JikanImageTypes.fromJson(Map<String, dynamic> json) =>
+      _$JikanImageTypesFromJson(json);
+  Map<String, dynamic> toJson() => _$JikanImageTypesToJson(this);
+}
+
+@JsonSerializable()
+class JikanAired {
+  @JsonKey(name: 'string')
+  String? stringDate;
+
+  JikanAired({this.stringDate});
+  factory JikanAired.fromJson(Map<String, dynamic> json) =>
+      _$JikanAiredFromJson(json);
+  Map<String, dynamic> toJson() => _$JikanAiredToJson(this);
+}
+
+@JsonSerializable()
+class JikanStudio {
+  @JsonKey(name: 'name')
+  String? name;
+
+  JikanStudio({this.name});
+  factory JikanStudio.fromJson(Map<String, dynamic> json) =>
+      _$JikanStudioFromJson(json);
+  Map<String, dynamic> toJson() => _$JikanStudioToJson(this);
+}
+
+@JsonSerializable()
+class JikanGenre {
+  @JsonKey(name: 'name')
+  String? name;
+
+  JikanGenre({this.name});
+  factory JikanGenre.fromJson(Map<String, dynamic> json) =>
+      _$JikanGenreFromJson(json);
+  Map<String, dynamic> toJson() => _$JikanGenreToJson(this);
+}
+
+@JsonSerializable()
+class JikanDetailsResponse {
+  @JsonKey(name: 'data')
+  JikanItem? data;
+
+  JikanDetailsResponse({this.data});
+  factory JikanDetailsResponse.fromJson(Map<String, dynamic> json) =>
+      _$JikanDetailsResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$JikanDetailsResponseToJson(this);
+}
+
+@JsonSerializable()
+class JikanRecommendationsResponse {
+  @JsonKey(name: 'data')
+  List<JikanRecommendationItem>? data;
+
+  JikanRecommendationsResponse({this.data});
+  factory JikanRecommendationsResponse.fromJson(Map<String, dynamic> json) =>
+      _$JikanRecommendationsResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$JikanRecommendationsResponseToJson(this);
+}
+
+@JsonSerializable()
+class JikanRecommendationItem {
+  @JsonKey(name: 'entry')
+  JikanRecommendationEntry? entry;
+
+  JikanRecommendationItem({this.entry});
+  factory JikanRecommendationItem.fromJson(Map<String, dynamic> json) =>
+      _$JikanRecommendationItemFromJson(json);
+  Map<String, dynamic> toJson() => _$JikanRecommendationItemToJson(this);
+}
+
+@JsonSerializable()
+class JikanRecommendationEntry {
+  @JsonKey(name: 'mal_id')
+  int? id;
+
+  @JsonKey(name: 'title')
+  String? title;
+
+  @JsonKey(name: 'images')
+  JikanImages? images;
+
+  String? get posterUrl => images?.jpg?.largeImageUrl ?? images?.jpg?.imageUrl;
+
+  JikanRecommendationEntry({this.id, this.title, this.images});
+  factory JikanRecommendationEntry.fromJson(Map<String, dynamic> json) =>
+      _$JikanRecommendationEntryFromJson(json);
+  Map<String, dynamic> toJson() => _$JikanRecommendationEntryToJson(this);
 }

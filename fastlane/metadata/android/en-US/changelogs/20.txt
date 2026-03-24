@@ -1,3 +1,14 @@
-- Added two buttons in search and details page to add items to todo or saved.
-- added pagination so users can actually  see more than one page of results.
-- added cache support for posters and images to save data and increase performance.
+New
+- Anime and Manga support via Jikan API (no API key required)
+- Quick-add buttons on search and detail pages for To-Do and Saved lists
+- Pagination in search results
+- Note indicator icon on items that have notes attached
+- Titles are now selectable for easy copy/paste
+
+Improved
+- Image and poster caching for faster load times and reduced data usage
+- Navigation bar with transparent overlay style
+- Item cards now show more of the cover art
+
+Fixed
+- RTL layout bug in the progress tracker bar

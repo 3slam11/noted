@@ -11,6 +11,7 @@ class Constants {
       'https://www.googleapis.com/books/v1';
   static const String rawgBaseUrl = 'https://api.rawg.io/api';
   static const String tmdbBaseUrl = 'https://api.themoviedb.org/3';
+  static const String jikanBaseUrl = 'https://api.jikan.moe/v4';
 
   static const String tmdbImageBaseUrl = 'https://image.tmdb.org/t/p/';
 }

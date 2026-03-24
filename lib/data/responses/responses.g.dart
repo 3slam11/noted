@@ -41,6 +41,8 @@ const _$CategoryEnumMap = {
   Category.series: 'series',
   Category.books: 'books',
   Category.games: 'games',
+  Category.anime: 'anime',
+  Category.manga: 'manga',
 };
 
 MainDataResponse _$MainDataResponseFromJson(Map<String, dynamic> json) =>
@@ -427,3 +429,153 @@ TmdbImageInfo _$TmdbImageInfoFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$TmdbImageInfoToJson(TmdbImageInfo instance) =>
     <String, dynamic>{'file_path': instance.filePath};
+
+JikanSearchResponse _$JikanSearchResponseFromJson(Map<String, dynamic> json) =>
+    JikanSearchResponse(
+      data: (json['data'] as List<dynamic>?)
+          ?.map((e) => JikanItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$JikanSearchResponseToJson(
+  JikanSearchResponse instance,
+) => <String, dynamic>{'data': instance.data};
+
+JikanItem _$JikanItemFromJson(Map<String, dynamic> json) => JikanItem(
+  id: (json['mal_id'] as num?)?.toInt(),
+  title: json['title'] as String?,
+  images: json['images'] == null
+      ? null
+      : JikanImages.fromJson(json['images'] as Map<String, dynamic>),
+  aired: json['aired'] == null
+      ? null
+      : JikanAired.fromJson(json['aired'] as Map<String, dynamic>),
+  published: json['published'] == null
+      ? null
+      : JikanAired.fromJson(json['published'] as Map<String, dynamic>),
+  synopsis: json['synopsis'] as String?,
+  score: (json['score'] as num?)?.toDouble(),
+  episodes: (json['episodes'] as num?)?.toInt(),
+  chapters: (json['chapters'] as num?)?.toInt(),
+  volumes: (json['volumes'] as num?)?.toInt(),
+  studios: (json['studios'] as List<dynamic>?)
+      ?.map((e) => JikanStudio.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  authors: (json['authors'] as List<dynamic>?)
+      ?.map((e) => JikanStudio.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  genres: (json['genres'] as List<dynamic>?)
+      ?.map((e) => JikanGenre.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
+
+Map<String, dynamic> _$JikanItemToJson(JikanItem instance) => <String, dynamic>{
+  'mal_id': instance.id,
+  'title': instance.title,
+  'images': instance.images,
+  'aired': instance.aired,
+  'published': instance.published,
+  'synopsis': instance.synopsis,
+  'score': instance.score,
+  'episodes': instance.episodes,
+  'chapters': instance.chapters,
+  'volumes': instance.volumes,
+  'studios': instance.studios,
+  'authors': instance.authors,
+  'genres': instance.genres,
+};
+
+JikanImages _$JikanImagesFromJson(Map<String, dynamic> json) => JikanImages(
+  jpg: json['jpg'] == null
+      ? null
+      : JikanImageTypes.fromJson(json['jpg'] as Map<String, dynamic>),
+);
+
+Map<String, dynamic> _$JikanImagesToJson(JikanImages instance) =>
+    <String, dynamic>{'jpg': instance.jpg};
+
+JikanImageTypes _$JikanImageTypesFromJson(Map<String, dynamic> json) =>
+    JikanImageTypes(
+      imageUrl: json['image_url'] as String?,
+      largeImageUrl: json['large_image_url'] as String?,
+    );
+
+Map<String, dynamic> _$JikanImageTypesToJson(JikanImageTypes instance) =>
+    <String, dynamic>{
+      'image_url': instance.imageUrl,
+      'large_image_url': instance.largeImageUrl,
+    };
+
+JikanAired _$JikanAiredFromJson(Map<String, dynamic> json) =>
+    JikanAired(stringDate: json['string'] as String?);
+
+Map<String, dynamic> _$JikanAiredToJson(JikanAired instance) =>
+    <String, dynamic>{'string': instance.stringDate};
+
+JikanStudio _$JikanStudioFromJson(Map<String, dynamic> json) =>
+    JikanStudio(name: json['name'] as String?);
+
+Map<String, dynamic> _$JikanStudioToJson(JikanStudio instance) =>
+    <String, dynamic>{'name': instance.name};
+
+JikanGenre _$JikanGenreFromJson(Map<String, dynamic> json) =>
+    JikanGenre(name: json['name'] as String?);
+
+Map<String, dynamic> _$JikanGenreToJson(JikanGenre instance) =>
+    <String, dynamic>{'name': instance.name};
+
+JikanDetailsResponse _$JikanDetailsResponseFromJson(
+  Map<String, dynamic> json,
+) => JikanDetailsResponse(
+  data: json['data'] == null
+      ? null
+      : JikanItem.fromJson(json['data'] as Map<String, dynamic>),
+);
+
+Map<String, dynamic> _$JikanDetailsResponseToJson(
+  JikanDetailsResponse instance,
+) => <String, dynamic>{'data': instance.data};
+
+JikanRecommendationsResponse _$JikanRecommendationsResponseFromJson(
+  Map<String, dynamic> json,
+) => JikanRecommendationsResponse(
+  data: (json['data'] as List<dynamic>?)
+      ?.map((e) => JikanRecommendationItem.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
+
+Map<String, dynamic> _$JikanRecommendationsResponseToJson(
+  JikanRecommendationsResponse instance,
+) => <String, dynamic>{'data': instance.data};
+
+JikanRecommendationItem _$JikanRecommendationItemFromJson(
+  Map<String, dynamic> json,
+) => JikanRecommendationItem(
+  entry: json['entry'] == null
+      ? null
+      : JikanRecommendationEntry.fromJson(
+          json['entry'] as Map<String, dynamic>,
+        ),
+);
+
+Map<String, dynamic> _$JikanRecommendationItemToJson(
+  JikanRecommendationItem instance,
+) => <String, dynamic>{'entry': instance.entry};
+
+JikanRecommendationEntry _$JikanRecommendationEntryFromJson(
+  Map<String, dynamic> json,
+) => JikanRecommendationEntry(
+  id: (json['mal_id'] as num?)?.toInt(),
+  title: json['title'] as String?,
+  images: json['images'] == null
+      ? null
+      : JikanImages.fromJson(json['images'] as Map<String, dynamic>),
+);
+
+Map<String, dynamic> _$JikanRecommendationEntryToJson(
+  JikanRecommendationEntry instance,
+) => <String, dynamic>{
+  'mal_id': instance.id,
+  'title': instance.title,
+  'images': instance.images,
+};

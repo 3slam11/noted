@@ -66,7 +66,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsSearchEn search = TranslationsSearchEn._(_root);
 	late final TranslationsDetailsEn details = TranslationsDetailsEn._(_root);
 	late final TranslationsSettingsEn settings = TranslationsSettingsEn._(_root);
-	late final TranslationsQrSettingsEn qrSettings = TranslationsQrSettingsEn._(_root);
 	late final TranslationsLanguageSettingsEn languageSettings = TranslationsLanguageSettingsEn._(_root);
 	late final TranslationsThemeSettingsEn themeSettings = TranslationsThemeSettingsEn._(_root);
 	late final TranslationsFontSettingsEn fontSettings = TranslationsFontSettingsEn._(_root);
@@ -213,6 +212,12 @@ class TranslationsHomeEn {
 
 	/// en: 'Books'
 	String get books => 'Books';
+
+	/// en: 'Anime'
+	String get anime => 'Anime';
+
+	/// en: 'Manga'
+	String get manga => 'Manga';
 
 	/// en: 'All'
 	String get all => 'All';
@@ -409,6 +414,12 @@ class TranslationsDetailsEn {
 	/// en: 'Books'
 	String get books => 'Books';
 
+	/// en: 'Anime'
+	String get anime => 'Anime';
+
+	/// en: 'Manga'
+	String get manga => 'Manga';
+
 	/// en: 'Description'
 	String get description => 'Description';
 
@@ -423,6 +434,12 @@ class TranslationsDetailsEn {
 
 	/// en: 'Episode'
 	String get episode => 'Episode';
+
+	/// en: 'Chapter'
+	String get chapter => 'Chapter';
+
+	/// en: 'Volume'
+	String get volume => 'Volume';
 
 	/// en: 'Release Date'
 	String get releaseDate => 'Release Date';
@@ -525,45 +542,6 @@ class TranslationsSettingsEn {
 
 	/// en: 'Display current season and episode for TV series on the main lists.'
 	String get showSeriesTrackerDescription => 'Display current season and episode for TV series on the main lists.';
-}
-
-// Path: qrSettings
-class TranslationsQrSettingsEn {
-	TranslationsQrSettingsEn._(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'QR Code Sync'
-	String get title => 'QR Code Sync';
-
-	/// en: 'Feature Not Available on Desktop'
-	String get desktop => 'Feature Not Available on Desktop';
-
-	/// en: 'QR code scanning is only available on the mobile version of the app.'
-	String get desktopDescription => 'QR code scanning is only available on the mobile version of the app.';
-
-	/// en: 'Sync between devices with a QR code'
-	String get subtitle => 'Sync between devices with a QR code';
-
-	/// en: 'You can export and import your data and settings with QR code to another device.'
-	String get description => 'You can export and import your data and settings with QR code to another device.';
-
-	/// en: 'Importing will overwrite all current settings and lists.'
-	String get alert => 'Importing will overwrite all current settings and lists.';
-
-	/// en: 'Scan'
-	String get scan => 'Scan';
-
-	/// en: 'Generate'
-	String get generate => 'Generate';
-
-	/// en: 'Generating QR Code...'
-	String get generating => 'Generating QR Code...';
-
-	/// en: 'QR Code Generated'
-	String get generated => 'QR Code Generated';
 }
 
 // Path: languageSettings
@@ -790,8 +768,8 @@ class TranslationsAboutEn {
 	/// en: 'This app has been made for practice, so if you encounter any issue tell the developer on GitHub.'
 	String get appDescription => 'This app has been made for practice, so if you encounter any issue tell the developer on GitHub.';
 
-	/// en: 'Report Issue'
-	String get reportIssue => 'Report Issue';
+	/// en: 'Issue?'
+	String get reportIssue => 'Issue?';
 
 	/// en: 'View Project'
 	String get viewProject => 'View Project';
@@ -799,17 +777,23 @@ class TranslationsAboutEn {
 	/// en: 'APIs Used'
 	String get apisUsed => 'APIs Used';
 
-	/// en: 'Games data came from RAWG site'
-	String get gamesDescription => 'Games data came from RAWG site';
+	/// en: 'Games data comes from RAWG site'
+	String get gamesDescription => 'Games data comes from RAWG site';
 
 	/// en: 'Movies and TV Series'
 	String get moviesAndTvSeries => 'Movies and TV Series';
 
-	/// en: 'All data about movies and TV series came from TMDB site'
-	String get moviesAndTvSeriesDescription => 'All data about movies and TV series came from TMDB site';
+	/// en: 'All data about movies and TV series comes from TMDB site'
+	String get moviesAndTvSeriesDescription => 'All data about movies and TV series comes from TMDB site';
 
-	/// en: 'All data about books came from Google Books API'
-	String get booksDescription => 'All data about books came from Google Books API';
+	/// en: 'All data about books comes from Google Books API'
+	String get booksDescription => 'All data about books comes from Google Books API';
+
+	/// en: 'Anime & Manga'
+	String get animeAndManga => 'Anime & Manga';
+
+	/// en: 'Anime and manga data comes from Jikan API, no API key needed'
+	String get animeAndMangaDescription => 'Anime and manga data comes from Jikan API, no API key needed';
 
 	/// en: 'Thanks to their free plan, the app became usable as it is now.'
 	String get thanksMessage => 'Thanks to their free plan, the app became usable as it is now.';
@@ -870,6 +854,8 @@ extension on Translations {
 			'home.series' => 'Series',
 			'home.games' => 'Games',
 			'home.books' => 'Books',
+			'home.anime' => 'Anime',
+			'home.manga' => 'Manga',
 			'home.all' => 'All',
 			'home.deleted' => 'Deleted',
 			'home.undo' => 'Undo',
@@ -926,11 +912,15 @@ extension on Translations {
 			'details.series' => 'Series',
 			'details.games' => 'Games',
 			'details.books' => 'Books',
+			'details.anime' => 'Anime',
+			'details.manga' => 'Manga',
 			'details.description' => 'Description',
 			'details.genres' => 'Genre',
 			'details.progressTracker' => 'Progress Tracker',
 			'details.season' => 'Season',
 			'details.episode' => 'Episode',
+			'details.chapter' => 'Chapter',
+			'details.volume' => 'Volume',
 			'details.releaseDate' => 'Release Date',
 			'details.platforms' => 'Platforms',
 			'details.rating' => 'Rating',
@@ -962,16 +952,6 @@ extension on Translations {
 			'settings.rolloverManualDescription' => 'Do nothing. I will manage my lists myself.',
 			'settings.showSeriesTracker' => 'Show Series Tracker',
 			'settings.showSeriesTrackerDescription' => 'Display current season and episode for TV series on the main lists.',
-			'qrSettings.title' => 'QR Code Sync',
-			'qrSettings.desktop' => 'Feature Not Available on Desktop',
-			'qrSettings.desktopDescription' => 'QR code scanning is only available on the mobile version of the app.',
-			'qrSettings.subtitle' => 'Sync between devices with a QR code',
-			'qrSettings.description' => 'You can export and import your data and settings with QR code to another device.',
-			'qrSettings.alert' => 'Importing will overwrite all current settings and lists.',
-			'qrSettings.scan' => 'Scan',
-			'qrSettings.generate' => 'Generate',
-			'qrSettings.generating' => 'Generating QR Code...',
-			'qrSettings.generated' => 'QR Code Generated',
 			'languageSettings.selectLanguage' => 'Select Language',
 			'languageSettings.en' => 'English',
 			'languageSettings.ar' => 'العربية',
@@ -1023,13 +1003,15 @@ extension on Translations {
 			'statistics.noData' => 'No data yet',
 			'about.aboutThisApp' => 'About This App',
 			'about.appDescription' => 'This app has been made for practice, so if you encounter any issue tell the developer on GitHub.',
-			'about.reportIssue' => 'Report Issue',
+			'about.reportIssue' => 'Issue?',
 			'about.viewProject' => 'View Project',
 			'about.apisUsed' => 'APIs Used',
-			'about.gamesDescription' => 'Games data came from RAWG site',
+			'about.gamesDescription' => 'Games data comes from RAWG site',
 			'about.moviesAndTvSeries' => 'Movies and TV Series',
-			'about.moviesAndTvSeriesDescription' => 'All data about movies and TV series came from TMDB site',
-			'about.booksDescription' => 'All data about books came from Google Books API',
+			'about.moviesAndTvSeriesDescription' => 'All data about movies and TV series comes from TMDB site',
+			'about.booksDescription' => 'All data about books comes from Google Books API',
+			'about.animeAndManga' => 'Anime & Manga',
+			'about.animeAndMangaDescription' => 'Anime and manga data comes from Jikan API, no API key needed',
 			'about.thanksMessage' => 'Thanks to their free plan, the app became usable as it is now.',
 			_ => null,
 		};

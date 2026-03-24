@@ -3,7 +3,10 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:noted/gen/strings.g.dart';
 
 class EmptyStateWidget extends StatelessWidget {
-  const EmptyStateWidget({super.key});
+  final String? message;
+  final IconData? icon;
+
+  const EmptyStateWidget({super.key, this.message, this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +16,7 @@ class EmptyStateWidget extends StatelessWidget {
         child: Column(
           children: [
             Icon(
-                  Icons.list_alt,
+                  icon ?? Icons.list_alt,
                   size: 40,
                   color: Theme.of(context).colorScheme.primary,
                 )
@@ -25,7 +28,11 @@ class EmptyStateWidget extends StatelessWidget {
                 .then(delay: 2000.ms)
                 .shake(duration: 500.ms),
             const SizedBox(height: 10),
-            Text(t.home.emptySection, style: const TextStyle(fontSize: 15))
+            Text(
+                  message ?? t.home.emptySection,
+                  style: const TextStyle(fontSize: 15),
+                  textAlign: TextAlign.center,
+                )
                 .animate()
                 .fadeIn(duration: 500.ms, delay: 200.ms)
                 .slideY(begin: 0.3, end: 0),
