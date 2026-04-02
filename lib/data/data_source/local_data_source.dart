@@ -192,6 +192,11 @@ class LocalDataSourceImpl implements LocalDataSource {
         dateAdded: entity.dateAdded,
         currentSeason: entity.currentSeason,
         currentEpisode: entity.currentEpisode,
+        description: entity.description,
+        additionalImageUrls: entity.additionalImageUrls,
+        genres: entity.genres,
+        publisher: entity.publisher,
+        platforms: entity.platforms,
       );
     } catch (error) {
       return null;
@@ -217,6 +222,11 @@ class LocalDataSourceImpl implements LocalDataSource {
         dateAdded: item.dateAdded ?? DateTime.now(),
         currentSeason: item.currentSeason,
         currentEpisode: item.currentEpisode,
+        description: item.description,
+        additionalImageUrls: item.additionalImageUrls,
+        genres: item.genres,
+        publisher: item.publisher,
+        platforms: item.platforms,
       );
 
       _objectBoxManager.addItem(entity);

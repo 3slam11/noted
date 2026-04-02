@@ -237,11 +237,11 @@ class TranslationsHomeEn {
 	/// en: 'Your finished items have been moved to history. Here are your unfinished items from last month:'
 	String get description2 => 'Your finished items have been moved to history. Here are your unfinished items from last month:';
 
-	/// en: '📝 Pending: '
-	String get pending => '📝 Pending: ';
+	/// en: 'To-Do'
+	String get pending => 'To-Do';
 
-	/// en: '🎯 Completed: '
-	String get completed => '🎯 Completed: ';
+	/// en: 'Completed'
+	String get completed => 'Completed';
 
 	/// en: 'Select All'
 	String get selectAll => 'Select All';
@@ -326,6 +326,54 @@ class TranslationsHomeEn {
 
 	/// en: 'Delete'
 	String get delete => 'Delete';
+
+	/// en: 'Add Custom Item'
+	String get addManualItem => 'Add Custom Item';
+
+	/// en: 'Basic Information'
+	String get basicInformation => 'Basic Information';
+
+	/// en: 'Media'
+	String get media => 'Media';
+
+	/// en: 'Additional Details'
+	String get additionalDetails => 'Additional Details';
+
+	/// en: 'Title is required'
+	String get titleRequired => 'Title is required';
+
+	/// en: 'Item Title'
+	String get titleHint => 'Item Title';
+
+	/// en: 'Description (Optional)'
+	String get descriptionOptional => 'Description (Optional)';
+
+	/// en: 'Poster URL (Optional)'
+	String get imageUrlOptional => 'Poster URL (Optional)';
+
+	/// en: 'Additional Images (Comma separated URLs)'
+	String get additionalImagesOptional => 'Additional Images (Comma separated URLs)';
+
+	/// en: 'Release Date (Optional)'
+	String get releaseDateOptional => 'Release Date (Optional)';
+
+	/// en: 'Add to List'
+	String get selectList => 'Add to List';
+
+	/// en: 'Pick Image'
+	String get pickImage => 'Pick Image';
+
+	/// en: 'Remove Image'
+	String get removeImage => 'Remove Image';
+
+	/// en: 'Genres (Comma separated)'
+	String get genresOptional => 'Genres (Comma separated)';
+
+	/// en: 'Publisher / Studio (Optional)'
+	String get publisherOptional => 'Publisher / Studio (Optional)';
+
+	/// en: 'Platforms (Comma separated)'
+	String get platformsOptional => 'Platforms (Comma separated)';
 }
 
 // Path: sort
@@ -381,11 +429,11 @@ class TranslationsSearchEn {
 	/// en: 'Search...'
 	String get searchPlaceholder => 'Search...';
 
-	/// en: 'Search for anything'
-	String get searchForSomething => 'Search for anything';
+	/// en: 'Search for anything or'
+	String get searchOrAdd => 'Search for anything\n\nor';
 
-	/// en: 'No results found'
-	String get noResultsFound => 'No results found';
+	/// en: 'No results found. You can add it manually.'
+	String get noResultsFound => 'No results found. You can add it manually.';
 
 	/// en: 'Can't search now'
 	String get cantSearch => 'Can\'t search now';
@@ -862,8 +910,8 @@ extension on Translations {
 			'home.newMonthStarted' => 'New Month Started! 🎉',
 			'home.description' => ({required Object month}) => 'Welcome to ${month}!',
 			'home.description2' => 'Your finished items have been moved to history. Here are your unfinished items from last month:',
-			'home.pending' => '📝 Pending: ',
-			'home.completed' => '🎯 Completed: ',
+			'home.pending' => 'To-Do',
+			'home.completed' => 'Completed',
 			'home.selectAll' => 'Select All',
 			'home.deselectAll' => 'Deselect All',
 			'home.deleteAll' => 'Delete All',
@@ -892,6 +940,22 @@ extension on Translations {
 			'home.notesSaved' => 'Note saved.',
 			'home.save' => 'Save',
 			'home.delete' => 'Delete',
+			'home.addManualItem' => 'Add Custom Item',
+			'home.basicInformation' => 'Basic Information',
+			'home.media' => 'Media',
+			'home.additionalDetails' => 'Additional Details',
+			'home.titleRequired' => 'Title is required',
+			'home.titleHint' => 'Item Title',
+			'home.descriptionOptional' => 'Description (Optional)',
+			'home.imageUrlOptional' => 'Poster URL (Optional)',
+			'home.additionalImagesOptional' => 'Additional Images (Comma separated URLs)',
+			'home.releaseDateOptional' => 'Release Date (Optional)',
+			'home.selectList' => 'Add to List',
+			'home.pickImage' => 'Pick Image',
+			'home.removeImage' => 'Remove Image',
+			'home.genresOptional' => 'Genres (Comma separated)',
+			'home.publisherOptional' => 'Publisher / Studio (Optional)',
+			'home.platformsOptional' => 'Platforms (Comma separated)',
 			'sort.sort' => 'Sort',
 			'sort.sortBy' => 'Sort by',
 			'sort.titleAsc' => 'Title (A-Z)',
@@ -904,8 +968,8 @@ extension on Translations {
 			'sort.dateAddedOldest' => 'Date Added (Oldest)',
 			'search.search' => 'Search',
 			'search.searchPlaceholder' => 'Search...',
-			'search.searchForSomething' => 'Search for anything',
-			'search.noResultsFound' => 'No results found',
+			'search.searchOrAdd' => 'Search for anything\n\nor',
+			'search.noResultsFound' => 'No results found. You can add it manually.',
 			'search.cantSearch' => 'Can\'t search now',
 			'details.title' => 'Details',
 			'details.movies' => 'Movies',

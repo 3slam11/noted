@@ -63,8 +63,8 @@
     "newMonthStarted": "بدأ شهر جديد! 🎉",
     "description": "مرحبا بـ ${month}!",
     "description2": "تم نقل العناصر المكتملة للسجل. هذه هي العناصر المتبقية من الشهر الماضي:",
-    "pending": "📝 في الانتظار: ",
-    "completed": "🎯 المكتمل: ",
+    "pending": "المهام",
+    "completed": "المكتمل",
     "selectAll": "تحديد الكل",
     "deselectAll": "إلغاء تحديد الكل",
     "deleteAll": "حذف الكل",
@@ -92,7 +92,23 @@
     "noNotes": "لا توجد ملاحظات بعد.",
     "notesSaved": "تم حفظ الملاحظات والتقييم.",
     "save": "حفظ",
-    "delete": "حذف"
+    "delete": "حذف",
+    "addManualItem": "اضف يدوياً",
+     "basicInformation": "معلومات اساسية",
+    "media": "وسائط",
+    "additionalDetails": "معلومات إضافية",
+    "titleRequired": "العنوان مطلوب",
+    "titleHint": "العنوان",
+    "descriptionOptional": "الوصف (اختياري)",
+    "imageUrlOptional": "البوستر (اختياري)",
+    "additionalImagesOptional": "صور إضافية (روابط مفصولة بفاصلة)",
+    "releaseDateOptional": "تاريخ الإصدار (اختياري)",
+    "selectList": "أضف إلى قائمة",
+    "pickImage": "اختر صورة",
+    "removeImage": "إزالة الصورة",
+    "genresOptional": "التصنيفات (مفصولة بفاصلة)",
+    "publisherOptional": "الناشر / الاستوديو (اختياري)",
+    "platformsOptional": "المنصات (مفصولة بفاصلة)"
   },
   "sort": {
     "sort": "رتب",
@@ -109,8 +125,8 @@
   "search": {
     "search": "بحث",
     "searchPlaceholder": "ابحث...",
-    "searchForSomething": "ابحث عن اي شيء",
-    "noResultsFound": "لم يتم العثور على نتائج",
+    "searchOrAdd": "ابحث عن أي شيء\n\nأو",
+    "noResultsFound": "لم يتم العثور على نتائج. يمكنك إضافته يدوياً.",
     "cantSearch": "لا يمكن البحث الآن"
   },
   "details": {
@@ -162,7 +178,6 @@
     "showSeriesTracker": "إظهار متتبع المسلسلات",
     "showSeriesTrackerDescription": "عرض الموسم والحلقة الحالية للمسلسلات التلفزيونية في القوائم الرئيسية."
   },
- 
   "languageSettings": {
     "selectLanguage": "اختر اللغة",
     "en": "English",

@@ -82,7 +82,7 @@
     },
     {
       "id": "3:6860424063945157781",
-      "lastPropertyId": "12:8063182753400783052",
+      "lastPropertyId": "17:4503717311442916132",
       "name": "ItemEntity",
       "properties": [
         {
@@ -145,6 +145,31 @@
           "id": "12:8063182753400783052",
           "name": "currentEpisode",
           "type": 6
+        },
+        {
+          "id": "13:7397240976251880369",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "14:4639852470425659352",
+          "name": "additionalImageUrls",
+          "type": 30
+        },
+        {
+          "id": "15:7353784538043594458",
+          "name": "genres",
+          "type": 30
+        },
+        {
+          "id": "16:2702347979900691074",
+          "name": "publisher",
+          "type": 9
+        },
+        {
+          "id": "17:4503717311442916132",
+          "name": "platforms",
+          "type": 30
         }
       ],
       "relations": []

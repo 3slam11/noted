@@ -77,6 +77,9 @@ class ObjectBoxManager {
       existingItem.personalNotes = item.personalNotes;
       existingItem.currentSeason = item.currentSeason;
       existingItem.currentEpisode = item.currentEpisode;
+      existingItem.genres = item.genres;
+      existingItem.publisher = item.publisher;
+      existingItem.platforms = item.platforms;
       _itemBox.put(existingItem);
     }
   }
@@ -303,6 +306,9 @@ class ObjectBoxManager {
                   'releaseDate': e.releaseDate,
                   'personalRating': e.personalRating,
                   'personalNotes': e.personalNotes,
+                  'genres': e.genres,
+                  'publisher': e.publisher,
+                  'platforms': e.platforms,
                 },
               )
               .toList(),
@@ -353,6 +359,9 @@ class ObjectBoxManager {
               listType: listType,
               personalRating: data['personalRating'],
               personalNotes: data['personalNotes'],
+              genres: (data['genres'] as List<dynamic>?)?.cast<String>(),
+              publisher: data['publisher'],
+              platforms: (data['platforms'] as List<dynamic>?)?.cast<String>(),
             );
           }).toList();
           addItemsBatch(items);

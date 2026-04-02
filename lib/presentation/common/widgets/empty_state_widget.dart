@@ -5,15 +5,19 @@ import 'package:noted/gen/strings.g.dart';
 class EmptyStateWidget extends StatelessWidget {
   final String? message;
   final IconData? icon;
+  final Widget? action;
 
-  const EmptyStateWidget({super.key, this.message, this.icon});
+  const EmptyStateWidget({super.key, this.message, this.icon, this.action});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
-      child: Center(
+    return Center(
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
                   icon ?? Icons.list_alt,
@@ -36,7 +40,10 @@ class EmptyStateWidget extends StatelessWidget {
                 .animate()
                 .fadeIn(duration: 500.ms, delay: 200.ms)
                 .slideY(begin: 0.3, end: 0),
-            const SizedBox(height: 30),
+            if (action != null) ...[
+              const SizedBox(height: 20),
+              action!.animate().fadeIn(duration: 500.ms, delay: 400.ms),
+            ],
           ],
         ),
       ),

@@ -60,6 +60,14 @@ class SearchUsecase implements BaseUsecase<SearchInput, SearchResults> {
   Future<Either<Failure, void>> addToSaved(ItemResponse item) {
     return repository.addSaved(item);
   }
+
+  Future<Either<Failure, void>> addToFinished(ItemResponse item) {
+    return repository.addFinished(item);
+  }
+
+  Future<Either<Failure, void>> addToHistory(ItemResponse item) {
+    return repository.addHistory(item);
+  }
 }
 
 class SearchInput {

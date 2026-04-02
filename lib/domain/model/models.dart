@@ -76,6 +76,11 @@ class Item {
   final DateTime? dateAdded;
   final int? currentSeason;
   final int? currentEpisode;
+  final String? description;
+  final List<String>? additionalImageUrls;
+  final List<String>? genres;
+  final String? publisher;
+  final List<String>? platforms;
 
   Item(
     this.id,
@@ -88,6 +93,11 @@ class Item {
     this.dateAdded,
     this.currentSeason,
     this.currentEpisode,
+    this.description,
+    this.additionalImageUrls,
+    this.genres,
+    this.publisher,
+    this.platforms,
   });
 
   Item copyWith({
@@ -101,6 +111,11 @@ class Item {
     DateTime? dateAdded,
     int? currentSeason,
     int? currentEpisode,
+    String? description,
+    List<String>? additionalImageUrls,
+    List<String>? genres,
+    String? publisher,
+    List<String>? platforms,
   }) {
     return Item(
       id ?? this.id,
@@ -113,6 +128,11 @@ class Item {
       dateAdded: dateAdded ?? this.dateAdded,
       currentSeason: currentSeason ?? this.currentSeason,
       currentEpisode: currentEpisode ?? this.currentEpisode,
+      description: description ?? this.description,
+      additionalImageUrls: additionalImageUrls ?? this.additionalImageUrls,
+      genres: genres ?? this.genres,
+      publisher: publisher ?? this.publisher,
+      platforms: platforms ?? this.platforms,
     );
   }
 }

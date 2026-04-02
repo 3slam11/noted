@@ -16,6 +16,11 @@ extension ItemToResponseMapper on Item {
       dateAdded: dateAdded,
       currentSeason: currentSeason,
       currentEpisode: currentEpisode,
+      description: description,
+      additionalImageUrls: additionalImageUrls,
+      genres: genres,
+      publisher: publisher,
+      platforms: platforms,
     );
   }
 }
@@ -33,6 +38,11 @@ extension ItemResponseMapper on ItemResponse? {
       dateAdded: this?.dateAdded,
       currentSeason: this?.currentSeason,
       currentEpisode: this?.currentEpisode,
+      description: this?.description,
+      additionalImageUrls: this?.additionalImageUrls,
+      genres: this?.genres,
+      publisher: this?.publisher,
+      platforms: this?.platforms,
     );
   }
 }

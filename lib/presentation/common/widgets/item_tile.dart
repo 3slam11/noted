@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -167,30 +168,55 @@ class ItemTile extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: (item.posterUrl != null && item.posterUrl!.isNotEmpty)
-                      ? CachedNetworkImage(
-                          imageUrl: item.posterUrl!,
-                          width: 70,
-                          height: 105,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            width: 70,
-                            height: 105,
-                            color: theme.colorScheme.surfaceContainerHighest,
-                            child: const Center(
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Container(
-                            width: 70,
-                            height: 105,
-                            color: theme.colorScheme.surfaceContainerHighest,
-                            child: Icon(
-                              Icons.broken_image_rounded,
-                              size: 30,
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        )
+                      ? (item.posterUrl!.startsWith('http')
+                            ? CachedNetworkImage(
+                                imageUrl: item.posterUrl!,
+                                width: 70,
+                                height: 105,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  width: 70,
+                                  height: 105,
+                                  color:
+                                      theme.colorScheme.surfaceContainerHighest,
+                                  child: const Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  width: 70,
+                                  height: 105,
+                                  color:
+                                      theme.colorScheme.surfaceContainerHighest,
+                                  child: Icon(
+                                    Icons.broken_image_rounded,
+                                    size: 30,
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              )
+                            : Image.file(
+                                File(item.posterUrl!),
+                                width: 70,
+                                height: 105,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
+                                      width: 70,
+                                      height: 105,
+                                      color: theme
+                                          .colorScheme
+                                          .surfaceContainerHighest,
+                                      child: Icon(
+                                        Icons.broken_image_rounded,
+                                        size: 30,
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                              ))
                       : Container(
                           width: 70,
                           height: 105,

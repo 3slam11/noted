@@ -19,6 +19,15 @@ ItemResponse _$ItemResponseFromJson(Map<String, dynamic> json) => ItemResponse(
       : DateTime.parse(json['dateAdded'] as String),
   currentSeason: (json['currentSeason'] as num?)?.toInt(),
   currentEpisode: (json['currentEpisode'] as num?)?.toInt(),
+  description: json['description'] as String?,
+  additionalImageUrls: (json['additionalImageUrls'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  genres: (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList(),
+  publisher: json['publisher'] as String?,
+  platforms: (json['platforms'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
 );
 
 Map<String, dynamic> _$ItemResponseToJson(ItemResponse instance) =>
@@ -33,6 +42,11 @@ Map<String, dynamic> _$ItemResponseToJson(ItemResponse instance) =>
       'dateAdded': instance.dateAdded?.toIso8601String(),
       'currentSeason': instance.currentSeason,
       'currentEpisode': instance.currentEpisode,
+      'description': instance.description,
+      'additionalImageUrls': instance.additionalImageUrls,
+      'genres': instance.genres,
+      'publisher': instance.publisher,
+      'platforms': instance.platforms,
     };
 
 const _$CategoryEnumMap = {

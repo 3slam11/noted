@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:dartz/dartz.dart';
 import 'package:noted/app/app_events.dart';
+import 'package:noted/data/network/failure.dart';
 import 'package:noted/data/responses/responses.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/domain/usecases/search_usecase.dart';
@@ -149,6 +151,67 @@ class SearchViewModel extends BaseViewModel
     );
   }
 
+  @override
+  void addManualItem({
+    required String title,
+    required Category category,
+    required ItemListType listType,
+    String? description,
+    String? posterUrl,
+    List<String>? additionalImageUrls,
+    String? releaseDate,
+    List<String>? genres,
+    String? publisher,
+    List<String>? platforms,
+  }) async {
+    final id = 'manual_${DateTime.now().millisecondsSinceEpoch}';
+    final itemResponse = ItemResponse(
+      id,
+      title,
+      category,
+      posterUrl,
+      releaseDate,
+      description: description,
+      additionalImageUrls: additionalImageUrls,
+      genres: genres,
+      publisher: publisher,
+      platforms: platforms,
+      dateAdded: DateTime.now(),
+    );
+
+    Either<Failure, void> result;
+    switch (listType) {
+      case ItemListType.todo:
+        result = await _searchUsecase.addToTodo(itemResponse);
+        break;
+      case ItemListType.finished:
+        result = await _searchUsecase.addToFinished(itemResponse);
+        break;
+      case ItemListType.saved:
+        result = await _searchUsecase.addToSaved(itemResponse);
+        break;
+      case ItemListType.history:
+        result = await _searchUsecase.addToHistory(itemResponse);
+        break;
+    }
+
+    result.fold(
+      (failure) {
+        _itemAddedSuccessfullyStreamController.add(false);
+        inputState.add(
+          ErrorState(
+            stateRendererType: StateRendererType.popupErrorState,
+            message: failure.message,
+          ),
+        );
+      },
+      (_) {
+        _itemAddedSuccessfullyStreamController.add(true);
+        _dataGlobalNotifier.notifyDataImported();
+      },
+    );
+  }
+
   // Inputs
   @override
   Sink<List<SearchItem>> get inputSearchResults =>
@@ -175,6 +238,18 @@ abstract class SearchViewModelInputs {
   Future<void> search(String query, {bool loadMore = false});
   void updateCategory(Category category);
   void addItemToList(SearchItem item, ItemListType listType);
+  void addManualItem({
+    required String title,
+    required Category category,
+    required ItemListType listType,
+    String? description,
+    String? posterUrl,
+    List<String>? additionalImageUrls,
+    String? releaseDate,
+    List<String>? genres,
+    String? publisher,
+    List<String>? platforms,
+  });
 }
 
 abstract class SearchViewModelOutputs {

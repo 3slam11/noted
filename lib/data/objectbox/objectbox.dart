@@ -11,7 +11,7 @@ class ItemEntity {
   String? categoryName;
   String? posterUrl;
   String? releaseDate;
-  String listType; // 'todo', 'finished', 'history'
+  String listType; // 'todo', 'finished', 'history', 'saved'
 
   double? personalRating;
   String? personalNotes;
@@ -21,6 +21,13 @@ class ItemEntity {
 
   int? currentSeason;
   int? currentEpisode;
+
+  String? description;
+  List<String>? additionalImageUrls;
+
+  List<String>? genres;
+  String? publisher;
+  List<String>? platforms;
 
   ItemEntity({
     this.id = 0,
@@ -35,6 +42,11 @@ class ItemEntity {
     this.dateAdded,
     this.currentSeason,
     this.currentEpisode,
+    this.description,
+    this.additionalImageUrls,
+    this.genres,
+    this.publisher,
+    this.platforms,
   });
 
   // Convert from domain model
@@ -50,6 +62,11 @@ class ItemEntity {
     DateTime? dateAdded,
     int? currentSeason,
     int? currentEpisode,
+    String? description,
+    List<String>? additionalImageUrls,
+    List<String>? genres,
+    String? publisher,
+    List<String>? platforms,
   }) {
     return ItemEntity(
       itemId: itemId,
@@ -63,6 +80,11 @@ class ItemEntity {
       dateAdded: dateAdded,
       currentSeason: currentSeason,
       currentEpisode: currentEpisode,
+      description: description,
+      additionalImageUrls: additionalImageUrls,
+      genres: genres,
+      publisher: publisher,
+      platforms: platforms,
     );
   }
 

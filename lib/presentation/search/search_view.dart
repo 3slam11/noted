@@ -4,7 +4,8 @@ import 'package:noted/app/di.dart';
 import 'package:noted/domain/model/models.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/common/widgets/empty_state_widget.dart';
-import 'package:noted/presentation/common/widgets/item_tile.dart'; // <-- Added import
+import 'package:noted/presentation/common/widgets/item_tile.dart';
+import 'package:noted/presentation/common/widgets/manual_add_dialog.dart';
 import 'package:noted/presentation/search/search_viewmodel.dart';
 import 'package:noted/presentation/common/state_renderer/state_flow_handler.dart';
 
@@ -43,6 +44,51 @@ class SearchViewState extends State<SearchView> {
     super.dispose();
   }
 
+  void _showManualAddDialog() {
+    showDialog(
+      context: context,
+      builder: (_) => ManualAddDialog(
+        onAdd:
+            ({
+              required String title,
+              required Category category,
+              required ItemListType listType,
+              String? description,
+              String? posterUrl,
+              List<String>? additionalImageUrls,
+              String? releaseDate,
+              List<String>? genres,
+              String? publisher,
+              List<String>? platforms,
+            }) {
+              viewModel.addManualItem(
+                title: title,
+                category: category,
+                listType: listType,
+                description: description,
+                posterUrl: posterUrl,
+                additionalImageUrls: additionalImageUrls,
+                releaseDate: releaseDate,
+                genres: genres,
+                publisher: publisher,
+                platforms: platforms,
+              );
+            },
+      ),
+    );
+  }
+
+  Widget _buildAddManualButton() {
+    return FilledButton.icon(
+      icon: const Icon(Icons.add_rounded),
+      label: Text(t.home.addManualItem),
+      onPressed: _showManualAddDialog,
+      style: FilledButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return StateFlowHandler(
@@ -70,12 +116,14 @@ class SearchViewState extends State<SearchView> {
                 if (results == null) {
                   return EmptyStateWidget(
                     icon: Icons.search,
-                    message: t.search.searchForSomething,
+                    message: t.search.searchOrAdd,
+                    action: _buildAddManualButton(),
                   );
                 } else if (results.isEmpty) {
                   return EmptyStateWidget(
                     icon: Icons.search_off,
                     message: t.search.noResultsFound,
+                    action: _buildAddManualButton(),
                   );
                 } else {
                   return ListView.builder(

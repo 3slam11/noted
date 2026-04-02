@@ -157,7 +157,37 @@ class RepositoryImpl implements Repository {
 
   // Details methods
   @override
-  Future<Either<Failure, Details>> getDetails(String id, Category category) {
+  Future<Either<Failure, Details>> getDetails(
+    String id,
+    Category category,
+  ) async {
+    // Intercept manual items and fetch them entirely from local DB
+    if (id.startsWith('manual_')) {
+      final localItemEither = await getLocalItem(id, category);
+      return localItemEither.fold((failure) => Left(failure), (item) {
+        if (item == null) {
+          return Left(Failure(404, "Manual item not found in local database"));
+        }
+        final details = Details(
+          id: item.id!,
+          title: item.title ?? '',
+          description: item.description,
+          releaseDate: item.releaseDate,
+          rating: item.personalRating,
+          publisher: item.publisher,
+          platforms: item.platforms,
+          imageUrls: [
+            if (item.posterUrl != null && item.posterUrl!.isNotEmpty)
+              item.posterUrl!,
+            ...(item.additionalImageUrls ?? []),
+          ],
+          genres: item.genres ?? [],
+          category: item.category!,
+        );
+        return Right(details);
+      });
+    }
+
     return _executeNetworkCall(() => _getDetailsByCategory(id, category));
   }
 
@@ -292,6 +322,9 @@ class RepositoryImpl implements Repository {
     String id,
     Category category,
   ) {
+    if (id.startsWith('manual_')) {
+      return Future.value(const Right([]));
+    }
     return _executeNetworkCall(() async {
       final response = await _getRecommendationsByCategory(id, category);
       return response.where((item) => item.id != id).toList();
@@ -440,6 +473,22 @@ class RepositoryImpl implements Repository {
   Future<Either<Failure, void>> addSaved(ItemResponse savedItem) {
     return _performLocalOperation(
       () => _localDataSource.addSaved(savedItem),
+      'Failed to save item locally',
+    );
+  }
+
+  @override
+  Future<Either<Failure, void>> addFinished(ItemResponse finishedItem) {
+    return _performLocalOperation(
+      () => _localDataSource.addFinished(finishedItem),
+      'Failed to save item locally',
+    );
+  }
+
+  @override
+  Future<Either<Failure, void>> addHistory(ItemResponse historyItem) {
+    return _performLocalOperation(
+      () => _localDataSource.addHistory(historyItem),
       'Failed to save item locally',
     );
   }

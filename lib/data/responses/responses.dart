@@ -44,6 +44,21 @@ class ItemResponse {
   @JsonKey(name: 'currentEpisode')
   int? currentEpisode;
 
+  @JsonKey(name: 'description')
+  String? description;
+
+  @JsonKey(name: 'additionalImageUrls')
+  List<String>? additionalImageUrls;
+
+  @JsonKey(name: 'genres')
+  List<String>? genres;
+
+  @JsonKey(name: 'publisher')
+  String? publisher;
+
+  @JsonKey(name: 'platforms')
+  List<String>? platforms;
+
   ItemResponse(
     this.id,
     this.title,
@@ -55,6 +70,11 @@ class ItemResponse {
     this.dateAdded,
     this.currentSeason,
     this.currentEpisode,
+    this.description,
+    this.additionalImageUrls,
+    this.genres,
+    this.publisher,
+    this.platforms,
   });
 
   factory ItemResponse.fromJson(Map<String, dynamic> json) =>

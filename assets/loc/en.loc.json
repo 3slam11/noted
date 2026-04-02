@@ -63,8 +63,8 @@
     "newMonthStarted": "New Month Started! 🎉",
     "description": "Welcome to ${month}!",
     "description2": "Your finished items have been moved to history. Here are your unfinished items from last month:",
-    "pending": "📝 Pending: ",
-    "completed": "🎯 Completed: ",
+    "pending": "To-Do",
+    "completed": "Completed",
     "selectAll": "Select All",
     "deselectAll": "Deselect All",
     "deleteAll": "Delete All",
@@ -92,7 +92,23 @@
     "noNotes": "No note yet.",
     "notesSaved": "Note saved.",
     "save": "Save",
-    "delete": "Delete"
+    "delete": "Delete",
+    "addManualItem": "Add Custom Item",
+    "basicInformation": "Basic Information",
+    "media": "Media",
+    "additionalDetails": "Additional Details",
+    "titleRequired": "Title is required",
+    "titleHint": "Item Title",
+    "descriptionOptional": "Description (Optional)",
+    "imageUrlOptional": "Poster URL (Optional)",
+    "additionalImagesOptional": "Additional Images (Comma separated URLs)",
+    "releaseDateOptional": "Release Date (Optional)",
+    "selectList": "Add to List",
+    "pickImage": "Pick Image",
+    "removeImage": "Remove Image",
+    "genresOptional": "Genres (Comma separated)",
+    "publisherOptional": "Publisher / Studio (Optional)",
+    "platformsOptional": "Platforms (Comma separated)"
   },
   "sort": {
     "sort": "Sort",
@@ -109,8 +125,8 @@
   "search": {
     "search": "Search",
     "searchPlaceholder": "Search...",
-    "searchForSomething": "Search for anything",
-    "noResultsFound": "No results found",
+    "searchOrAdd": "Search for anything\n\nor",
+    "noResultsFound": "No results found. You can add it manually.",
     "cantSearch": "Can't search now"
   },
   "details": {
@@ -162,7 +178,6 @@
     "showSeriesTracker": "Show Series Tracker",
     "showSeriesTrackerDescription": "Display current season and episode for TV series on the main lists."
   },
-  
   "languageSettings": {
     "selectLanguage": "Select Language",
     "en": "English",

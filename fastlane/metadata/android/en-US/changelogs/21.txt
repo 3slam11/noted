@@ -1,0 +1,2 @@
+New
+- Added a manual way to add an item

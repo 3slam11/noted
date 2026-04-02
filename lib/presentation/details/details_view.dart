@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -468,20 +469,43 @@ class DetailsViewState extends State<DetailsView> {
                   margin: const EdgeInsets.symmetric(horizontal: AppPadding.p8),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(AppSize.s12),
-                    child: CachedNetworkImage(
-                      imageUrl: imageUrls[index],
-                      fit: deviceWidth > 500 ? BoxFit.contain : BoxFit.cover,
-                      placeholder: (context, url) =>
-                          const Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) => Container(
-                        color: theme.colorScheme.secondary.withAlpha(15),
-                        child: Icon(
-                          Icons.broken_image_outlined,
-                          size: AppSize.s50,
-                          color: theme.colorScheme.primary.withAlpha(128),
-                        ),
-                      ),
-                    ),
+                    child: imageUrls[index].startsWith('http')
+                        ? CachedNetworkImage(
+                            imageUrl: imageUrls[index],
+                            fit: deviceWidth > 500
+                                ? BoxFit.contain
+                                : BoxFit.cover,
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              color: theme.colorScheme.secondary.withAlpha(15),
+                              child: Icon(
+                                Icons.broken_image_outlined,
+                                size: AppSize.s50,
+                                color: theme.colorScheme.primary.withAlpha(128),
+                              ),
+                            ),
+                          )
+                        : Image.file(
+                            File(imageUrls[index]),
+                            fit: deviceWidth > 500
+                                ? BoxFit.contain
+                                : BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Container(
+                                  color: theme.colorScheme.secondary.withAlpha(
+                                    15,
+                                  ),
+                                  child: Icon(
+                                    Icons.broken_image_outlined,
+                                    size: AppSize.s50,
+                                    color: theme.colorScheme.primary.withAlpha(
+                                      128,
+                                    ),
+                                  ),
+                                ),
+                          ),
                   ),
                 );
               },

@@ -109,7 +109,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(3, 6860424063945157781),
     name: 'ItemEntity',
-    lastPropertyId: const obx_int.IdUid(12, 8063182753400783052),
+    lastPropertyId: const obx_int.IdUid(17, 4503717311442916132),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -182,6 +182,36 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(12, 8063182753400783052),
         name: 'currentEpisode',
         type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(13, 7397240976251880369),
+        name: 'description',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(14, 4639852470425659352),
+        name: 'additionalImageUrls',
+        type: 30,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(15, 7353784538043594458),
+        name: 'genres',
+        type: 30,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(16, 2702347979900691074),
+        name: 'publisher',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(17, 4503717311442916132),
+        name: 'platforms',
+        type: 30,
         flags: 0,
       ),
     ],
@@ -396,7 +426,30 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final personalNotesOffset = object.personalNotes == null
             ? null
             : fbb.writeString(object.personalNotes!);
-        fbb.startTable(13);
+        final descriptionOffset = object.description == null
+            ? null
+            : fbb.writeString(object.description!);
+        final additionalImageUrlsOffset = object.additionalImageUrls == null
+            ? null
+            : fbb.writeList(
+                object.additionalImageUrls!
+                    .map(fbb.writeString)
+                    .toList(growable: false),
+              );
+        final genresOffset = object.genres == null
+            ? null
+            : fbb.writeList(
+                object.genres!.map(fbb.writeString).toList(growable: false),
+              );
+        final publisherOffset = object.publisher == null
+            ? null
+            : fbb.writeString(object.publisher!);
+        final platformsOffset = object.platforms == null
+            ? null
+            : fbb.writeList(
+                object.platforms!.map(fbb.writeString).toList(growable: false),
+              );
+        fbb.startTable(18);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, itemIdOffset);
         fbb.addOffset(2, titleOffset);
@@ -409,6 +462,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(9, object.dateAdded?.millisecondsSinceEpoch);
         fbb.addInt64(10, object.currentSeason);
         fbb.addInt64(11, object.currentEpisode);
+        fbb.addOffset(12, descriptionOffset);
+        fbb.addOffset(13, additionalImageUrlsOffset);
+        fbb.addOffset(14, genresOffset);
+        fbb.addOffset(15, publisherOffset);
+        fbb.addOffset(16, platformsOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -465,6 +523,24 @@ obx_int.ModelDefinition getObjectBoxModel() {
           rootOffset,
           26,
         );
+        final descriptionParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 28);
+        final additionalImageUrlsParam = const fb.ListReader<String>(
+          fb.StringReader(asciiOptimization: true),
+          lazy: false,
+        ).vTableGetNullable(buffer, rootOffset, 30);
+        final genresParam = const fb.ListReader<String>(
+          fb.StringReader(asciiOptimization: true),
+          lazy: false,
+        ).vTableGetNullable(buffer, rootOffset, 32);
+        final publisherParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 34);
+        final platformsParam = const fb.ListReader<String>(
+          fb.StringReader(asciiOptimization: true),
+          lazy: false,
+        ).vTableGetNullable(buffer, rootOffset, 36);
         final object = ItemEntity(
           id: idParam,
           itemId: itemIdParam,
@@ -478,6 +554,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
           dateAdded: dateAddedParam,
           currentSeason: currentSeasonParam,
           currentEpisode: currentEpisodeParam,
+          description: descriptionParam,
+          additionalImageUrls: additionalImageUrlsParam,
+          genres: genresParam,
+          publisher: publisherParam,
+          platforms: platformsParam,
         );
 
         return object;
@@ -609,5 +690,30 @@ class ItemEntity_ {
   /// See [ItemEntity.currentEpisode].
   static final currentEpisode = obx.QueryIntegerProperty<ItemEntity>(
     _entities[2].properties[11],
+  );
+
+  /// See [ItemEntity.description].
+  static final description = obx.QueryStringProperty<ItemEntity>(
+    _entities[2].properties[12],
+  );
+
+  /// See [ItemEntity.additionalImageUrls].
+  static final additionalImageUrls = obx.QueryStringVectorProperty<ItemEntity>(
+    _entities[2].properties[13],
+  );
+
+  /// See [ItemEntity.genres].
+  static final genres = obx.QueryStringVectorProperty<ItemEntity>(
+    _entities[2].properties[14],
+  );
+
+  /// See [ItemEntity.publisher].
+  static final publisher = obx.QueryStringProperty<ItemEntity>(
+    _entities[2].properties[15],
+  );
+
+  /// See [ItemEntity.platforms].
+  static final platforms = obx.QueryStringVectorProperty<ItemEntity>(
+    _entities[2].properties[16],
   );
 }

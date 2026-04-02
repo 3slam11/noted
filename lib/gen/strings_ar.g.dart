@@ -146,8 +146,8 @@ class _TranslationsHomeAr implements TranslationsHomeEn {
 	@override String get newMonthStarted => 'بدأ شهر جديد! 🎉';
 	@override String description({required Object month}) => 'مرحبا بـ ${month}!';
 	@override String get description2 => 'تم نقل العناصر المكتملة للسجل. هذه هي العناصر المتبقية من الشهر الماضي:';
-	@override String get pending => '📝 في الانتظار: ';
-	@override String get completed => '🎯 المكتمل: ';
+	@override String get pending => 'المهام';
+	@override String get completed => 'المكتمل';
 	@override String get selectAll => 'تحديد الكل';
 	@override String get deselectAll => 'إلغاء تحديد الكل';
 	@override String get deleteAll => 'حذف الكل';
@@ -176,6 +176,22 @@ class _TranslationsHomeAr implements TranslationsHomeEn {
 	@override String get notesSaved => 'تم حفظ الملاحظات والتقييم.';
 	@override String get save => 'حفظ';
 	@override String get delete => 'حذف';
+	@override String get addManualItem => 'اضف يدوياً';
+	@override String get basicInformation => 'معلومات اساسية';
+	@override String get media => 'وسائط';
+	@override String get additionalDetails => 'معلومات إضافية';
+	@override String get titleRequired => 'العنوان مطلوب';
+	@override String get titleHint => 'العنوان';
+	@override String get descriptionOptional => 'الوصف (اختياري)';
+	@override String get imageUrlOptional => 'البوستر (اختياري)';
+	@override String get additionalImagesOptional => 'صور إضافية (روابط مفصولة بفاصلة)';
+	@override String get releaseDateOptional => 'تاريخ الإصدار (اختياري)';
+	@override String get selectList => 'أضف إلى قائمة';
+	@override String get pickImage => 'اختر صورة';
+	@override String get removeImage => 'إزالة الصورة';
+	@override String get genresOptional => 'التصنيفات (مفصولة بفاصلة)';
+	@override String get publisherOptional => 'الناشر / الاستوديو (اختياري)';
+	@override String get platformsOptional => 'المنصات (مفصولة بفاصلة)';
 }
 
 // Path: sort
@@ -206,8 +222,8 @@ class _TranslationsSearchAr implements TranslationsSearchEn {
 	// Translations
 	@override String get search => 'بحث';
 	@override String get searchPlaceholder => 'ابحث...';
-	@override String get searchForSomething => 'ابحث عن اي شيء';
-	@override String get noResultsFound => 'لم يتم العثور على نتائج';
+	@override String get searchOrAdd => 'ابحث عن أي شيء\n\nأو';
+	@override String get noResultsFound => 'لم يتم العثور على نتائج. يمكنك إضافته يدوياً.';
 	@override String get cantSearch => 'لا يمكن البحث الآن';
 }
 
@@ -470,8 +486,8 @@ extension on TranslationsAr {
 			'home.newMonthStarted' => 'بدأ شهر جديد! 🎉',
 			'home.description' => ({required Object month}) => 'مرحبا بـ ${month}!',
 			'home.description2' => 'تم نقل العناصر المكتملة للسجل. هذه هي العناصر المتبقية من الشهر الماضي:',
-			'home.pending' => '📝 في الانتظار: ',
-			'home.completed' => '🎯 المكتمل: ',
+			'home.pending' => 'المهام',
+			'home.completed' => 'المكتمل',
 			'home.selectAll' => 'تحديد الكل',
 			'home.deselectAll' => 'إلغاء تحديد الكل',
 			'home.deleteAll' => 'حذف الكل',
@@ -500,6 +516,22 @@ extension on TranslationsAr {
 			'home.notesSaved' => 'تم حفظ الملاحظات والتقييم.',
 			'home.save' => 'حفظ',
 			'home.delete' => 'حذف',
+			'home.addManualItem' => 'اضف يدوياً',
+			'home.basicInformation' => 'معلومات اساسية',
+			'home.media' => 'وسائط',
+			'home.additionalDetails' => 'معلومات إضافية',
+			'home.titleRequired' => 'العنوان مطلوب',
+			'home.titleHint' => 'العنوان',
+			'home.descriptionOptional' => 'الوصف (اختياري)',
+			'home.imageUrlOptional' => 'البوستر (اختياري)',
+			'home.additionalImagesOptional' => 'صور إضافية (روابط مفصولة بفاصلة)',
+			'home.releaseDateOptional' => 'تاريخ الإصدار (اختياري)',
+			'home.selectList' => 'أضف إلى قائمة',
+			'home.pickImage' => 'اختر صورة',
+			'home.removeImage' => 'إزالة الصورة',
+			'home.genresOptional' => 'التصنيفات (مفصولة بفاصلة)',
+			'home.publisherOptional' => 'الناشر / الاستوديو (اختياري)',
+			'home.platformsOptional' => 'المنصات (مفصولة بفاصلة)',
 			'sort.sort' => 'رتب',
 			'sort.sortBy' => 'ترتيب حسب',
 			'sort.titleAsc' => 'العنوان (أ-ي)',
@@ -512,8 +544,8 @@ extension on TranslationsAr {
 			'sort.dateAddedOldest' => 'تاريخ الإضافة (الأقدم)',
 			'search.search' => 'بحث',
 			'search.searchPlaceholder' => 'ابحث...',
-			'search.searchForSomething' => 'ابحث عن اي شيء',
-			'search.noResultsFound' => 'لم يتم العثور على نتائج',
+			'search.searchOrAdd' => 'ابحث عن أي شيء\n\nأو',
+			'search.noResultsFound' => 'لم يتم العثور على نتائج. يمكنك إضافته يدوياً.',
 			'search.cantSearch' => 'لا يمكن البحث الآن',
 			'details.title' => 'تفاصيل',
 			'details.movies' => 'الأفلام',
