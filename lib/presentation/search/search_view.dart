@@ -18,6 +18,7 @@ class SearchView extends StatefulWidget {
 class SearchViewState extends State<SearchView> {
   final TextEditingController searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _searchFocusNode = FocusNode();
   late final SearchViewModel viewModel = instance<SearchViewModel>();
 
   @override
@@ -41,7 +42,20 @@ class SearchViewState extends State<SearchView> {
     viewModel.dispose();
     searchController.dispose();
     _scrollController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
+  }
+
+  // QOL: Request focus and scroll to top
+  void focusSearchField() {
+    _searchFocusNode.requestFocus();
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   void _showManualAddDialog() {
@@ -160,6 +174,7 @@ class SearchViewState extends State<SearchView> {
           Expanded(
             child: TextField(
               controller: searchController,
+              focusNode: _searchFocusNode,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 16,

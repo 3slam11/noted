@@ -24,12 +24,18 @@ class _HomeViewState extends State<HomeView>
   bool _isBottomBarVisible = true;
   bool _isAnimating = false;
 
-  static const List<Widget> _pages = [
-    MainView(),
-    SearchView(),
-    SavedView(),
-    HistoryView(),
-    SettingsView(),
+  // GlobalKeys to trigger QOL actions on active tabs
+  late final GlobalKey<MainViewState> _mainKey = GlobalKey();
+  late final GlobalKey<SearchViewState> _searchKey = GlobalKey();
+  late final GlobalKey<SavedViewState> _savedKey = GlobalKey();
+  late final GlobalKey<HistoryViewState> _historyKey = GlobalKey();
+
+  late final List<Widget> _pages = [
+    MainView(key: _mainKey),
+    SearchView(key: _searchKey),
+    SavedView(key: _savedKey),
+    HistoryView(key: _historyKey),
+    const SettingsView(),
   ];
 
   static const List<IconData> _pageIcons = [
@@ -162,8 +168,27 @@ class _HomeViewState extends State<HomeView>
                             icon: _pageIcons[index],
                             label: pageTitles[index],
                             isActive: _bottomNavIndex == index,
-                            onTap: () =>
-                                setState(() => _bottomNavIndex = index),
+                            onTap: () {
+                              if (_bottomNavIndex == index) {
+                                // QOL: Trigger actions when tapping the active tab
+                                switch (index) {
+                                  case 0:
+                                    _mainKey.currentState?.scrollToTop();
+                                    break;
+                                  case 1:
+                                    _searchKey.currentState?.focusSearchField();
+                                    break;
+                                  case 2:
+                                    _savedKey.currentState?.scrollToTop();
+                                    break;
+                                  case 3:
+                                    _historyKey.currentState?.scrollToTop();
+                                    break;
+                                }
+                              } else {
+                                setState(() => _bottomNavIndex = index);
+                              }
+                            },
                             activeColor: colorScheme.primary,
                             inactiveColor: colorScheme.onSurface.withValues(
                               alpha: 0.6,

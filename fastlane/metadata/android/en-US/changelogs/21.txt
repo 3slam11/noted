@@ -1,5 +1,6 @@
 New
 - Added a manual way to add an item
+- Qol: tapping search icon twice will prompt keyboard
 
 Fixed
 - deletion of 2 items fast causes problems

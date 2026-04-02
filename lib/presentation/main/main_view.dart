@@ -24,12 +24,24 @@ class MainView extends StatefulWidget {
 class MainViewState extends State<MainView> {
   final MainViewModel viewModel = instance<MainViewModel>();
   final AppPrefs appPrefs = instance<AppPrefs>();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     viewModel.start();
     WidgetsBinding.instance.addPostFrameCallback((_) => monthChecker());
+  }
+
+  // QOL: Scroll to top
+  void scrollToTop() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   Future<void> timeBackwards(BuildContext context) async {
@@ -157,6 +169,7 @@ class MainViewState extends State<MainView> {
   @override
   void dispose() {
     viewModel.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -173,6 +186,7 @@ class MainViewState extends State<MainView> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
+        controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

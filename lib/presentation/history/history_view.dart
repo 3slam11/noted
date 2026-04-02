@@ -18,6 +18,7 @@ class HistoryView extends StatefulWidget {
 
 class HistoryViewState extends State<HistoryView> {
   late final HistoryViewModel _viewModel = instance<HistoryViewModel>();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -28,7 +29,19 @@ class HistoryViewState extends State<HistoryView> {
   @override
   void dispose() {
     _viewModel.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  // QOL: Scroll to top
+  void scrollToTop() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   @override
@@ -237,7 +250,8 @@ class HistoryViewState extends State<HistoryView> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                      primary: true,
+                      controller: _scrollController,
+                      primary: false,
                       padding: const EdgeInsets.symmetric(
                         vertical: AppPadding.p8,
                       ),
