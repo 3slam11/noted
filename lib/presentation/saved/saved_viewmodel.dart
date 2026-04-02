@@ -27,12 +27,16 @@ class SavedViewModel extends BaseViewModel
   List<Item> _rawSavedItems = [];
   bool _showSeriesTracker = true;
 
+  final Set<String> _pendingDeletions = {};
+
   SavedViewModel(this._savedUsecase, this._dataGlobalNotifier, this._appPrefs) {
     _dataGlobalNotifier.addListener(_silentRefresh);
   }
 
   @override
   bool get showSeriesTracker => _showSeriesTracker;
+
+  String _getItemKey(Item item) => '${item.id}_${item.category}';
 
   @override
   void start() {
@@ -73,7 +77,9 @@ class SavedViewModel extends BaseViewModel
         _savedController.add([]);
       },
       (savedItems) {
-        _rawSavedItems = savedItems;
+        _rawSavedItems = savedItems
+            .where((item) => !_pendingDeletions.contains(_getItemKey(item)))
+            .toList();
         _applySort();
         if (isInitialLoad) {
           inputState.add(ContentState());
@@ -116,12 +122,10 @@ class SavedViewModel extends BaseViewModel
 
   @override
   int? deleteSavedItemTemporarily(Item item) {
-    final currentItems = _savedController.valueOrNull;
-    if (currentItems == null) return null;
-
-    final index = currentItems.indexWhere((i) => _isSameItem(i, item));
+    _pendingDeletions.add(_getItemKey(item));
+    final index = _rawSavedItems.indexWhere((i) => _isSameItem(i, item));
     if (index != -1) {
-      _rawSavedItems.removeWhere((i) => _isSameItem(i, item));
+      _rawSavedItems.removeAt(index);
       _applySort();
       return index;
     }
@@ -130,17 +134,18 @@ class SavedViewModel extends BaseViewModel
 
   @override
   void undoDeleteSavedItem(Item item, int index) {
-    final currentItems = _savedController.valueOrNull;
-    if (currentItems == null) return;
-
+    _pendingDeletions.remove(_getItemKey(item));
     if (index >= 0 && index <= _rawSavedItems.length) {
       _rawSavedItems.insert(index, item);
-      _applySort();
+    } else {
+      _rawSavedItems.add(item);
     }
+    _applySort();
   }
 
   @override
   Future<void> confirmDeleteSavedItem(Item item) async {
+    _pendingDeletions.remove(_getItemKey(item));
     final result = await _savedUsecase.deleteSavedItem(item);
     result.fold(
       (failure) {

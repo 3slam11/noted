@@ -27,6 +27,8 @@ class MainViewModel extends BaseViewModel
   MainObject? _currentObject;
   bool _showSeriesTracker = true;
 
+  final Set<String> _pendingDeletions = {};
+
   MainViewModel(this._mainUsecase, this._dataGlobalNotifier, this._appPrefs) {
     _dataGlobalNotifier.addListener(_silentRefresh);
   }
@@ -35,6 +37,8 @@ class MainViewModel extends BaseViewModel
 
   @override
   bool get showSeriesTracker => _showSeriesTracker;
+
+  String _getItemKey(Item item) => '${item.id}_${item.category}';
 
   @override
   void start() {
@@ -76,6 +80,18 @@ class MainViewModel extends BaseViewModel
         _mainDataController.add(null);
       },
       (mainObject) {
+        if (mainObject.mainData != null) {
+          mainObject.mainData!.todos.removeWhere(
+            (item) => _pendingDeletions.contains(_getItemKey(item)),
+          );
+          mainObject.mainData!.finished.removeWhere(
+            (item) => _pendingDeletions.contains(_getItemKey(item)),
+          );
+          mainObject.mainData!.saved.removeWhere(
+            (item) => _pendingDeletions.contains(_getItemKey(item)),
+          );
+        }
+
         _currentObject = mainObject;
         _applySortersAndFilters();
         if (isInitialLoad) {
@@ -198,6 +214,7 @@ class MainViewModel extends BaseViewModel
   @override
   int? deleteTodoTemporarily(Item item) {
     if (!hasData) return null;
+    _pendingDeletions.add(_getItemKey(item));
     final index = _currentObject!.mainData!.todos.indexWhere(
       (i) => _isSameItem(i, item),
     );
@@ -212,14 +229,18 @@ class MainViewModel extends BaseViewModel
   @override
   void undoDeleteTodo(Item item, int index) {
     if (!hasData) return;
+    _pendingDeletions.remove(_getItemKey(item));
     if (index >= 0 && index <= _currentObject!.mainData!.todos.length) {
       _currentObject!.mainData!.todos.insert(index, item);
-      _applySortersAndFilters();
+    } else {
+      _currentObject!.mainData!.todos.add(item);
     }
+    _applySortersAndFilters();
   }
 
   @override
   Future<void> confirmDeleteTodo(Item item) async {
+    _pendingDeletions.remove(_getItemKey(item));
     final result = await _mainUsecase.deleteTodo(item);
     result.fold(
       (failure) {
@@ -235,6 +256,7 @@ class MainViewModel extends BaseViewModel
   @override
   int? deleteFinishedTemporarily(Item item) {
     if (!hasData) return null;
+    _pendingDeletions.add(_getItemKey(item));
     final index = _currentObject!.mainData!.finished.indexWhere(
       (i) => _isSameItem(i, item),
     );
@@ -249,14 +271,18 @@ class MainViewModel extends BaseViewModel
   @override
   void undoDeleteFinished(Item item, int index) {
     if (!hasData) return;
+    _pendingDeletions.remove(_getItemKey(item));
     if (index >= 0 && index <= _currentObject!.mainData!.finished.length) {
       _currentObject!.mainData!.finished.insert(index, item);
-      _applySortersAndFilters();
+    } else {
+      _currentObject!.mainData!.finished.add(item);
     }
+    _applySortersAndFilters();
   }
 
   @override
   Future<void> confirmDeleteFinished(Item item) async {
+    _pendingDeletions.remove(_getItemKey(item));
     final result = await _mainUsecase.deleteFinished(item);
     result.fold(
       (failure) {
@@ -272,6 +298,7 @@ class MainViewModel extends BaseViewModel
   @override
   int? deleteSavedTemporarily(Item item) {
     if (!hasData) return null;
+    _pendingDeletions.add(_getItemKey(item));
     final index = _currentObject!.mainData!.saved.indexWhere(
       (i) => _isSameItem(i, item),
     );
@@ -286,14 +313,18 @@ class MainViewModel extends BaseViewModel
   @override
   void undoDeleteSaved(Item item, int index) {
     if (!hasData) return;
+    _pendingDeletions.remove(_getItemKey(item));
     if (index >= 0 && index <= _currentObject!.mainData!.saved.length) {
       _currentObject!.mainData!.saved.insert(index, item);
-      _applySortersAndFilters();
+    } else {
+      _currentObject!.mainData!.saved.add(item);
     }
+    _applySortersAndFilters();
   }
 
   @override
   Future<void> confirmDeleteSaved(Item item) async {
+    _pendingDeletions.remove(_getItemKey(item));
     final result = await _mainUsecase.deleteSaved(item);
     result.fold(
       (failure) {

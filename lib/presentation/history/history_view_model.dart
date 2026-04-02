@@ -27,6 +27,8 @@ class HistoryViewModel extends BaseViewModel
   List<Item> _rawHistoryItems = [];
   bool _showSeriesTracker = true;
 
+  final Set<String> _pendingDeletions = {};
+
   HistoryViewModel(
     this._historyUsecase,
     this._dataGlobalNotifier,
@@ -37,6 +39,8 @@ class HistoryViewModel extends BaseViewModel
 
   @override
   bool get showSeriesTracker => _showSeriesTracker;
+
+  String _getItemKey(Item item) => '${item.id}_${item.category}';
 
   @override
   void start() {
@@ -77,7 +81,9 @@ class HistoryViewModel extends BaseViewModel
         _historyController.add([]);
       },
       (historyItems) {
-        _rawHistoryItems = historyItems;
+        _rawHistoryItems = historyItems
+            .where((item) => !_pendingDeletions.contains(_getItemKey(item)))
+            .toList();
         _applySort();
         if (isInitialLoad) {
           inputState.add(ContentState());
@@ -120,12 +126,10 @@ class HistoryViewModel extends BaseViewModel
 
   @override
   int? deleteHistoryItemTemporarily(Item item) {
-    final currentItems = _historyController.valueOrNull;
-    if (currentItems == null) return null;
-
-    final index = currentItems.indexWhere((i) => _isSameItem(i, item));
+    _pendingDeletions.add(_getItemKey(item));
+    final index = _rawHistoryItems.indexWhere((i) => _isSameItem(i, item));
     if (index != -1) {
-      _rawHistoryItems.removeWhere((i) => _isSameItem(i, item));
+      _rawHistoryItems.removeAt(index);
       _applySort();
       return index;
     }
@@ -134,17 +138,18 @@ class HistoryViewModel extends BaseViewModel
 
   @override
   void undoDeleteHistoryItem(Item item, int index) {
-    final currentItems = _historyController.valueOrNull;
-    if (currentItems == null) return;
-
+    _pendingDeletions.remove(_getItemKey(item));
     if (index >= 0 && index <= _rawHistoryItems.length) {
       _rawHistoryItems.insert(index, item);
-      _applySort();
+    } else {
+      _rawHistoryItems.add(item);
     }
+    _applySort();
   }
 
   @override
   Future<void> confirmDeleteHistoryItem(Item item) async {
+    _pendingDeletions.remove(_getItemKey(item));
     final result = await _historyUsecase.deleteHistoryItem(item);
     result.fold(
       (failure) {
