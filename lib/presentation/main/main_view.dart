@@ -26,8 +26,6 @@ class MainViewState extends State<MainView> {
   final AppPrefs appPrefs = instance<AppPrefs>();
   final ScrollController _scrollController = ScrollController();
 
-  bool isFilterVisible = false;
-
   @override
   void initState() {
     super.initState();
@@ -36,9 +34,7 @@ class MainViewState extends State<MainView> {
   }
 
   void toggleFilter() {
-    setState(() {
-      isFilterVisible = !isFilterVisible;
-    });
+    viewModel.toggleFilter();
   }
 
   // QOL: Scroll to top
@@ -191,38 +187,52 @@ class MainViewState extends State<MainView> {
   }
 
   Widget _getContentWidget() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SingleChildScrollView(
-        controller: _scrollController,
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AnimatedSize(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              alignment: Alignment.topCenter,
-              child: isFilterVisible
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildFilterAndSortControls(context),
-                        const SizedBox(height: 20),
-                      ],
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            TodoSectionWidget(
-              viewModel: viewModel,
-            ).animate().fadeIn(duration: 500.ms),
-            const SizedBox(height: 8),
-            FinishedSectionWidget(
-              viewModel: viewModel,
-            ).animate().fadeIn(duration: 500.ms),
-          ],
-        ),
-      ),
+    return StreamBuilder<bool>(
+      stream: viewModel.outputShowFilterToggle,
+      builder: (context, showToggleSnapshot) {
+        final showToggle = showToggleSnapshot.data ?? true;
+        return StreamBuilder<bool>(
+          stream: viewModel.outputIsFilterVisible,
+          builder: (context, isVisibleSnapshot) {
+            final isVisible = isVisibleSnapshot.data ?? true;
+            final shouldShowFilter = !showToggle || isVisible;
+
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      alignment: Alignment.topCenter,
+                      child: shouldShowFilter
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildFilterAndSortControls(context),
+                                const SizedBox(height: 20),
+                              ],
+                            )
+                          : const SizedBox.shrink(),
+                    ),
+                    TodoSectionWidget(
+                      viewModel: viewModel,
+                    ).animate().fadeIn(duration: 500.ms),
+                    const SizedBox(height: 8),
+                    FinishedSectionWidget(
+                      viewModel: viewModel,
+                    ).animate().fadeIn(duration: 500.ms),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

@@ -16,6 +16,8 @@ const String customFontPathPref = 'CUSTOM_FONT_PATH_PREF';
 const String customFontFamilyNamePref = 'CUSTOM_FONT_FAMILY_NAME_PREF';
 const String monthRolloverBehaviorPref = 'MONTH_ROLLOVER_BEHAVIOR_PREF';
 const String showSeriesTrackerPref = 'SHOW_SERIES_TRACKER_PREF';
+const String isFilterVisiblePref = 'IS_FILTER_VISIBLE_PREF';
+const String showFilterTogglePref = 'SHOW_FILTER_TOGGLE_PREF';
 
 class AppPrefs {
   final SharedPreferences sharedPreferences;
@@ -149,5 +151,21 @@ class AppPrefs {
 
   Future<bool> getShowSeriesTracker() async {
     return sharedPreferences.getBool(showSeriesTrackerPref) ?? true;
+  }
+
+  Future<void> setIsFilterVisible(bool visible) async {
+    await sharedPreferences.setBool(isFilterVisiblePref, visible);
+  }
+
+  Future<bool> getIsFilterVisible() async {
+    return sharedPreferences.getBool(isFilterVisiblePref) ?? true;
+  }
+
+  Future<void> setShowFilterToggle(bool show) async {
+    await sharedPreferences.setBool(showFilterTogglePref, show);
+  }
+
+  Future<bool> getShowFilterToggle() async {
+    return sharedPreferences.getBool(showFilterTogglePref) ?? true;
   }
 }

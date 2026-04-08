@@ -23,6 +23,11 @@ class HistoryViewModel extends BaseViewModel
   final BehaviorSubject<bool> _isAscendingController =
       BehaviorSubject<bool>.seeded(false);
 
+  final BehaviorSubject<bool> _isFilterVisibleController =
+      BehaviorSubject<bool>.seeded(true);
+  final BehaviorSubject<bool> _showFilterToggleController =
+      BehaviorSubject<bool>.seeded(true);
+
   final HistoryUsecase _historyUsecase;
   final DataGlobalNotifier _dataGlobalNotifier;
   final AppPrefs _appPrefs;
@@ -64,6 +69,9 @@ class HistoryViewModel extends BaseViewModel
 
   Future<void> _fetchAndProcessData({required bool isInitialLoad}) async {
     _showSeriesTracker = await _appPrefs.getShowSeriesTracker();
+    _isFilterVisibleController.add(await _appPrefs.getIsFilterVisible());
+    _showFilterToggleController.add(await _appPrefs.getShowFilterToggle());
+
     (await _historyUsecase.execute(null)).fold(
       (failure) {
         if (isInitialLoad) {
@@ -117,6 +125,13 @@ class HistoryViewModel extends BaseViewModel
       _isAscendingController.add(false);
     }
     _applySort();
+  }
+
+  @override
+  void toggleFilter() async {
+    final newValue = !_isFilterVisibleController.value;
+    _isFilterVisibleController.add(newValue);
+    await _appPrefs.setIsFilterVisible(newValue);
   }
 
   bool _isSameItem(Item a, Item b) => a.id == b.id && a.category == b.category;
@@ -230,6 +245,8 @@ class HistoryViewModel extends BaseViewModel
     _selectedCategoryController.close();
     _sortOptionController.close();
     _isAscendingController.close();
+    _isFilterVisibleController.close();
+    _showFilterToggleController.close();
     _dataGlobalNotifier.removeListener(_silentRefresh);
     super.dispose();
   }
@@ -252,6 +269,12 @@ class HistoryViewModel extends BaseViewModel
 
   @override
   Stream<bool> get outputIsAscending => _isAscendingController.stream;
+
+  @override
+  Stream<bool> get outputIsFilterVisible => _isFilterVisibleController.stream;
+
+  @override
+  Stream<bool> get outputShowFilterToggle => _showFilterToggleController.stream;
 }
 
 abstract class HistoryViewModelInputs {
@@ -259,6 +282,7 @@ abstract class HistoryViewModelInputs {
   Sink<SortOption> get inputSortOption;
   void setCategory(Category category);
   void setSortOption(SortOption sortOption);
+  void toggleFilter();
   Future<void> loadHistoryItems();
 
   int? deleteHistoryItemTemporarily(Item item);
@@ -277,5 +301,7 @@ abstract class HistoryViewModelOutputs {
   Stream<Category> get outputSelectedCategory;
   Stream<SortOption> get outputSortOption;
   Stream<bool> get outputIsAscending;
+  Stream<bool> get outputIsFilterVisible;
+  Stream<bool> get outputShowFilterToggle;
   bool get showSeriesTracker;
 }

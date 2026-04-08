@@ -578,6 +578,12 @@ class TranslationsSettingsEn {
 
 	/// en: 'Display current season and episode for TV series on the main lists.'
 	String get showSeriesTrackerDescription => 'Display current season and episode for TV series on the main lists.';
+
+	/// en: 'Collapsible Filter'
+	String get showFilterToggle => 'Collapsible Filter';
+
+	/// en: 'Add a button to the top bar to hide/show the filter.'
+	String get showFilterToggleDescription => 'Add a button to the top bar to hide/show the filter.';
 }
 
 // Path: languageSettings
@@ -1000,6 +1006,8 @@ extension on Translations {
 			'settings.rolloverManualDescription' => 'Do nothing. I will manage my lists myself.',
 			'settings.showSeriesTracker' => 'Show Series Tracker',
 			'settings.showSeriesTrackerDescription' => 'Display current season and episode for TV series on the main lists.',
+			'settings.showFilterToggle' => 'Collapsible Filter',
+			'settings.showFilterToggleDescription' => 'Add a button to the top bar to hide/show the filter.',
 			'languageSettings.selectLanguage' => 'Select Language',
 			'languageSettings.en' => 'English',
 			'languageSettings.ar' => 'العربية',

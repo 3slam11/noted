@@ -172,7 +172,9 @@
     "rolloverManual": "يدوي",
     "rolloverManualDescription": "لا تفعل شيئًا. سأدير قوائمي بنفسي.",
     "showSeriesTracker": "إظهار متتبع المسلسلات",
-    "showSeriesTrackerDescription": "عرض الموسم والحلقة الحالية للمسلسلات التلفزيونية في القوائم الرئيسية."
+    "showSeriesTrackerDescription": "عرض الموسم والحلقة الحالية للمسلسلات التلفزيونية في القوائم الرئيسية.",
+    "showFilterToggle": "فلتر قابل للطي",
+    "showFilterToggleDescription": "إضافة زر في الشريط العلوي لإخفاء/إظهار الفلتر."
   },
   "languageSettings": {
     "selectLanguage": "اختر اللغة",

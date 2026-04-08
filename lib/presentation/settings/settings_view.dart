@@ -49,6 +49,8 @@ class _SettingsViewState extends State<SettingsView> {
           const SizedBox(height: AppSize.s12),
           _buildSeriesTrackerSettings(context),
           const SizedBox(height: AppSize.s12),
+          _buildFilterToggleSettings(context),
+          const SizedBox(height: AppSize.s12),
           _buildSettingCard(
             context,
             title: t.settings.apiChange,
@@ -128,6 +130,52 @@ class _SettingsViewState extends State<SettingsView> {
             value: isEnabled,
             onChanged: (value) {
               viewModel.setShowSeriesTracker(value);
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFilterToggleSettings(BuildContext context) {
+    return StreamBuilder<bool>(
+      stream: viewModel.outputShowFilterToggle,
+      builder: (context, snapshot) {
+        final isEnabled = snapshot.data ?? true;
+        return Card(
+          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSize.s15),
+          ),
+          child: SwitchListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppPadding.p16,
+              vertical: AppPadding.p8,
+            ),
+            secondary: Icon(
+              Icons.filter_list_rounded,
+              color: Theme.of(context).colorScheme.primary,
+              size: AppSize.s28,
+            ),
+            title: Text(
+              t.settings.showFilterToggle,
+              style: TextStyle(
+                fontSize: AppSize.s18,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            subtitle: Text(
+              t.settings.showFilterToggleDescription,
+              style: TextStyle(
+                fontSize: AppSize.s14,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
+              ),
+            ),
+            value: isEnabled,
+            onChanged: (value) {
+              viewModel.setShowFilterToggle(value);
             },
           ),
         );

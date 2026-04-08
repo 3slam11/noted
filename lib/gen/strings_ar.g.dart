@@ -284,6 +284,8 @@ class _TranslationsSettingsAr implements TranslationsSettingsEn {
 	@override String get rolloverManualDescription => 'لا تفعل شيئًا. سأدير قوائمي بنفسي.';
 	@override String get showSeriesTracker => 'إظهار متتبع المسلسلات';
 	@override String get showSeriesTrackerDescription => 'عرض الموسم والحلقة الحالية للمسلسلات التلفزيونية في القوائم الرئيسية.';
+	@override String get showFilterToggle => 'فلتر قابل للطي';
+	@override String get showFilterToggleDescription => 'إضافة زر في الشريط العلوي لإخفاء/إظهار الفلتر.';
 }
 
 // Path: languageSettings
@@ -584,6 +586,8 @@ extension on TranslationsAr {
 			'settings.rolloverManualDescription' => 'لا تفعل شيئًا. سأدير قوائمي بنفسي.',
 			'settings.showSeriesTracker' => 'إظهار متتبع المسلسلات',
 			'settings.showSeriesTrackerDescription' => 'عرض الموسم والحلقة الحالية للمسلسلات التلفزيونية في القوائم الرئيسية.',
+			'settings.showFilterToggle' => 'فلتر قابل للطي',
+			'settings.showFilterToggleDescription' => 'إضافة زر في الشريط العلوي لإخفاء/إظهار الفلتر.',
 			'languageSettings.selectLanguage' => 'اختر اللغة',
 			'languageSettings.en' => 'English',
 			'languageSettings.ar' => 'العربية',

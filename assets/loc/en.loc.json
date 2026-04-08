@@ -172,7 +172,9 @@
     "rolloverManual": "Manual",
     "rolloverManualDescription": "Do nothing. I will manage my lists myself.",
     "showSeriesTracker": "Show Series Tracker",
-    "showSeriesTrackerDescription": "Display current season and episode for TV series on the main lists."
+    "showSeriesTrackerDescription": "Display current season and episode for TV series on the main lists.",
+    "showFilterToggle": "Collapsible Filter",
+    "showFilterToggleDescription": "Add a button to the top bar to hide/show the filter."
   },
   "languageSettings": {
     "selectLanguage": "Select Language",

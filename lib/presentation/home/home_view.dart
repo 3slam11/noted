@@ -1,6 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:noted/app/app_events.dart';
+import 'package:noted/app/app_prefs.dart';
+import 'package:noted/app/di.dart';
 import 'package:noted/gen/strings.g.dart';
 import 'package:noted/presentation/history/history_view.dart';
 import 'package:noted/presentation/main/main_view.dart';
@@ -23,6 +26,10 @@ class _HomeViewState extends State<HomeView>
   // Track scroll state to prevent redundant animations
   bool _isBottomBarVisible = true;
   bool _isAnimating = false;
+  bool _showFilterToggle = true;
+
+  final AppPrefs _appPrefs = instance<AppPrefs>();
+  final DataGlobalNotifier _dataGlobalNotifier = instance<DataGlobalNotifier>();
 
   // GlobalKeys to trigger QOL actions on active tabs
   late final GlobalKey<MainViewState> _mainKey = GlobalKey();
@@ -55,8 +62,18 @@ class _HomeViewState extends State<HomeView>
       reverseDuration: const Duration(milliseconds: 200),
     );
 
-    // Listen to animation status to track when animations complete
     _hideBottomBarAnimationController.addStatusListener(_handleAnimationStatus);
+    _loadSettings();
+    _dataGlobalNotifier.addListener(_loadSettings);
+  }
+
+  void _loadSettings() async {
+    final showToggle = await _appPrefs.getShowFilterToggle();
+    if (mounted) {
+      setState(() {
+        _showFilterToggle = showToggle;
+      });
+    }
   }
 
   void _handleAnimationStatus(AnimationStatus status) {
@@ -97,6 +114,7 @@ class _HomeViewState extends State<HomeView>
 
   @override
   void dispose() {
+    _dataGlobalNotifier.removeListener(_loadSettings);
     _hideBottomBarAnimationController.removeStatusListener(
       _handleAnimationStatus,
     );
@@ -122,9 +140,10 @@ class _HomeViewState extends State<HomeView>
       appBar: AppBar(
         title: Text(pageTitles[_bottomNavIndex]),
         actions: [
-          if (_bottomNavIndex == 0 ||
-              _bottomNavIndex == 2 ||
-              _bottomNavIndex == 3)
+          if (_showFilterToggle &&
+              (_bottomNavIndex == 0 ||
+                  _bottomNavIndex == 2 ||
+                  _bottomNavIndex == 3))
             IconButton(
               icon: const Icon(Icons.filter_list_rounded),
               tooltip: t.sort.sort,

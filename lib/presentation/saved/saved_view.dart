@@ -20,8 +20,6 @@ class SavedViewState extends State<SavedView> {
   late final SavedViewModel _viewModel = instance<SavedViewModel>();
   final ScrollController _scrollController = ScrollController();
 
-  bool isFilterVisible = false;
-
   @override
   void initState() {
     super.initState();
@@ -29,9 +27,7 @@ class SavedViewState extends State<SavedView> {
   }
 
   void toggleFilter() {
-    setState(() {
-      isFilterVisible = !isFilterVisible;
-    });
+    _viewModel.toggleFilter();
   }
 
   @override
@@ -64,28 +60,42 @@ class SavedViewState extends State<SavedView> {
   }
 
   Widget _getContentWidget() {
-    return Padding(
-      padding: const EdgeInsets.all(AppPadding.p16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AnimatedSize(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            alignment: Alignment.topCenter,
-            child: isFilterVisible
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildCategoryFilter(),
-                      const SizedBox(height: AppSize.s20),
-                    ],
-                  )
-                : const SizedBox.shrink(),
-          ),
-          Expanded(child: _buildSavedListSection()),
-        ],
-      ),
+    return StreamBuilder<bool>(
+      stream: _viewModel.outputShowFilterToggle,
+      builder: (context, showToggleSnapshot) {
+        final showToggle = showToggleSnapshot.data ?? true;
+        return StreamBuilder<bool>(
+          stream: _viewModel.outputIsFilterVisible,
+          builder: (context, isVisibleSnapshot) {
+            final isVisible = isVisibleSnapshot.data ?? true;
+            final shouldShowFilter = !showToggle || isVisible;
+
+            return Padding(
+              padding: const EdgeInsets.all(AppPadding.p16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    alignment: Alignment.topCenter,
+                    child: shouldShowFilter
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildCategoryFilter(),
+                              const SizedBox(height: AppSize.s20),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                  Expanded(child: _buildSavedListSection()),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

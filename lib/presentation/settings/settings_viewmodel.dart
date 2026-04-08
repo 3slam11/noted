@@ -33,6 +33,7 @@ class SettingsViewModel extends BaseViewModel
   final _monthRolloverBehaviorController =
       BehaviorSubject<MonthRolloverBehavior>();
   final _showSeriesTrackerController = BehaviorSubject<bool>();
+  final _showFilterToggleController = BehaviorSubject<bool>();
 
   SettingsViewModel(this.appPrefs, this.themeManager, this.dataGlobalNotifier);
 
@@ -56,6 +57,7 @@ class SettingsViewModel extends BaseViewModel
     _customFontInfoController.close();
     _monthRolloverBehaviorController.close();
     _showSeriesTrackerController.close();
+    _showFilterToggleController.close();
     super.dispose();
   }
 
@@ -101,6 +103,10 @@ class SettingsViewModel extends BaseViewModel
     // Show Series Tracker
     final showTracker = await appPrefs.getShowSeriesTracker();
     inputShowSeriesTracker.add(showTracker);
+
+    // Show Filter Toggle
+    final showFilterToggle = await appPrefs.getShowFilterToggle();
+    inputShowFilterToggle.add(showFilterToggle);
   }
 
   @override
@@ -127,6 +133,9 @@ class SettingsViewModel extends BaseViewModel
 
   @override
   Sink<bool> get inputShowSeriesTracker => _showSeriesTrackerController.sink;
+
+  @override
+  Sink<bool> get inputShowFilterToggle => _showFilterToggleController.sink;
 
   @override
   Future<void> setLanguage(String languageCode) async {
@@ -215,6 +224,13 @@ class SettingsViewModel extends BaseViewModel
   }
 
   @override
+  Future<void> setShowFilterToggle(bool show) async {
+    await appPrefs.setShowFilterToggle(show);
+    inputShowFilterToggle.add(show);
+    dataGlobalNotifier.notifyDataImported();
+  }
+
+  @override
   Stream<String> get outputCurrentLanguage =>
       _currentLanguageStreamController.stream;
 
@@ -248,6 +264,9 @@ class SettingsViewModel extends BaseViewModel
   @override
   Stream<bool> get outputShowSeriesTracker =>
       _showSeriesTrackerController.stream;
+
+  @override
+  Stream<bool> get outputShowFilterToggle => _showFilterToggleController.stream;
 }
 
 abstract class SettingsViewModelInputs {
@@ -258,6 +277,7 @@ abstract class SettingsViewModelInputs {
   Sink<String> get inputCustomFontInfo;
   Sink<MonthRolloverBehavior> get inputMonthRolloverBehavior;
   Sink<bool> get inputShowSeriesTracker;
+  Sink<bool> get inputShowFilterToggle;
 
   Future<void> setLanguage(String languageCode);
   Future<void> setThemeMode(ThemeType mode);
@@ -267,6 +287,7 @@ abstract class SettingsViewModelInputs {
   Future<void> clearCustomFont();
   Future<void> setMonthRolloverBehavior(MonthRolloverBehavior behavior);
   Future<void> setShowSeriesTracker(bool show);
+  Future<void> setShowFilterToggle(bool show);
 }
 
 abstract class SettingsViewModelOutputs {
@@ -279,4 +300,5 @@ abstract class SettingsViewModelOutputs {
   Stream<String> get outputCustomFontInfo;
   Stream<MonthRolloverBehavior> get outputMonthRolloverBehavior;
   Stream<bool> get outputShowSeriesTracker;
+  Stream<bool> get outputShowFilterToggle;
 }

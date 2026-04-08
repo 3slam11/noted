@@ -26,6 +26,11 @@ class MainViewModel extends BaseViewModel
   final BehaviorSubject<bool> _isAscendingController =
       BehaviorSubject<bool>.seeded(false);
 
+  final BehaviorSubject<bool> _isFilterVisibleController =
+      BehaviorSubject<bool>.seeded(true);
+  final BehaviorSubject<bool> _showFilterToggleController =
+      BehaviorSubject<bool>.seeded(true);
+
   MainObject? _currentObject;
   bool _showSeriesTracker = true;
 
@@ -60,6 +65,9 @@ class MainViewModel extends BaseViewModel
 
   Future<void> _fetchAndProcessData({required bool isInitialLoad}) async {
     _showSeriesTracker = await _appPrefs.getShowSeriesTracker();
+    _isFilterVisibleController.add(await _appPrefs.getIsFilterVisible());
+    _showFilterToggleController.add(await _appPrefs.getShowFilterToggle());
+
     final result = await _mainUsecase.execute(null);
     result.fold(
       (failure) {
@@ -166,6 +174,13 @@ class MainViewModel extends BaseViewModel
       ); // Default to descending when changing option
     }
     _applySortersAndFilters();
+  }
+
+  @override
+  void toggleFilter() async {
+    final newValue = !_isFilterVisibleController.value;
+    _isFilterVisibleController.add(newValue);
+    await _appPrefs.setIsFilterVisible(newValue);
   }
 
   @override
@@ -433,6 +448,8 @@ class MainViewModel extends BaseViewModel
     _selectedCategoryController.close();
     _sortOptionController.close();
     _isAscendingController.close();
+    _isFilterVisibleController.close();
+    _showFilterToggleController.close();
     _dataGlobalNotifier.removeListener(_silentRefresh);
     super.dispose();
   }
@@ -458,6 +475,12 @@ class MainViewModel extends BaseViewModel
 
   @override
   Stream<bool> get outputIsAscending => _isAscendingController.stream;
+
+  @override
+  Stream<bool> get outputIsFilterVisible => _isFilterVisibleController.stream;
+
+  @override
+  Stream<bool> get outputShowFilterToggle => _showFilterToggleController.stream;
 }
 
 abstract class MainViewModelInputs {
@@ -467,6 +490,7 @@ abstract class MainViewModelInputs {
 
   void setCategory(Category category);
   void setSortOption(SortOption sortOption);
+  void toggleFilter();
 
   Future<void> updateItem(Item item);
 
@@ -497,5 +521,7 @@ abstract class MainViewModelOutputs {
   Stream<Category> get outputSelectedCategory;
   Stream<SortOption> get outputSortOption;
   Stream<bool> get outputIsAscending;
+  Stream<bool> get outputIsFilterVisible;
+  Stream<bool> get outputShowFilterToggle;
   bool get showSeriesTracker;
 }
