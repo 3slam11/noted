@@ -2,17 +2,20 @@ import 'package:noted/domain/model/models.dart';
 
 extension ItemSortExtension on List<Item> {
   /// Applies the selected sort option to a list of items.
-  List<Item> applySort(SortOption sortOption) {
+  List<Item> applySort(SortOption sortOption, bool isAscending) {
     List<Item> sortedList = List.from(this);
 
-    int compareStrings(String? a, String? b) =>
-        (a ?? '').toLowerCase().compareTo((b ?? '').toLowerCase());
+    int compareStrings(String? a, String? b) {
+      final cmp = (a ?? '').toLowerCase().compareTo((b ?? '').toLowerCase());
+      return isAscending ? cmp : -cmp;
+    }
 
     int compareDates(DateTime? a, DateTime? b) {
       if (a == null && b == null) return 0;
-      if (a == null) return 1;
+      if (a == null) return 1; // Put nulls at the end
       if (b == null) return -1;
-      return a.compareTo(b);
+      final cmp = a.compareTo(b);
+      return isAscending ? cmp : -cmp;
     }
 
     DateTime? parseDate(String? dateStr) {
@@ -24,31 +27,23 @@ extension ItemSortExtension on List<Item> {
       }
     }
 
-    int compareRatings(double? a, double? b) => (b ?? 0.0).compareTo(a ?? 0.0);
+    int compareRatings(double? a, double? b) {
+      final cmp = (a ?? 0.0).compareTo(b ?? 0.0);
+      return isAscending ? cmp : -cmp;
+    }
 
     sortedList.sort((a, b) {
       switch (sortOption) {
-        case SortOption.titleAsc:
+        case SortOption.title:
           return compareStrings(a.title, b.title);
-        case SortOption.titleDesc:
-          return compareStrings(b.title, a.title);
-        case SortOption.releaseDateNewest:
-          return compareDates(
-            parseDate(b.releaseDate),
-            parseDate(a.releaseDate),
-          );
-        case SortOption.releaseDateOldest:
+        case SortOption.releaseDate:
           return compareDates(
             parseDate(a.releaseDate),
             parseDate(b.releaseDate),
           );
-        case SortOption.ratingHighest:
+        case SortOption.rating:
           return compareRatings(a.personalRating, b.personalRating);
-        case SortOption.ratingLowest:
-          return compareRatings(b.personalRating, a.personalRating);
-        case SortOption.dateAddedNewest:
-          return compareDates(b.dateAdded, a.dateAdded);
-        case SortOption.dateAddedOldest:
+        case SortOption.dateAdded:
           return compareDates(a.dateAdded, b.dateAdded);
       }
     });

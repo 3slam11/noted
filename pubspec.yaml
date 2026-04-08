@@ -4,8 +4,8 @@ publish_to: 'none'
 version: 3.1.1+21
 
 environment:
-  sdk: ^3.11.0
-  flutter: 3.41.1
+  sdk: ^3.11.4
+  flutter: 3.41.6
 
 dependencies:
   flutter:
@@ -34,7 +34,7 @@ dependencies:
   fl_chart: ^1.1.1
   flutter_launcher_icons: ^0.14.4
   url_launcher: ^6.3.2
-  file_picker: ^10.3.10
+  file_picker: ^11.0.2
   flutter_dotenv: ^6.0.0
   objectbox: ^5.2.0
   objectbox_flutter_libs: ^5.2.0

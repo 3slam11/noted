@@ -209,48 +209,45 @@ class SearchViewState extends State<SearchView> {
           ),
           const SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: StreamBuilder<Category>(
               stream: viewModel.outputSelectedCategory,
               builder: (context, snapshot) {
                 final selectedCategory = snapshot.data ?? Category.movies;
-                return DropdownButton<Category>(
-                  value: selectedCategory,
-                  underline: Container(),
-                  icon: Icon(
-                    Icons.arrow_drop_down,
-                    color: Theme.of(context).colorScheme.primary,
+                return DropdownButtonHideUnderline(
+                  child: DropdownButton<Category>(
+                    isExpanded: false,
+                    value: selectedCategory,
+                    icon: Icon(
+                      Icons.unfold_more_rounded,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      size: 20,
+                    ),
+                    dropdownColor: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    onChanged: (Category? newValue) {
+                      if (newValue != null) {
+                        viewModel.updateCategory(newValue);
+                      }
+                    },
+                    items: Category.values
+                        .where((category) => category != Category.all)
+                        .map((category) {
+                          return DropdownMenuItem(
+                            value: category,
+                            child: Text(
+                              category.localizedCategory(),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          );
+                        })
+                        .toList(),
                   ),
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  dropdownColor: Theme.of(context).colorScheme.surface,
-                  onChanged: (Category? newValue) {
-                    if (newValue != null) {
-                      viewModel.updateCategory(newValue);
-                    }
-                  },
-                  items: Category.values
-                      .where((category) => category != Category.all)
-                      .map((category) {
-                        return DropdownMenuItem(
-                          value: category,
-                          child: Text(
-                            category.localizedCategory(),
-                            style: Theme.of(context).textTheme.bodyLarge
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                ),
-                          ),
-                        );
-                      })
-                      .toList(),
                 );
               },
             ),

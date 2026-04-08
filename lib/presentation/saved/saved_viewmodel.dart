@@ -18,7 +18,10 @@ class SavedViewModel extends BaseViewModel
       BehaviorSubject<Category>.seeded(Category.all);
 
   final BehaviorSubject<SortOption> _sortOptionController =
-      BehaviorSubject<SortOption>.seeded(SortOption.dateAddedNewest);
+      BehaviorSubject<SortOption>.seeded(SortOption.dateAdded);
+
+  final BehaviorSubject<bool> _isAscendingController =
+      BehaviorSubject<bool>.seeded(false);
 
   final SavedUsecase _savedUsecase;
   final DataGlobalNotifier _dataGlobalNotifier;
@@ -89,7 +92,10 @@ class SavedViewModel extends BaseViewModel
   }
 
   void _applySort() {
-    final sortedItems = _rawSavedItems.applySort(_sortOptionController.value);
+    final sortedItems = _rawSavedItems.applySort(
+      _sortOptionController.value,
+      _isAscendingController.value,
+    );
     _savedController.add(sortedItems);
   }
 
@@ -100,7 +106,12 @@ class SavedViewModel extends BaseViewModel
 
   @override
   void setSortOption(SortOption sortOption) {
-    _sortOptionController.add(sortOption);
+    if (_sortOptionController.value == sortOption) {
+      _isAscendingController.add(!_isAscendingController.value);
+    } else {
+      _sortOptionController.add(sortOption);
+      _isAscendingController.add(false);
+    }
     _applySort();
   }
 
@@ -214,6 +225,7 @@ class SavedViewModel extends BaseViewModel
     _savedController.close();
     _selectedCategoryController.close();
     _sortOptionController.close();
+    _isAscendingController.close();
     _dataGlobalNotifier.removeListener(_silentRefresh);
     super.dispose();
   }
@@ -233,6 +245,9 @@ class SavedViewModel extends BaseViewModel
 
   @override
   Stream<SortOption> get outputSortOption => _sortOptionController.stream;
+
+  @override
+  Stream<bool> get outputIsAscending => _isAscendingController.stream;
 }
 
 abstract class SavedViewModelInputs {
@@ -257,5 +272,6 @@ abstract class SavedViewModelOutputs {
   Stream<List<Item>> get outputSavedItems;
   Stream<Category> get outputSelectedCategory;
   Stream<SortOption> get outputSortOption;
+  Stream<bool> get outputIsAscending;
   bool get showSeriesTracker;
 }

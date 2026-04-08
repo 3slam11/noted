@@ -22,7 +22,9 @@ class MainViewModel extends BaseViewModel
   final BehaviorSubject<Category> _selectedCategoryController =
       BehaviorSubject<Category>.seeded(Category.all);
   final BehaviorSubject<SortOption> _sortOptionController =
-      BehaviorSubject<SortOption>.seeded(SortOption.dateAddedNewest);
+      BehaviorSubject<SortOption>.seeded(SortOption.dateAdded);
+  final BehaviorSubject<bool> _isAscendingController =
+      BehaviorSubject<bool>.seeded(false);
 
   MainObject? _currentObject;
   bool _showSeriesTracker = true;
@@ -108,15 +110,19 @@ class MainViewModel extends BaseViewModel
     }
 
     final currentSortOption = _sortOptionController.value;
+    final isAscending = _isAscendingController.value;
 
     final sortedTodos = _currentObject!.mainData!.todos.applySort(
       currentSortOption,
+      isAscending,
     );
     final sortedFinished = _currentObject!.mainData!.finished.applySort(
       currentSortOption,
+      isAscending,
     );
     final sortedSaved = _currentObject!.mainData!.saved.applySort(
       currentSortOption,
+      isAscending,
     );
 
     final newMainData = TaskData(sortedTodos, sortedFinished, sortedSaved);
@@ -151,7 +157,14 @@ class MainViewModel extends BaseViewModel
 
   @override
   void setSortOption(SortOption sortOption) {
-    _sortOptionController.add(sortOption);
+    if (_sortOptionController.value == sortOption) {
+      _isAscendingController.add(!_isAscendingController.value);
+    } else {
+      _sortOptionController.add(sortOption);
+      _isAscendingController.add(
+        false,
+      ); // Default to descending when changing option
+    }
     _applySortersAndFilters();
   }
 
@@ -419,6 +432,7 @@ class MainViewModel extends BaseViewModel
     _mainDataController.close();
     _selectedCategoryController.close();
     _sortOptionController.close();
+    _isAscendingController.close();
     _dataGlobalNotifier.removeListener(_silentRefresh);
     super.dispose();
   }
@@ -441,6 +455,9 @@ class MainViewModel extends BaseViewModel
 
   @override
   Stream<SortOption> get outputSortOption => _sortOptionController.stream;
+
+  @override
+  Stream<bool> get outputIsAscending => _isAscendingController.stream;
 }
 
 abstract class MainViewModelInputs {
@@ -479,5 +496,6 @@ abstract class MainViewModelOutputs {
   Stream<MainObject?> get outputMainData;
   Stream<Category> get outputSelectedCategory;
   Stream<SortOption> get outputSortOption;
+  Stream<bool> get outputIsAscending;
   bool get showSeriesTracker;
 }

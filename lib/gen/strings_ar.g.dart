@@ -133,7 +133,7 @@ class _TranslationsHomeAr implements TranslationsHomeEn {
 	@override String get titleSection => 'قائمة الترفيه لشهر ';
 	@override String get emptySection => 'القائمة فارغة';
 	@override String get finishedList => 'القائمة المكتملة';
-	@override String get savedList => 'الحفظ لوقت لاحق';
+	@override String get savedList => 'المحفوظات';
 	@override String get movies => 'الأفلام';
 	@override String get series => 'المسلسلات';
 	@override String get games => 'الألعاب';
@@ -203,14 +203,10 @@ class _TranslationsSortAr implements TranslationsSortEn {
 	// Translations
 	@override String get sort => 'رتب';
 	@override String get sortBy => 'ترتيب حسب';
-	@override String get titleAsc => 'العنوان (أ-ي)';
-	@override String get titleDesc => 'العنوان (ي-أ)';
-	@override String get releaseDateNewest => 'تاريخ الإصدار (الأحدث)';
-	@override String get releaseDateOldest => 'تاريخ الإصدار (الأقدم)';
-	@override String get ratingHighest => 'التقييم (الأعلى)';
-	@override String get ratingLowest => 'التقييم (الأدنى)';
-	@override String get dateAddedNewest => 'تاريخ الإضافة (الأحدث)';
-	@override String get dateAddedOldest => 'تاريخ الإضافة (الأقدم)';
+	@override String get title => 'العنوان';
+	@override String get releaseDate => 'تاريخ الإصدار';
+	@override String get rating => 'التقييم';
+	@override String get dateAdded => 'تاريخ الإضافة';
 }
 
 // Path: search
@@ -473,7 +469,7 @@ extension on TranslationsAr {
 			'home.titleSection' => 'قائمة الترفيه لشهر ',
 			'home.emptySection' => 'القائمة فارغة',
 			'home.finishedList' => 'القائمة المكتملة',
-			'home.savedList' => 'الحفظ لوقت لاحق',
+			'home.savedList' => 'المحفوظات',
 			'home.movies' => 'الأفلام',
 			'home.series' => 'المسلسلات',
 			'home.games' => 'الألعاب',
@@ -534,14 +530,10 @@ extension on TranslationsAr {
 			'home.platformsOptional' => 'المنصات (مفصولة بفاصلة)',
 			'sort.sort' => 'رتب',
 			'sort.sortBy' => 'ترتيب حسب',
-			'sort.titleAsc' => 'العنوان (أ-ي)',
-			'sort.titleDesc' => 'العنوان (ي-أ)',
-			'sort.releaseDateNewest' => 'تاريخ الإصدار (الأحدث)',
-			'sort.releaseDateOldest' => 'تاريخ الإصدار (الأقدم)',
-			'sort.ratingHighest' => 'التقييم (الأعلى)',
-			'sort.ratingLowest' => 'التقييم (الأدنى)',
-			'sort.dateAddedNewest' => 'تاريخ الإضافة (الأحدث)',
-			'sort.dateAddedOldest' => 'تاريخ الإضافة (الأقدم)',
+			'sort.title' => 'العنوان',
+			'sort.releaseDate' => 'تاريخ الإصدار',
+			'sort.rating' => 'التقييم',
+			'sort.dateAdded' => 'تاريخ الإضافة',
 			'search.search' => 'بحث',
 			'search.searchPlaceholder' => 'ابحث...',
 			'search.searchOrAdd' => 'ابحث عن أي شيء\n\nأو',

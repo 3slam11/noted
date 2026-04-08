@@ -334,8 +334,9 @@ class _ManualAddDialogState extends State<ManualAddDialog> {
                                   _posterUrlController.clear();
                                 });
                               } else {
-                                final result = await FilePicker.platform
-                                    .pickFiles(type: FileType.image);
+                                final result = await FilePicker.pickFiles(
+                                  type: FileType.image,
+                                );
                                 if (result != null &&
                                     result.files.single.path != null) {
                                   setState(() {
@@ -365,11 +366,10 @@ class _ManualAddDialogState extends State<ManualAddDialog> {
                             ),
                             tooltip: t.home.pickImage,
                             onPressed: () async {
-                              final result = await FilePicker.platform
-                                  .pickFiles(
-                                    type: FileType.image,
-                                    allowMultiple: true,
-                                  );
+                              final result = await FilePicker.pickFiles(
+                                type: FileType.image,
+                                allowMultiple: true,
+                              );
                               if (result != null) {
                                 setState(() {
                                   _pickedAdditionalImages.addAll(

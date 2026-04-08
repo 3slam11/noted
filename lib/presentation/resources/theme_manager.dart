@@ -131,14 +131,15 @@ ThemeData getApplicationTheme(
     appBarTheme: baseTheme.appBarTheme.copyWith(
       backgroundColor: baseTheme.colorScheme.primary,
       elevation: AppSize.s0,
+      toolbarHeight: 48.0,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(AppSize.s30),
-          bottomRight: Radius.circular(AppSize.s30),
+          bottomLeft: Radius.circular(AppSize.s20),
+          bottomRight: Radius.circular(AppSize.s20),
         ),
       ),
       titleTextStyle: getRegularStyle(
-        fontSize: FontSize.s22,
+        fontSize: FontSize.s20,
         color: baseTheme.colorScheme.onPrimary,
       ).copyWith(fontFamily: fontFamily),
       iconTheme: IconThemeData(color: baseTheme.colorScheme.onPrimary),

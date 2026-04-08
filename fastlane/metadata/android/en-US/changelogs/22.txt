@@ -1,0 +1,4 @@
+Improved
+- shortened height of the top bar
+- deleted the check icon in the filter section
+- Improved sort layout in main page

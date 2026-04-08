@@ -102,7 +102,7 @@ class BackupAndRestoreViewModel extends BaseViewModel
 
       final String jsonData = jsonEncode(backupData);
 
-      final String? outputDir = await FilePicker.platform.getDirectoryPath(
+      final String? outputDir = await FilePicker.getDirectoryPath(
         dialogTitle: t.backupAndRestore.saveBackupFile,
       );
 
@@ -132,7 +132,7 @@ class BackupAndRestoreViewModel extends BaseViewModel
   @override
   Future<void> restoreData() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['json'],
         dialogTitle: t.backupAndRestore.selectBackupFile,

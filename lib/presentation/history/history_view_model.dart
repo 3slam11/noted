@@ -18,7 +18,10 @@ class HistoryViewModel extends BaseViewModel
       BehaviorSubject<Category>.seeded(Category.all);
 
   final BehaviorSubject<SortOption> _sortOptionController =
-      BehaviorSubject<SortOption>.seeded(SortOption.dateAddedNewest);
+      BehaviorSubject<SortOption>.seeded(SortOption.dateAdded);
+
+  final BehaviorSubject<bool> _isAscendingController =
+      BehaviorSubject<bool>.seeded(false);
 
   final HistoryUsecase _historyUsecase;
   final DataGlobalNotifier _dataGlobalNotifier;
@@ -93,7 +96,10 @@ class HistoryViewModel extends BaseViewModel
   }
 
   void _applySort() {
-    final sortedItems = _rawHistoryItems.applySort(_sortOptionController.value);
+    final sortedItems = _rawHistoryItems.applySort(
+      _sortOptionController.value,
+      _isAscendingController.value,
+    );
     _historyController.add(sortedItems);
   }
 
@@ -104,7 +110,12 @@ class HistoryViewModel extends BaseViewModel
 
   @override
   void setSortOption(SortOption sortOption) {
-    _sortOptionController.add(sortOption);
+    if (_sortOptionController.value == sortOption) {
+      _isAscendingController.add(!_isAscendingController.value);
+    } else {
+      _sortOptionController.add(sortOption);
+      _isAscendingController.add(false);
+    }
     _applySort();
   }
 
@@ -218,6 +229,7 @@ class HistoryViewModel extends BaseViewModel
     _historyController.close();
     _selectedCategoryController.close();
     _sortOptionController.close();
+    _isAscendingController.close();
     _dataGlobalNotifier.removeListener(_silentRefresh);
     super.dispose();
   }
@@ -237,6 +249,9 @@ class HistoryViewModel extends BaseViewModel
 
   @override
   Stream<SortOption> get outputSortOption => _sortOptionController.stream;
+
+  @override
+  Stream<bool> get outputIsAscending => _isAscendingController.stream;
 }
 
 abstract class HistoryViewModelInputs {
@@ -261,5 +276,6 @@ abstract class HistoryViewModelOutputs {
   Stream<List<Item>> get outputHistoryItems;
   Stream<Category> get outputSelectedCategory;
   Stream<SortOption> get outputSortOption;
+  Stream<bool> get outputIsAscending;
   bool get showSeriesTracker;
 }

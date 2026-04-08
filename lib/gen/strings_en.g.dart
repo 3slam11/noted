@@ -198,8 +198,8 @@ class TranslationsHomeEn {
 	/// en: 'Finished List'
 	String get finishedList => 'Finished List';
 
-	/// en: 'Saved for Later'
-	String get savedList => 'Saved for Later';
+	/// en: 'Saved'
+	String get savedList => 'Saved';
 
 	/// en: 'Movies'
 	String get movies => 'Movies';
@@ -390,29 +390,17 @@ class TranslationsSortEn {
 	/// en: 'Sort by'
 	String get sortBy => 'Sort by';
 
-	/// en: 'Title (A-Z)'
-	String get titleAsc => 'Title (A-Z)';
+	/// en: 'Title'
+	String get title => 'Title';
 
-	/// en: 'Title (Z-A)'
-	String get titleDesc => 'Title (Z-A)';
+	/// en: 'Release Date'
+	String get releaseDate => 'Release Date';
 
-	/// en: 'Release Date (Newest)'
-	String get releaseDateNewest => 'Release Date (Newest)';
+	/// en: 'Rating'
+	String get rating => 'Rating';
 
-	/// en: 'Release Date (Oldest)'
-	String get releaseDateOldest => 'Release Date (Oldest)';
-
-	/// en: 'Rating (Highest)'
-	String get ratingHighest => 'Rating (Highest)';
-
-	/// en: 'Rating (Lowest)'
-	String get ratingLowest => 'Rating (Lowest)';
-
-	/// en: 'Date Added (Newest)'
-	String get dateAddedNewest => 'Date Added (Newest)';
-
-	/// en: 'Date Added (Oldest)'
-	String get dateAddedOldest => 'Date Added (Oldest)';
+	/// en: 'Date Added'
+	String get dateAdded => 'Date Added';
 }
 
 // Path: search
@@ -897,7 +885,7 @@ extension on Translations {
 			'home.titleSection' => 'Entertainment list for ',
 			'home.emptySection' => 'This list is empty',
 			'home.finishedList' => 'Finished List',
-			'home.savedList' => 'Saved for Later',
+			'home.savedList' => 'Saved',
 			'home.movies' => 'Movies',
 			'home.series' => 'Series',
 			'home.games' => 'Games',
@@ -958,14 +946,10 @@ extension on Translations {
 			'home.platformsOptional' => 'Platforms (Comma separated)',
 			'sort.sort' => 'Sort',
 			'sort.sortBy' => 'Sort by',
-			'sort.titleAsc' => 'Title (A-Z)',
-			'sort.titleDesc' => 'Title (Z-A)',
-			'sort.releaseDateNewest' => 'Release Date (Newest)',
-			'sort.releaseDateOldest' => 'Release Date (Oldest)',
-			'sort.ratingHighest' => 'Rating (Highest)',
-			'sort.ratingLowest' => 'Rating (Lowest)',
-			'sort.dateAddedNewest' => 'Date Added (Newest)',
-			'sort.dateAddedOldest' => 'Date Added (Oldest)',
+			'sort.title' => 'Title',
+			'sort.releaseDate' => 'Release Date',
+			'sort.rating' => 'Rating',
+			'sort.dateAdded' => 'Date Added',
 			'search.search' => 'Search',
 			'search.searchPlaceholder' => 'Search...',
 			'search.searchOrAdd' => 'Search for anything\n\nor',

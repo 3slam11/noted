@@ -20,47 +20,104 @@ class CategoryFilterWidget extends StatelessWidget {
               // Sort Dropdown Chip
               Padding(
                 padding: const EdgeInsets.only(right: 8),
-                child: StreamBuilder<SortOption>(
-                  stream: viewModel.outputSortOption,
-                  builder: (context, sortSnapshot) {
-                    final selectedOption =
-                        sortSnapshot.data ?? SortOption.dateAddedNewest;
-                    return ChoiceChip(
-                      label: Row(
-                        children: [
-                          Icon(
-                            Icons.sort_rounded,
-                            size: 16,
-                            color: Theme.of(context).colorScheme.primary,
+                child: StreamBuilder<bool>(
+                  stream: viewModel.outputIsAscending,
+                  builder: (context, ascSnapshot) {
+                    final isAscending = ascSnapshot.data ?? false;
+                    return StreamBuilder<SortOption>(
+                      stream: viewModel.outputSortOption,
+                      builder: (context, sortSnapshot) {
+                        final selectedOption =
+                            sortSnapshot.data ?? SortOption.dateAdded;
+                        return PopupMenuButton<SortOption>(
+                          initialValue: selectedOption,
+                          onSelected: (option) {
+                            viewModel.setSortOption(option);
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          const SizedBox(width: 4),
-                          Text(selectedOption.localizedName()),
-                        ],
-                      ),
-                      selected: false,
-                      onSelected: (selected) {
-                        showMenu(
-                          context: context,
-                          position: const RelativeRect.fromLTRB(0, 0, 0, 0),
-                          items: SortOption.values.map((option) {
-                            return PopupMenuItem<SortOption>(
-                              value: option,
-                              child: Text(option.localizedName()),
-                              onTap: () {
-                                viewModel.setSortOption(option);
-                              },
-                            );
-                          }).toList(),
+                          color: Theme.of(context).colorScheme.surface,
+                          offset: const Offset(0, 40),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.sort_rounded,
+                                  size: 18,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  selectedOption.localizedName(),
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                      ),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(
+                                  isAscending
+                                      ? Icons.arrow_upward_rounded
+                                      : Icons.arrow_downward_rounded,
+                                  size: 16,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ],
+                            ),
+                          ),
+                          itemBuilder: (context) =>
+                              SortOption.values.map((option) {
+                                final isSelected = option == selectedOption;
+                                return PopupMenuItem<SortOption>(
+                                  value: option,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        option.localizedName(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              fontWeight: isSelected
+                                                  ? FontWeight.bold
+                                                  : FontWeight.normal,
+                                              color: isSelected
+                                                  ? Theme.of(
+                                                      context,
+                                                    ).colorScheme.primary
+                                                  : null,
+                                            ),
+                                      ),
+                                      if (isSelected) ...[
+                                        const SizedBox(width: 8),
+                                        Icon(
+                                          isAscending
+                                              ? Icons.arrow_upward_rounded
+                                              : Icons.arrow_downward_rounded,
+                                          size: 16,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
                         );
                       },
-                      backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                      labelStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
                     );
                   },
                 ),
@@ -74,6 +131,7 @@ class CategoryFilterWidget extends StatelessWidget {
                       ChoiceChip(
                             label: Text(category.localizedCategory()),
                             selected: selectedCategory == category,
+                            showCheckmark: false,
                             onSelected: (selected) {
                               if (selected) {
                                 viewModel.setCategory(category);

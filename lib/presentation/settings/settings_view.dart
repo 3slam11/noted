@@ -555,7 +555,7 @@ class _FontSelectionDialogState extends State<FontSelectionDialog> {
   }
 
   void _pickAndSetFont() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
+    FilePickerResult? result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['ttf', 'otf'],
       dialogTitle: t.fontSettings.selectFontFile,

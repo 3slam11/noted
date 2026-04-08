@@ -34,33 +34,21 @@ enum Category {
 }
 
 enum SortOption {
-  dateAddedNewest,
-  dateAddedOldest,
-  titleAsc,
-  titleDesc,
-  releaseDateNewest,
-  releaseDateOldest,
-  ratingHighest,
-  ratingLowest;
+  dateAdded,
+  title,
+  releaseDate,
+  rating;
 
   String localizedName() {
     switch (this) {
-      case SortOption.dateAddedNewest:
-        return t.sort.dateAddedNewest;
-      case SortOption.dateAddedOldest:
-        return t.sort.dateAddedOldest;
-      case SortOption.titleAsc:
-        return t.sort.titleAsc;
-      case SortOption.titleDesc:
-        return t.sort.titleDesc;
-      case SortOption.releaseDateNewest:
-        return t.sort.releaseDateNewest;
-      case SortOption.releaseDateOldest:
-        return t.sort.releaseDateOldest;
-      case SortOption.ratingHighest:
-        return t.sort.ratingHighest;
-      case SortOption.ratingLowest:
-        return t.sort.ratingLowest;
+      case SortOption.dateAdded:
+        return t.sort.dateAdded;
+      case SortOption.title:
+        return t.sort.title;
+      case SortOption.releaseDate:
+        return t.sort.releaseDate;
+      case SortOption.rating:
+        return t.sort.rating;
     }
   }
 }
