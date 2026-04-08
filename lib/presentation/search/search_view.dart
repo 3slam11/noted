@@ -222,11 +222,6 @@ class SearchViewState extends State<SearchView> {
                   child: DropdownButton<Category>(
                     isExpanded: false,
                     value: selectedCategory,
-                    icon: Icon(
-                      Icons.unfold_more_rounded,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      size: 20,
-                    ),
                     dropdownColor: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(16),
                     onChanged: (Category? newValue) {

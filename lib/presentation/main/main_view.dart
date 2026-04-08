@@ -26,11 +26,19 @@ class MainViewState extends State<MainView> {
   final AppPrefs appPrefs = instance<AppPrefs>();
   final ScrollController _scrollController = ScrollController();
 
+  bool isFilterVisible = false;
+
   @override
   void initState() {
     super.initState();
     viewModel.start();
     WidgetsBinding.instance.addPostFrameCallback((_) => monthChecker());
+  }
+
+  void toggleFilter() {
+    setState(() {
+      isFilterVisible = !isFilterVisible;
+    });
   }
 
   // QOL: Scroll to top
@@ -191,10 +199,20 @@ class MainViewState extends State<MainView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildFilterAndSortControls(
-              context,
-            ).animate().fadeIn(duration: 400.ms),
-            const SizedBox(height: 20),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              alignment: Alignment.topCenter,
+              child: isFilterVisible
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildFilterAndSortControls(context),
+                        const SizedBox(height: 20),
+                      ],
+                    )
+                  : const SizedBox.shrink(),
+            ),
             TodoSectionWidget(
               viewModel: viewModel,
             ).animate().fadeIn(duration: 500.ms),

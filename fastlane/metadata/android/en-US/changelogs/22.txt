@@ -1,3 +1,6 @@
+New
+- Added filter icon to show or hide filters
+
 Improved
 - shortened height of the top bar
 - deleted the check icon in the filter section

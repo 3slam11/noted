@@ -69,8 +69,8 @@ class CategoryFilterWidget extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Icon(
                                   isAscending
-                                      ? Icons.arrow_upward_rounded
-                                      : Icons.arrow_downward_rounded,
+                                      ? Icons.arrow_downward_rounded
+                                      : Icons.arrow_upward_rounded,
                                   size: 16,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
@@ -104,8 +104,8 @@ class CategoryFilterWidget extends StatelessWidget {
                                         const SizedBox(width: 8),
                                         Icon(
                                           isAscending
-                                              ? Icons.arrow_upward_rounded
-                                              : Icons.arrow_downward_rounded,
+                                              ? Icons.arrow_downward_rounded
+                                              : Icons.arrow_upward_rounded,
                                           size: 16,
                                           color: Theme.of(
                                             context,

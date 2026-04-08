@@ -119,7 +119,27 @@ class _HomeViewState extends State<HomeView>
     return Scaffold(
       backgroundColor: colorScheme.primaryContainer,
       extendBody: true, // Crucial for the glass effect to show content behind
-      appBar: AppBar(title: Text(pageTitles[_bottomNavIndex])),
+      appBar: AppBar(
+        title: Text(pageTitles[_bottomNavIndex]),
+        actions: [
+          if (_bottomNavIndex == 0 ||
+              _bottomNavIndex == 2 ||
+              _bottomNavIndex == 3)
+            IconButton(
+              icon: const Icon(Icons.filter_list_rounded),
+              tooltip: t.sort.sort,
+              onPressed: () {
+                if (_bottomNavIndex == 0) {
+                  _mainKey.currentState?.toggleFilter();
+                } else if (_bottomNavIndex == 2) {
+                  _savedKey.currentState?.toggleFilter();
+                } else if (_bottomNavIndex == 3) {
+                  _historyKey.currentState?.toggleFilter();
+                }
+              },
+            ),
+        ],
+      ),
       body: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
           _handleScrollNotification(notification);

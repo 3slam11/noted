@@ -20,10 +20,18 @@ class HistoryViewState extends State<HistoryView> {
   late final HistoryViewModel _viewModel = instance<HistoryViewModel>();
   final ScrollController _scrollController = ScrollController();
 
+  bool isFilterVisible = false;
+
   @override
   void initState() {
     super.initState();
     _viewModel.start();
+  }
+
+  void toggleFilter() {
+    setState(() {
+      isFilterVisible = !isFilterVisible;
+    });
   }
 
   @override
@@ -61,9 +69,20 @@ class HistoryViewState extends State<HistoryView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCategoryFilter(),
-          const SizedBox(height: AppSize.s12),
-          const SizedBox(height: AppSize.s20),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            alignment: Alignment.topCenter,
+            child: isFilterVisible
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildCategoryFilter(),
+                      const SizedBox(height: AppSize.s20),
+                    ],
+                  )
+                : const SizedBox.shrink(),
+          ),
           Expanded(child: _buildHistoryListSection()),
         ],
       ),
@@ -130,8 +149,8 @@ class HistoryViewState extends State<HistoryView> {
                                 const SizedBox(width: 4),
                                 Icon(
                                   isAscending
-                                      ? Icons.arrow_upward_rounded
-                                      : Icons.arrow_downward_rounded,
+                                      ? Icons.arrow_downward_rounded
+                                      : Icons.arrow_upward_rounded,
                                   size: 16,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
@@ -165,8 +184,8 @@ class HistoryViewState extends State<HistoryView> {
                                         const SizedBox(width: 8),
                                         Icon(
                                           isAscending
-                                              ? Icons.arrow_upward_rounded
-                                              : Icons.arrow_downward_rounded,
+                                              ? Icons.arrow_downward_rounded
+                                              : Icons.arrow_upward_rounded,
                                           size: 16,
                                           color: Theme.of(
                                             context,
