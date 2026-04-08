@@ -16,8 +16,6 @@ class SearchViewModel extends BaseViewModel
       BehaviorSubject<List<SearchItem>>();
   final BehaviorSubject<Category> _selectedCategoryStreamController =
       BehaviorSubject<Category>();
-  final BehaviorSubject<bool> _itemAddedSuccessfullyStreamController =
-      BehaviorSubject<bool>();
 
   final SearchUsecase _searchUsecase;
   final DataGlobalNotifier _dataGlobalNotifier;
@@ -39,7 +37,6 @@ class SearchViewModel extends BaseViewModel
   void dispose() {
     _searchResultsStreamController.close();
     _selectedCategoryStreamController.close();
-    _itemAddedSuccessfullyStreamController.close();
     super.dispose();
   }
 
@@ -125,7 +122,6 @@ class SearchViewModel extends BaseViewModel
 
     result.fold(
       (failure) {
-        _itemAddedSuccessfullyStreamController.add(false);
         inputState.add(
           ErrorState(
             stateRendererType: StateRendererType.popupErrorState,
@@ -134,7 +130,6 @@ class SearchViewModel extends BaseViewModel
         );
       },
       (_) {
-        _itemAddedSuccessfullyStreamController.add(true);
         _dataGlobalNotifier.notifyDataImported();
 
         final currentResults = _searchResultsStreamController.valueOrNull ?? [];
@@ -197,7 +192,6 @@ class SearchViewModel extends BaseViewModel
 
     result.fold(
       (failure) {
-        _itemAddedSuccessfullyStreamController.add(false);
         inputState.add(
           ErrorState(
             stateRendererType: StateRendererType.popupErrorState,
@@ -206,7 +200,6 @@ class SearchViewModel extends BaseViewModel
         );
       },
       (_) {
-        _itemAddedSuccessfullyStreamController.add(true);
         _dataGlobalNotifier.notifyDataImported();
       },
     );
@@ -226,10 +219,6 @@ class SearchViewModel extends BaseViewModel
   @override
   Stream<Category> get outputSelectedCategory =>
       _selectedCategoryStreamController.stream;
-
-  @override
-  Stream<bool> get outputItemAddedSuccessfully =>
-      _itemAddedSuccessfullyStreamController.stream;
 }
 
 abstract class SearchViewModelInputs {
@@ -255,5 +244,4 @@ abstract class SearchViewModelInputs {
 abstract class SearchViewModelOutputs {
   Stream<List<SearchItem>> get outputSearchResults;
   Stream<Category> get outputSelectedCategory;
-  Stream<bool> get outputItemAddedSuccessfully;
 }

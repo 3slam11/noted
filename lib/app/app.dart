@@ -15,27 +15,15 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final ThemeManager _themeManager = instance<ThemeManager>();
-  late Future<({FlexScheme scheme, String? fontFamily})> _themeFuture;
 
   @override
   void initState() {
     super.initState();
     _themeManager.addListener(_onThemeChanged);
-    _themeFuture = _loadThemeAndFont();
-  }
-
-  Future<({FlexScheme scheme, String? fontFamily})> _loadThemeAndFont() async {
-    final scheme = await _themeManager.getCurrentTheme();
-    final fontFamily = await _themeManager.getCurrentFontFamily();
-    return (scheme: scheme, fontFamily: fontFamily);
   }
 
   void _onThemeChanged() {
-    if (mounted) {
-      setState(() {
-        _themeFuture = _loadThemeAndFont();
-      });
-    }
+    if (mounted) setState(() {});
   }
 
   @override
@@ -46,32 +34,26 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<({FlexScheme scheme, String? fontFamily})>(
-      future: _themeFuture,
-      builder: (context, snapshot) {
-        final FlexScheme currentScheme =
-            snapshot.data?.scheme ?? _themeManager.getMonthlyTheme();
-        final String? currentFontFamily = snapshot.data?.fontFamily;
+    final FlexScheme currentScheme = _themeManager.getCurrentThemeSync();
+    final String? currentFontFamily = _themeManager.getCurrentFontFamilySync();
 
-        return MaterialApp(
-          title: t.appName,
-          locale: TranslationProvider.of(context).flutterLocale,
-          supportedLocales: AppLocaleUtils.supportedLocales,
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          debugShowCheckedModeBanner: false,
-          onGenerateRoute: RouteGenerator.getRoute,
-          initialRoute: RoutesManager.mainRoute,
-          theme: getApplicationTheme(
-            currentScheme,
-            context,
-            fontFamily: currentFontFamily,
-          ),
-        );
-      },
+    return MaterialApp(
+      title: t.appName,
+      locale: TranslationProvider.of(context).flutterLocale,
+      supportedLocales: AppLocaleUtils.supportedLocales,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      debugShowCheckedModeBanner: false,
+      onGenerateRoute: RouteGenerator.getRoute,
+      initialRoute: RoutesManager.mainRoute,
+      theme: getApplicationTheme(
+        currentScheme,
+        context,
+        fontFamily: currentFontFamily,
+      ),
     );
   }
 }

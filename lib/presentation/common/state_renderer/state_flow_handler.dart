@@ -33,6 +33,7 @@ class _StateFlowHandlerState extends State<StateFlowHandler> {
   StreamSubscription<FlowState>? _subscription;
   FlowState? _currentState;
   Object? _error;
+  bool _isPopupOpen = false;
 
   @override
   void initState() {
@@ -61,7 +62,17 @@ class _StateFlowHandlerState extends State<StateFlowHandler> {
   void _handleStateChange(FlowState state) {
     if (!mounted) return;
 
+    // If transitioning from a popup state to a non-popup state, close the popup.
+    if (_isPopupOpen && !_isPopupState(state)) {
+      Navigator.of(context, rootNavigator: true).pop();
+      _isPopupOpen = false;
+    }
+
     if (_isPopupState(state)) {
+      // Close existing popup before showing a new one
+      if (_isPopupOpen) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       _showDialog(state);
       return;
     }
@@ -74,7 +85,10 @@ class _StateFlowHandlerState extends State<StateFlowHandler> {
 
   void _handleError(Object error) {
     if (!mounted) return;
-
+    if (_isPopupOpen) {
+      Navigator.of(context, rootNavigator: true).pop();
+      _isPopupOpen = false;
+    }
     setState(() {
       _error = error;
       _currentState = null;
@@ -83,11 +97,9 @@ class _StateFlowHandlerState extends State<StateFlowHandler> {
 
   @override
   Widget build(BuildContext context) {
-    // Handle errors
     if (_error != null) {
       return _buildErrorState(_error.toString());
     }
-
     return _buildWidgetForState(_currentState);
   }
 
@@ -97,7 +109,6 @@ class _StateFlowHandlerState extends State<StateFlowHandler> {
           ? widget.initialWidget!
           : widget.contentBuilder(context);
     }
-
     return _buildStateRenderer(state);
   }
 
@@ -129,6 +140,7 @@ class _StateFlowHandlerState extends State<StateFlowHandler> {
   Future<void> _showDialog(FlowState state) async {
     if (!mounted) return;
 
+    _isPopupOpen = true;
     final stateType = _getStateRendererType(state);
     final message = _getStateMessage(state);
     final isLoading = stateType == StateRendererType.popupLoadingState;
@@ -137,26 +149,23 @@ class _StateFlowHandlerState extends State<StateFlowHandler> {
       context: context,
       barrierDismissible: !isLoading,
       useRootNavigator: true,
-      builder:
-          (context) => PopScope(
-            canPop: !isLoading,
-            child: StateRenderer(
-              stateRendererType: stateType,
-              message: message,
-              actionButtonTitle:
-                  isLoading
-                      ? null
-                      : (widget.popupDismissButtonTitle ?? t.stateRenderer.ok),
-              onActionPressed:
-                  isLoading ? null : () => Navigator.of(context).pop(),
-            ),
-          ),
+      builder: (context) => PopScope(
+        canPop: !isLoading,
+        child: StateRenderer(
+          stateRendererType: stateType,
+          message: message,
+          actionButtonTitle: isLoading
+              ? null
+              : (widget.popupDismissButtonTitle ?? t.stateRenderer.ok),
+          onActionPressed: isLoading ? null : () => Navigator.of(context).pop(),
+        ),
+      ),
     );
+    _isPopupOpen = false;
   }
 
   bool _isPopupState(FlowState? state) {
     if (state == null || state is ContentState) return false;
-
     final stateType = _getStateRendererType(state);
     return stateType.name.toLowerCase().startsWith('popup');
   }
@@ -165,7 +174,6 @@ class _StateFlowHandlerState extends State<StateFlowHandler> {
     try {
       return state.getStateRendererType();
     } catch (e) {
-      debugPrint("StateFlowHandler: Error getting state renderer type: $e");
       return StateRendererType.fullScreenErrorState;
     }
   }
@@ -174,7 +182,6 @@ class _StateFlowHandlerState extends State<StateFlowHandler> {
     try {
       return state.getMessage();
     } catch (e) {
-      debugPrint("StateFlowHandler: Error getting state message: $e");
       return 'An error occurred';
     }
   }

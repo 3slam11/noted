@@ -34,8 +34,8 @@ class _ProgressTrackerWidgetState extends State<ProgressTrackerWidget> {
   @override
   void didUpdateWidget(covariant ProgressTrackerWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.localItem.currentSeason != _selectedSeason ||
-        widget.localItem.currentEpisode != _selectedEpisode) {
+    if (oldWidget.localItem.currentSeason != widget.localItem.currentSeason ||
+        oldWidget.localItem.currentEpisode != widget.localItem.currentEpisode) {
       _initializeState();
     }
   }

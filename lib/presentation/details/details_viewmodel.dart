@@ -95,7 +95,7 @@ class DetailsViewModel extends BaseViewModel
 
   @override
   Future<void> updateTracking({int? season, int? episode}) async {
-    final currentItem = _localItemStreamController.value;
+    final currentItem = _localItemStreamController.valueOrNull;
     if (currentItem == null) return;
 
     final updatedItem = currentItem.copyWith(

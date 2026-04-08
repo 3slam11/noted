@@ -58,6 +58,32 @@ class ThemeManager extends ChangeNotifier {
     }
   }
 
+  FlexScheme getCurrentThemeSync() {
+    final isManualMode = appPrefs.getThemeModeSync() == ThemeType.manual.index;
+    if (isManualMode) {
+      final manualThemeIndex = appPrefs.getManualThemeSync();
+      if (manualThemeIndex >= 0 &&
+          manualThemeIndex < monthlySchemes.values.length) {
+        return monthlySchemes.values.elementAt(manualThemeIndex);
+      }
+    }
+    return getMonthlyTheme();
+  }
+
+  String? getCurrentFontFamilySync() {
+    final fontTypeIndex = appPrefs.getFontTypeSync();
+    final fontType = FontType.values[fontTypeIndex];
+    switch (fontType) {
+      case FontType.appDefault:
+        return FontConstants.fontFamily;
+      case FontType.systemDefault:
+        return null;
+      case FontType.custom:
+        final familyName = appPrefs.getCustomFontFamilyNameSync();
+        return familyName.isNotEmpty ? familyName : FontConstants.fontFamily;
+    }
+  }
+
   FlexScheme getMonthlyTheme() {
     final currentMonth = DateTime.now().month;
     return monthlySchemes[currentMonth] ?? monthlySchemes.values.first;

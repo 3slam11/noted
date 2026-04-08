@@ -18,7 +18,7 @@ class Constants {
 
 class ApiKeys {
   static final String defaultGoogleBooks =
-      dotenv.env['DEFAULT_GOOGLE_BOOKS_API_KEY']!;
-  static final String defaultRawg = dotenv.env['DEFAULT_RAWG_API_KEY']!;
-  static final String defaultTmdb = dotenv.env['DEFAULT_TMDB_API_KEY']!;
+      dotenv.env['DEFAULT_GOOGLE_BOOKS_API_KEY'] ?? '';
+  static final String defaultRawg = dotenv.env['DEFAULT_RAWG_API_KEY'] ?? '';
+  static final String defaultTmdb = dotenv.env['DEFAULT_TMDB_API_KEY'] ?? '';
 }

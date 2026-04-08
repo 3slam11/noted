@@ -24,6 +24,23 @@ class AppPrefs {
 
   AppPrefs(this.sharedPreferences);
 
+  // getters for startup
+  int getThemeModeSync() {
+    return sharedPreferences.getInt(themeModePref) ?? ThemeType.auto.index;
+  }
+
+  int getManualThemeSync() {
+    return sharedPreferences.getInt(manualThemePref) ?? 0;
+  }
+
+  int getFontTypeSync() {
+    return sharedPreferences.getInt(fontTypePref) ?? FontType.appDefault.index;
+  }
+
+  String getCustomFontFamilyNameSync() {
+    return sharedPreferences.getString(customFontFamilyNamePref) ?? '';
+  }
+
   Future<String> getLanguage() async {
     String? language =
         sharedPreferences.getString(languagePref) ?? Constants.language;

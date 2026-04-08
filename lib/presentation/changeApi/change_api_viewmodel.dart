@@ -9,11 +9,6 @@ class ChangeApiViewModel extends BaseViewModel
     implements ChangeApiViewModelInputs, ChangeApiViewModelOutputs {
   final AppPrefs _appPrefs;
 
-  // Input controllers for API key text (from view)
-  final _rawgApiKeyTextController = BehaviorSubject<String>();
-  final _tmdbApiKeyTextController = BehaviorSubject<String>();
-  final _booksApiKeyTextController = BehaviorSubject<String>();
-
   // Output streams for API key values (to view)
   final _outputRawgApiKeyController = BehaviorSubject<String>();
   final _outputTmdbApiKeyController = BehaviorSubject<String>();
@@ -38,9 +33,6 @@ class ChangeApiViewModel extends BaseViewModel
 
   @override
   void dispose() {
-    _rawgApiKeyTextController.close();
-    _tmdbApiKeyTextController.close();
-    _booksApiKeyTextController.close();
     _outputRawgApiKeyController.close();
     _outputTmdbApiKeyController.close();
     _outputBooksApiKeyController.close();

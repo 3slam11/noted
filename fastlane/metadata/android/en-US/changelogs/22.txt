@@ -1,7 +1,9 @@
 New
 - Added filter icon to show or hide filters
+- Added toggle to disable filter button
 
 Improved
-- shortened height of the top bar
-- deleted the check icon in the filter section
+- Shortened height of the top bar
+- Deleted the check icon in the filter section
 - Improved sort layout in main page
+- Bunch of small unnoticed tweaks

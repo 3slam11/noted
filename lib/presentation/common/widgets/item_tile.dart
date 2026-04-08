@@ -125,14 +125,17 @@ class ItemTile extends StatelessWidget {
     );
   }
 
+  // Card has NO border radius — the outer ClipRRect handles all rounding.
+  // This prevents the Card's own anti-aliased corners from bleeding white
+  // pixels over the red Dismissible background during swipe.
   Widget _buildCard(BuildContext context) {
     final theme = Theme.of(context);
 
     return Card(
-      margin: margin ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.zero,
       elevation: 0,
       color: cardColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: const RoundedRectangleBorder(), // No radius here
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
@@ -344,59 +347,69 @@ class ItemTile extends StatelessWidget {
     final valueKey =
         'item-${currentList?.name ?? 'search'}-${item.id}-${item.category?.name}';
 
-    if (onSwipeDismiss == null) {
-      return _buildCard(context);
+    final actualMargin =
+        margin ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+
+    Widget content;
+
+    if (onSwipeDismiss != null) {
+      content = ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Dismissible(
+          key: ValueKey(valueKey),
+          direction: DismissDirection.startToEnd,
+          onDismissed: (direction) {
+            final index = onSwipeDismiss!(item);
+            if (index == null) return;
+
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context)
+                .showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      "'${item.title ?? 'Item'}' ${t.home.deleted}.",
+                    ),
+                    duration: const Duration(seconds: 3),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    action: SnackBarAction(
+                      label: t.home.undo,
+                      onPressed: () => onUndoSwipe?.call(item, index),
+                    ),
+                  ),
+                )
+                .closed
+                .then((reason) {
+                  if (reason != SnackBarClosedReason.action) {
+                    onConfirmSwipe?.call(item);
+                  }
+                });
+          },
+          background: Container(
+            color: theme.colorScheme.error,
+            alignment: Directionality.of(context) == TextDirection.rtl
+                ? Alignment.centerRight
+                : Alignment.centerLeft,
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Icon(
+              Icons.delete_outline_rounded,
+              color: theme.colorScheme.onError,
+              size: 28,
+            ),
+          ),
+          child: _buildCard(context),
+        ),
+      );
+    } else {
+      content = ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: _buildCard(context),
+      );
     }
 
-    return Dismissible(
-      key: ValueKey(valueKey),
-      direction: DismissDirection.startToEnd,
-      onDismissed: (direction) {
-        final index = onSwipeDismiss!(item);
-        if (index == null) return;
-
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context)
-            .showSnackBar(
-              SnackBar(
-                content: Text("'${item.title ?? 'Item'}' ${t.home.deleted}."),
-                duration: const Duration(seconds: 3),
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                action: SnackBarAction(
-                  label: t.home.undo,
-                  onPressed: () => onUndoSwipe?.call(item, index),
-                ),
-              ),
-            )
-            .closed
-            .then((reason) {
-              if (reason != SnackBarClosedReason.action) {
-                onConfirmSwipe?.call(item);
-              }
-            });
-      },
-      background: Container(
-        margin:
-            margin ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.error,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        alignment: Directionality.of(context) == TextDirection.rtl
-            ? Alignment.centerRight
-            : Alignment.centerLeft,
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Icon(
-          Icons.delete_outline_rounded,
-          color: theme.colorScheme.onError,
-          size: 28,
-        ),
-      ),
-      child: _buildCard(context),
-    );
+    return Padding(padding: actualMargin, child: content);
   }
 }
 
